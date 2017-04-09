@@ -2,7 +2,7 @@
 
 This is a webapp to control and manage headless MegaMek (www.megamek.org) server.
 
-It's intended to run on a Linux machine on any virtual, or psychical, server.
+It's intended to run on a Linux machine on any virtual, or psychical server.
 
 It depends on Oracle Java JRE and Python 3.6.x.
 
