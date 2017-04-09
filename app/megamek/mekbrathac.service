@@ -1,0 +1,14 @@
+[Unit]
+Description=Megamek stable erver
+Documentation=http://www.megamek.info/
+After=network.target
+
+[Service]
+WorkingDirectory=/home/mekstable/BATTLETECH/stable/
+ExecStart=/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port 2346 &
+User=mekstable
+Type=simple
+
+[Install]
+WantedBy=default.target
+
