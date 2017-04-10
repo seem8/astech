@@ -12,7 +12,7 @@ from time import sleep
 
 # import bottle
 # remember to delete debug for production
-from bottle import template, response, request, get, post, \
+from bottle import template, response, request, get, post, error, \
                    redirect, static_file, run, route, debug
 
 # help with file uploading
@@ -251,6 +251,12 @@ def mmrestart():
 def logoff():
   response.delete_cookie('administrator')
   redirect('/')
+
+# finally - 404
+@error(404)
+def route404(error):
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  return template('error404', username=username)
 
 # ----------------
 # main debug run
