@@ -20,7 +20,7 @@ import os
 from pathlib import Path
 
 # we have to append date to filename 
-import time
+import time 
 
 
 # ----------------------------------------
@@ -210,6 +210,12 @@ def do_upload_map():
     redirect('/maps')
   elif not username:
     redirect('/login')
+
+# if this is the first login, show tutorial
+@route('/firststrike')
+def tutorial():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  return template('first_strike', username=username)
 
 # main route
 @route('/')
