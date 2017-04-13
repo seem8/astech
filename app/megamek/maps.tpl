@@ -1,5 +1,17 @@
 % include('header', title='Astech - for better MegaMek administration')
 
+% if not veteran:
+  <table>
+    <tr width=800px>
+      <td width=800px>
+        <p>This is a <b>map files</b> page, where you can upload them to Astech webpage and choose them in MegaMek lobby screen.</p>
+        <p>Savegame files are usually in <i>data/boards</i> on your local MegaMek installation folder and have .board extension.<br />
+           After uploading, they will be at megamek/data/boards/astech on this server.</p>
+      </td>
+    </tr>
+  </table>
+% end
+
 <p>
 <table border="0">
   <tr width=500px>

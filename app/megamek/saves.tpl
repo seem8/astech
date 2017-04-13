@@ -1,16 +1,12 @@
 % include('header', title='Astech - for better MegaMek administration')
 
-% if tutorial:
+% if not veteran:
   <table>
     <tr width=800px>
-      <td>
-        <p>This is a <b>saves</b> page, where you can upload them to<br />
-           Astech webpage and use them when launching MegaMek.</p>
-        <p>Savegame files are usually in your <i>savegames</i> on your<br />
-           local MegaMek installation folder and have .sav.gz extension.<br />
-           After uploading, they will be at megamek/savegames on<br />
-           this server.</p>
-        <p>You can try it now, or <a href="administrator">continue tutorial</a>.</p>
+      <td width=800px>
+        <p>This is a <b>saved games</b> page, where you can upload them to Astech webpage and use them when launching MegaMek.</p>
+        <p>Savegame files are usually in <i>savegames</i> on your local MegaMek installation folder and have .sav.gz extension.<br />
+           After uploading, they will be at megamek/savegames on this server.</p>
       </td>
     </tr>
   </table>

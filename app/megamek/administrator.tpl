@@ -1,6 +1,20 @@
 % include('header', title='Astech - for better MegaMek administration')
 
+% if not veteran:
 <p>
+  <table>
+    <tr width=800px>
+      <td width=800px>
+        <p>This is a <b>server status</b> page, where you can control MegaMek server and view log files.</p>
+        <p>In server status table you can start, stop or quick restart MegaMek instance.<br />
+           MegaMek server will listen on specified port on entire intrernet.<br />
+           Remember that players (including yourself) have to have the same version of MegaMek to connect.</p>
+        <p>MegaMek Server Log table is showing you the lastest messages from Megamek installed on Astech webpage. It will show players connecting and disconnecting, their MegaMek version and all possible problems with joining game. It will not autorefresh, so hit F5 from time to time to refresh entire webpage.</p>
+      </td>
+    </tr>
+<p>
+% end 
+
 <table border="1">
   <tr width=500px>
     <td width=250px>Server status:</td>

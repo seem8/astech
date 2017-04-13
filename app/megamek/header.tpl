@@ -3,16 +3,24 @@
 <title>{{title}}</title>
 </head>
 <body bgcolor='eeeeee'>
-<center>
 
 <!-- header image and title -->
-<p><img src="image/mm_sol7_logo.png"></p>
-<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.4)<br />
 % if username:
-<font size="-1">You are logged as {{username}}.</font></p>
+  % if not veteran:
+    <div align="right"><p><a href="veteran">[hide help messages]</a></p></div>
+  % end
+  % if veteran:
+    <div align="right"><p><a href="green">[show help messages]</a></p></div>
+  % end
 % end
 
-<!-- main menu -->
+<center>
+<p><img src="image/mm_sol7_logo.png"></p>
+<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.4)<br />
+
 % if username:
-<p><a href="/">server status</a> | <a href="saves">saved games</a> | <a href="maps">map files</a> | <a href="logout">log out</a></p>
+<font size="-1">You are logged as {{username}}.</font></p>
+
+<!-- main menu -->
+<p><a href="/">server status</a> | <a href="maps">map files</a> | <a href="saves">saved games</a> | <a href="firststrike">help</a> | <a href="logout">log out</a></p>
 % end

@@ -147,12 +147,14 @@ def check_login():
 @get('/saves')
 def upload_save():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('saves', username=username, \
+                             veteran=veteran, \
                              savegames=os.listdir('./savegames')) #, \
                              # removeSave=os.remove('.savegames/'+item))
   # an idea to remove saved games:
-  # saves = os.lostdir(./savegames')
+  # saves = os.listdir(./savegames')
   # os.remove('.savegames/saves[index])
   elif not username:
     redirect('/login')
@@ -182,8 +184,10 @@ def do_upload_save():
 @get('/maps')
 def upload_map():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('maps', username=username, \
+                            veteran=veteran, \
                             mapfiles=os.listdir('./data/boards/astech'))
   # an idea to remove saved games:
   # saves = os.lostdir(./savegames')
@@ -215,21 +219,31 @@ def do_upload_map():
 @route('/firststrike')
 def tutorial():
   username = request.get_cookie('administrator', secret='comstarwygra')
-  return template('first_strike', username=username)
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  if username:
+    return template('first_strike', username=username, \
+                                    veteran=veteran)
+  elif not username:
+    redirect('/login')
 
 # main route
 @route('/')
 def administrator():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  # veteran cookie is present after finishing tutorial
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  # cookie to check if tutorial is in progress
   if username:
     response.delete_cookie('badPassword')
     return template('administrator', username=username, \
+                                     veteran=veteran, \
                                      mmison=megatech.ison, \
                                      mmver=megatech.version, \
                                      port=str(megatech.port), \
                                      domain=megatech.domain, \
                                      getLogFile=getFile('logs/megameklog.txt'), \
                                      fromSave = megatech.from_save)
+
   elif not username:
     redirect('/login')
 
@@ -256,6 +270,20 @@ def mmrestart():
 @route('/logout')
 def logoff():
   response.delete_cookie('administrator')
+  redirect('/')
+
+# set vetran cookie to hide tutorial messages
+@route('/veteran')
+def become_veteran():
+  if request.get_cookie('administrator', secret='comstarwygra'):
+    response.set_cookie('veteran', 'veteran', secret='comstarwygra')
+  redirect('/')
+
+# delete veteran cookie to rerun tutorial
+@route('/green')
+def become_green():
+  if request.get_cookie('administrator', secret='comstarwygra'):
+    response.delete_cookie('veteran')
   redirect('/')
 
 # finally - 404
