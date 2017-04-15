@@ -5,6 +5,7 @@
     <tr width=800px>
       <td width=800px>
         <p>This is a <b>map files</b> page, where you can upload them to Astech webpage and choose them in MegaMek lobby screen.</p>
+        <p>Keep it simple. Please avoid file names with spaces, or special charakters.</p>
         <p>Savegame files are usually in <i>data/boards</i> on your local MegaMek installation folder and have .board extension.<br />
            After uploading, they will be at megamek/data/boards/astech on this server.</p>
       </td>

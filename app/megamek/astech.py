@@ -163,13 +163,12 @@ def upload_save():
 @post('/saves')
 def do_upload_save():
   username = request.get_cookie('administrator', secret='comstarwygra')
-  if username:
     save_file = request.files.get('saved_game')
     name, ext = os.path.splitext(save_file.filename)
     if ext not in ('.gz'):
       # TODO nice info about wrong file extension
       print('WRONG SAVE :(')
-    else:
+   else:
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites

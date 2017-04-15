@@ -5,6 +5,7 @@
     <tr width=800px>
       <td width=800px>
         <p>This is a <b>saved games</b> page, where you can upload them to Astech webpage and use them when launching MegaMek.</p>
+        <p>Keep it simple. Please avoid file names with spaces, or special charakters.</p>
         <p>Savegame files are usually in <i>savegames</i> on your local MegaMek installation folder and have .sav.gz extension.<br />
            After uploading, they will be at megamek/savegames on this server.</p>
       </td>
