@@ -111,6 +111,7 @@ megatech = MegaTech()
 @route('/image/<filename>')
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
+# ----------------------------------------
 
 # a little login template
 @get('/login')
@@ -121,6 +122,7 @@ def login():
   bad_password = request.get_cookie('badPassword', secret='comstarprzegra')
   return template('login', badPass=bad_password, \
                            username=username)
+# ----------------------------------------
 
 # check credentials and redirect to other routes
 @post('/login')
@@ -129,7 +131,9 @@ def check_login():
   if request.forms.get('username').isalpha() and request.forms.get('password').isalpha():
     username = request.forms.get('username')
     password = request.forms.get('password')
-    if crede(username, password):
+
+   # now check actual credentials from the form
+   if crede(username, password):
       # signed cookie for a period of time in seconds (about a day)
       response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
       response.delete_cookie('badPassword')
@@ -142,6 +146,7 @@ def check_login():
     # and redirect to login (just to be safe)
     response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
     redirect('/login')
+# ----------------------------------------
 
 # savegame upload form
 @get('/saves')
@@ -158,6 +163,7 @@ def upload_save():
   # os.remove('.savegames/saves[index])
   elif not username:
     redirect('/login')
+# ----------------------------------------
 
 # checking and uploading files to savegames dir
 @post('/saves')
@@ -165,20 +171,32 @@ def do_upload_save():
   username = request.get_cookie('administrator', secret='comstarwygra')
   if username:
     save_file = request.files.get('saved_game')
+
+    # check if file extension is .gz
     name, ext = os.path.splitext(save_file.filename)
     if ext not in ('.gz'):
       # TODO nice info about wrong file extension
-      print('WRONG SAVE :(')
+      print('WRONG FILE EXTENSION :(')
     else:
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
+
       save_file.save('./savegames', overwrite=True)
+
+      # checking filesize and, if bigger than 1M, delete file
+      filestats = os.stat('./data/boards/astech/'+save_file.filename)
+      if filestats.st_size > 1000000000:
+        # TODO nice info about too big file
+        print('FILE IS TOO BIG. :(')
+        os.remove('./data/boards/astech/'+save_file.filename)
+
     sleep(1)
     redirect('/saves')
   elif not username:
     redirect('/login')
+# ----------------------------------------
 
 # map files upload form
 @get('/maps')
@@ -194,6 +212,7 @@ def upload_map():
   # os.remove('.savegames/saves[index])
   elif not username:
     redirect('/login')
+# ----------------------------------------
 
 # checking and uploading files to savegames dir
 @post('/maps')
@@ -204,18 +223,25 @@ def do_upload_map():
     name, ext = os.path.splitext(map_file.filename)
     if ext not in ('.board'):
       # TODO nice info about wrong file extension
-      print('WRONG MAP :(')
+      print('WRONG FILE EXTENSION :(')
     else:
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites
       map_file.save('./data/boards/astech', overwrite=True)
+      filestats = os.stat('./data/boards/astech/'+map_file.filename)
+      # checking filesize and, if bigger than 1M, delete file
+      if filestats.st_size > 1000000000:
+        # TODO nice info about too big file
+        print('FILE IS TOO BIG. :(')
+        os.remove('./data/boards/astech/'+map_file.filename)
     sleep(1)
     redirect('/maps')
   elif not username:
     redirect('/login')
+# ----------------------------------------
 
-# if this is the first login, show tutorial
+# tutorial
 @route('/firststrike')
 def tutorial():
   username = request.get_cookie('administrator', secret='comstarwygra')
@@ -225,6 +251,7 @@ def tutorial():
                                     veteran=veteran)
   elif not username:
     redirect('/login')
+# ----------------------------------------
 
 # main route
 @route('/')
@@ -246,6 +273,7 @@ def administrator():
 
   elif not username:
     redirect('/login')
+# ----------------------------------------
 
 # a little functions doing bigger functions
 # from MegaTech class
@@ -292,7 +320,7 @@ def route404(error):
   username = request.get_cookie('administrator', secret='comstarwygra')
   return template('error404', username=username)
 
-# ----------------
+# ----------------------------------------
 # main debug run
 debug(True)
 run(host='localhost', port=8080, reloader=True)
