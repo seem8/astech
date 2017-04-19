@@ -1,6 +1,6 @@
 Starting MegaMek v0.43.1-git ...
 Compiled on Mon Feb 13 05:20:08 CET 2017
-Today is Tue Apr 18 09:07:41 CEST 2017
+Today is Wed Apr 19 19:10:58 CEST 2017
 Java vendor Oracle Corporation
 Java version 1.8.0_121
 Platform Linux 4.11.0-0.rc6.git3.1.fc27.x86_64 (amd64)
@@ -12,15 +12,3 @@ s: starting a new server...
 s: hostname = 'gazelle' port = 3477
 s: hosting on address = 192.168.122.1
 s: password = null
-s: listening for clients...
-s: accepting player connection #0 ...
-Bark Bark
-s: player #0, iiiiiiiiiiiiiiiiiii connected from /127.0.0.1
-SUCCESS: Client/Server Version (0.43.1-git) and Checksum (91e7012a93c0f77d7ad5e8a129869dd1dd8ad6a9b21968973fb11e824e09c65e) matched
-server: got a client name from a non-pending connection
-SUCCESS: Client/Server Version (0.43.1-git) and Checksum (91e7012a93c0f77d7ad5e8a129869dd1dd8ad6a9b21968973fb11e824e09c65e) matched
-s:Contents of Send Queue: 
-s: connection 0 disconnected
-s: removed player iiiiiiiiiiiiiiiiiii
-2017-04-18 09:08:44 CEST END OF GAME
-s:Contents of Send Queue: 

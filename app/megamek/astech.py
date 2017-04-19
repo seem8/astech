@@ -53,7 +53,7 @@ def stringTime():
   return strtime
 
 # login and password (without encryption)
-# looks secure so far... but have to be updated for
+# TODO looks secure so far... but have to be updated for
 # database and encryption
 def crede(l, p):
  if l == 'brathac' and p == 'deathabovefrom':
@@ -81,6 +81,9 @@ class MegaTech:
   def start(self):
     '''starts MegaMek server'''
     self.process = subprocess.Popen('/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port 3477'.split()) 
+    # TODO testing parameters to load save games and passwords - not ready yet
+    # dedicated servers parameters are as follows:
+    # -port [port] -password [password] [savedgame]
     #if not self.from_save:
     #  self.process = subprocess.Popen('/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port 3477'.split()) 
     #elif self.from_save:
@@ -132,12 +135,12 @@ def check_login():
     username = request.forms.get('username')
     password = request.forms.get('password')
 
-   # now check actual credentials from the form
-   if crede(username, password):
-      # signed cookie for a period of time in seconds (about a day)
-      response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
-      response.delete_cookie('badPassword')
-      redirect('/')
+    # now check actual credentials from the form
+    if crede(username, password):
+       # signed cookie for a period of time in seconds (about a day)
+       response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
+       response.delete_cookie('badPassword')
+       redirect('/')
     elif not crede(username,password):
       response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
       redirect('/login')
@@ -152,6 +155,7 @@ def check_login():
 @get('/saves')
 def upload_save():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('saves', username=username, \
@@ -202,6 +206,7 @@ def do_upload_save():
 @get('/maps')
 def upload_map():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('maps', username=username, \
@@ -245,6 +250,7 @@ def do_upload_map():
 @route('/firststrike')
 def tutorial():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('first_strike', username=username, \
@@ -257,7 +263,7 @@ def tutorial():
 @route('/')
 def administrator():
   username = request.get_cookie('administrator', secret='comstarwygra')
-  # veteran cookie is present after finishing tutorial
+  # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   # cookie to check if tutorial is in progress
   if username:
@@ -307,7 +313,7 @@ def become_veteran():
     response.set_cookie('veteran', 'veteran', secret='comstarwygra')
   redirect('/')
 
-# delete veteran cookie to rerun tutorial
+# delete veteran cookie to show tutorial messages again 
 @route('/green')
 def become_green():
   if request.get_cookie('administrator', secret='comstarwygra'):

@@ -48,6 +48,39 @@
 </table>
 </p>
 
+
+% if mmison:
+<p>&nbsp;</p>
+<p>
+<table border="0">
+  <tr width=476px>
+    <td width=175px>&nbsp;</td>
+    <td width=292px>How to connect to the game:</td>
+  </tr>
+  <tr width=467px>
+    <td width=175px><img src="/image/connect_dialog-0-0.png"></td>
+    <td width=292px><img src="/image/connect_dialog-1-0.png"></td>
+  </tr>
+  <tr width=467px>
+    <td width=175px><img src="/image/connect_dialog-0-1.png"></td>
+    <td width=292px><img src="/image/connect_dialog-1-1.png"></td>
+  </tr>
+  <tr width=467px>
+    <td width=175px><img src="/image/connect_dialog-0-2.png"></td>
+    <td width=292px><img src="/image/connect_dialog-1-2.png"></td>
+  </tr>
+  <tr width=467px>
+    <td width=175px><img src="/image/connect_dialog-0-3.png"></td>
+    <td width=292px><img src="/image/connect_dialog-1-3.png"></td>
+  </tr>
+  <tr width=467px>
+    <td width=175px><img src="/image/connect_dialog-0-4.png"></td>
+    <td width=292px><img src="/image/connect_dialog-1-4.png"></td>
+  </tr>
+</table>
+</p>
+% end
+
 <p>&nbsp;</p>
 
 <p>
