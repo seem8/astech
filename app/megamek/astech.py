@@ -71,25 +71,28 @@ def crede(l, p):
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    self.ison = False                    # megamek is off by default 
-    self.version = '0.42.1'              # megamek version
-    self.port = 3477                     # port for megamek server
-    self.domain = 'mek.solaris7.pl'      # nice site name
-    self.from_save = False               # check if savegame is loaded
-    self.save_dir = Path('./savegames/') # default save dir for megamek
+    self.ison = False                           # megamek is off by default 
+    self.version = '0.43.2'                     # megamek version
+    self.port = 3477                            # port for megamek server
+    self.domain = 'mek.solaris7.pl'             # nice site name
+    self.from_save = False                      # check if savegame is loaded
+    self.password = False                       # optional password to join a game
+    self.save_dir = Path('./savegames/')        # default save dir for megamek
+    self.map_dir = Path('./data/boards/astech') # astech will upload maps there
+    # command to lauch MegaMek server with provided port
+    self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port '+str(self.port)
   
   def start(self):
     '''starts MegaMek server'''
-    self.process = subprocess.Popen('/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port 3477'.split()) 
+    # if password is set, add it to the lauch command
+    # TODO password is not working, it's probably bug in MegaMek
+    if self.password != False:
+      self.command += ' -password ' + self.password + ' '
+    self.process = subprocess.Popen(self.command.split()) 
     # TODO testing parameters to load save games and passwords - not ready yet
     # dedicated servers parameters are as follows:
     # -port [port] -password [password] [savedgame]
-    #if not self.from_save:
-    #  self.process = subprocess.Popen('/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port 3477'.split()) 
-    #elif self.from_save:
-    #  self.process = subprocess.Popen('/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port 3477 data/' + \
-    #                                   .split()) 
-    sleep(3)
+    sleep(2)
     self.ison = True
   
   def stop(self):
@@ -137,10 +140,10 @@ def check_login():
 
     # now check actual credentials from the form
     if crede(username, password):
-       # signed cookie for a period of time in seconds (about a day)
-       response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
-       response.delete_cookie('badPassword')
-       redirect('/')
+      # signed cookie for a period of time in seconds (about a day)
+      response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
+      response.delete_cookie('badPassword')
+      redirect('/')
     elif not crede(username,password):
       response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
       redirect('/login')
@@ -155,12 +158,16 @@ def check_login():
 @get('/saves')
 def upload_save():
   username = request.get_cookie('administrator', secret='comstarwygra')
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/saves', max_age=321, secret='comstarwygra')
+  
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('saves', username=username, \
                              veteran=veteran, \
-                             savegames=os.listdir('./savegames')) #, \
+                             savegames=os.listdir(megatech.save_dir)) #, \
                              # removeSave=os.remove('.savegames/'+item))
   # an idea to remove saved games:
   # saves = os.listdir(./savegames')
@@ -187,14 +194,14 @@ def do_upload_save():
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
 
-      save_file.save('./savegames', overwrite=True)
+      save_file.save(megatech.save_dir, overwrite=True)
 
       # checking filesize and, if bigger than 1M, delete file
-      filestats = os.stat('./data/boards/astech/'+save_file.filename)
+      filestats = os.stat(megatech.save_dir + save_file.filename)
       if filestats.st_size > 1000000000:
         # TODO nice info about too big file
         print('FILE IS TOO BIG. :(')
-        os.remove('./data/boards/astech/'+save_file.filename)
+        os.remove(megatech.save_dir + save_file.filename)
 
     sleep(1)
     redirect('/saves')
@@ -206,12 +213,16 @@ def do_upload_save():
 @get('/maps')
 def upload_map():
   username = request.get_cookie('administrator', secret='comstarwygra')
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/maps', max_age=321, secret='comstarwygra')
+
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
     return template('maps', username=username, \
                             veteran=veteran, \
-                            mapfiles=os.listdir('./data/boards/astech'))
+                            mapfiles=os.listdir(megatech.map_dir))
   # an idea to remove saved games:
   # saves = os.lostdir(./savegames')
   # os.remove('.savegames/saves[index])
@@ -233,13 +244,13 @@ def do_upload_map():
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites
-      map_file.save('./data/boards/astech', overwrite=True)
-      filestats = os.stat('./data/boards/astech/'+map_file.filename)
+      map_file.save(megatech.map_dir, overwrite=True)
+      filestats = os.stat(megatech.map_dir + map_file.filename)
       # checking filesize and, if bigger than 1M, delete file
       if filestats.st_size > 1000000000:
         # TODO nice info about too big file
         print('FILE IS TOO BIG. :(')
-        os.remove('./data/boards/astech/'+map_file.filename)
+        os.remove(megatech.map_dir + map_file.filename)
     sleep(1)
     redirect('/maps')
   elif not username:
@@ -250,6 +261,10 @@ def do_upload_map():
 @route('/firststrike')
 def tutorial():
   username = request.get_cookie('administrator', secret='comstarwygra')
+  
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/firststrike', max_age=321, secret='comstarwygra')
+  
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
   if username:
@@ -263,19 +278,24 @@ def tutorial():
 @route('/')
 def administrator():
   username = request.get_cookie('administrator', secret='comstarwygra')
+
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='comstarwygra')
-  # cookie to check if tutorial is in progress
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/', max_age=321, secret='comstarwygra')
+
   if username:
     response.delete_cookie('badPassword')
-    return template('administrator', username=username, \
-                                     veteran=veteran, \
-                                     mmison=megatech.ison, \
-                                     mmver=megatech.version, \
-                                     port=str(megatech.port), \
-                                     domain=megatech.domain, \
-                                     getLogFile=getFile('logs/megameklog.txt'), \
-                                     fromSave = megatech.from_save)
+    return template('administrator', username = username, \
+                                     veteran = veteran, \
+                                     mtison = megatech.ison, \
+                                     mtver = megatech.version, \
+                                     mtport = str(megatech.port), \
+                                     mtdomain = megatech.domain, \
+                                     getLogFile = getFile('logs/megameklog.txt'), \
+                                     mtpassword = megatech.password, \
+                                     mtfromSave = megatech.from_save)
 
   elif not username:
     redirect('/login')
@@ -311,14 +331,16 @@ def logoff():
 def become_veteran():
   if request.get_cookie('administrator', secret='comstarwygra'):
     response.set_cookie('veteran', 'veteran', secret='comstarwygra')
-  redirect('/')
+  # curpage cookie is storing current page (route)
+  redirect(request.get_cookie('curpage', secret='comstarwygra'))
 
 # delete veteran cookie to show tutorial messages again 
 @route('/green')
 def become_green():
   if request.get_cookie('administrator', secret='comstarwygra'):
     response.delete_cookie('veteran')
-  redirect('/')
+  # curpage cookie is storing current page (route)
+  redirect(request.get_cookie('curpage', secret='comstarwygra'))
 
 # finally - 404
 @error(404)
@@ -328,6 +350,7 @@ def route404(error):
 
 # ----------------------------------------
 # main debug run
+# remember to add debug import from bottle
 debug(True)
 run(host='localhost', port=8080, reloader=True)
 

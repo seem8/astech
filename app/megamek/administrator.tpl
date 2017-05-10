@@ -7,7 +7,7 @@
       <td width=800px>
         <p>This is a <b>server status</b> page, where you can control MegaMek server and view log files.</p>
         <p>In server status table you can start, stop or quick restart MegaMek instance.<br />
-           MegaMek server will listen on specified port on entire intrernet.<br />
+           MegaMek server will listen for connections on specified port.<br />
            Remember that players (including yourself) have to have the same version of MegaMek to connect.</p>
         <p>MegaMek Server Log table is showing you the lastest messages from Megamek installed on Astech webpage. It will show players connecting and disconnecting, their MegaMek version and all possible problems with joining game. It will not autorefresh, so hit F5 from time to time to refresh entire webpage.</p>
       </td>
@@ -19,25 +19,25 @@
   <tr width=500px>
     <td width=250px>Server status:</td>
     <td width=250px>
-      % if mmison:
+      % if mtison:
         server is <b>turned on</b>
       % end
-      % if not mmison:
+      % if not mtison:
         server is <b>turned off</b>
       % end
       <br />
-      version: {{mmver}}<br />
-      address: {{domain}}<br />
-      port: {{port}}
+      version: {{mtver}}<br />
+      address: {{mtdomain}}<br />
+      port: {{mtport}}
     </td>
   </tr>
   <tr width=500px>
     <td width=250px>Server administration:</td>
     <td width=250px>
-      % if not mmison:
+      % if not mtison:
         <a href="mmturnon">turn on</a>
       % end
-      % if mmison:
+      % if mtison:
         <a href="mmturnoff">turn off</a>
       % end
       <br /><a href="mmrestart">quick restart</a>
@@ -49,7 +49,7 @@
 </p>
 
 
-% if mmison:
+% if mtison:
 <p>&nbsp;</p>
 <p>
 <table border="0">

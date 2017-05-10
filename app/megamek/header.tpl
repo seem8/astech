@@ -7,10 +7,10 @@
 <!-- header image and title -->
 % if username:
   % if not veteran:
-    <div align="right"><p><a href="veteran">[hide help messages]</a></p></div>
+    <div align="right"><p><a href="veteran">[ hide tutorial ]</a></p></div>
   % end
   % if veteran:
-    <div align="right"><p><a href="green">[show help messages]</a></p></div>
+    <div align="right"><p><a href="green">[ show tutorial ]</a></p></div>
   % end
 % end
 
