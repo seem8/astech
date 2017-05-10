@@ -1,5 +1,5 @@
 [Unit]
-Description=Megamek stable erver
+Description=Megamek stable server
 Documentation=http://www.megamek.info/
 After=network.target
 
