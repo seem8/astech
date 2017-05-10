@@ -167,6 +167,7 @@ def upload_save():
   if username:
     return template('saves', username=username, \
                              veteran=veteran, \
+                             # TODO create dir if not exist
                              savegames=os.listdir(megatech.save_dir)) #, \
                              # removeSave=os.remove('.savegames/'+item))
   # an idea to remove saved games:
@@ -222,6 +223,7 @@ def upload_map():
   if username:
     return template('maps', username=username, \
                             veteran=veteran, \
+                            # TODO create dir if not exist
                             mapfiles=os.listdir(megatech.map_dir))
   # an idea to remove saved games:
   # saves = os.lostdir(./savegames')
