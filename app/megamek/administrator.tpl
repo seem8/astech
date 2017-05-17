@@ -51,7 +51,12 @@
     <td width=250px>Server password:</td>
     <td width=250px>
       <form action="/" method="post">
-        <input name="mekpassword" type="text" /><br />
+        % if mtpassword:
+          <input name="mekpassword" type="text" value="{{mtpassword}}" /><br />
+        % end
+        % if not mtpassword:
+          <input name="mekpassword" type="text" /><br />
+        % end
         <font size="-1">(please use only latin characters)</font></br />
         <input value="OK" type="submit" />
       </form>

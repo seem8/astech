@@ -80,12 +80,11 @@ class MegaTech:
     self.save_dir = Path('./savegames/')        # default save dir for megamek
     self.map_dir = Path('./data/boards/astech') # astech will upload maps there
     # command to lauch MegaMek server with provided port
-    self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port '+str(self.port)
+    self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
   
   def start(self):
     '''starts MegaMek server'''
     # if password is set, add it to the lauch command
-    # TODO password is not working, it's probably bug in MegaMek
     if self.password != False:
       self.command += ' -password ' + self.password + ' '
     self.process = subprocess.Popen(self.command.split()) 
@@ -140,11 +139,13 @@ def check_login():
 
     # now check actual credentials from the form
     if crede(username, password):
+      # good password
       # signed cookie for a period of time in seconds (about a day)
       response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
       response.delete_cookie('badPassword')
       redirect('/')
     elif not crede(username,password):
+      # bad password
       response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
       redirect('/login')
   else:
@@ -310,7 +311,8 @@ def setMekPassword():
   if username:
     # check if username and password isn't something like '/mmrestart'
     if request.forms.get('mekpassword').isalpha():
-      mekpassword = request.forms.get('mekpassword')
+      megatech.password = request.forms.get('mekpassword')
+      redirect('/')
     else:
       # if mekpassword is not alpha, don't parse it
       # and redirect to login (just to be safe)
