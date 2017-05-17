@@ -31,6 +31,7 @@
       port: {{mtport}}
     </td>
   </tr>
+  
   <tr width=500px>
     <td width=250px>Server administration:</td>
     <td width=250px>
@@ -45,6 +46,16 @@
       game in progress will be lost.</font>
     </td>
   </tr>
+  
+  <tr>
+    <td width=250px>Server password:</td>
+    <td width=250px>
+      <form action="/" method="post">
+        <input name="mekpassword" type="text" /><br />
+        <font size="-1">(please use only latin characters)</font></br />
+        <input value="OK" type="submit" />
+      </form>
+    </td>
 </table>
 </p>
 

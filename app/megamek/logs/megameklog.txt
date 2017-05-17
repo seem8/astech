@@ -1,20 +1,19 @@
 Starting MegaMek v0.43.2 ...
 Compiled on Tue May 02 00:08:44 CEST 2017
-Today is Wed May 10 20:39:43 CEST 2017
+Today is Thu May 11 07:48:41 CEST 2017
 Java vendor Oracle Corporation
 Java version 1.8.0_121
 Platform Linux 4.11.0-1.fc27.x86_64 (amd64)
 Total memory available to MegaMek: 1 691 648 kB
 
-Starting Dedicated Server. args: [-port 3477]
+Starting Dedicated Server. args: [-port 3477 -password predator]
 MMRandom: generating RNG type #1
 s: starting a new server...
 s: hostname = 'gazelle' port = 3477
 s: hosting on address = 127.0.0.1
-s: password = null
+s: password = predator
 s: listening for clients...
 s: accepting player connection #0 ...
-Bark Bark
 Bark Bark
 Bark Bark
 s: player #0, SeeM connected from /127.0.0.1
@@ -23,10 +22,14 @@ server: got a client name from a non-pending connection
 SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
 server: got a client name from a non-pending connection
 SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
-server: got a client name from a non-pending connection
+s: accepting player connection #1 ...
+s: player #1, TestBot connected from /127.0.0.1
 SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
 s:Contents of Send Queue: 
 s: connection 0 disconnected
 s: removed player SeeM
-2017-05-10 20:45:11 CEST END OF GAME
-s:
+s:Contents of Send Queue: 
+s: connection 0 disconnected
+s:Contents of Send Queue: 
+s: connection 1 disconnected
+s: removed player TestBot

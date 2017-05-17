@@ -76,7 +76,7 @@ class MegaTech:
     self.port = 3477                            # port for megamek server
     self.domain = 'mek.solaris7.pl'             # nice site name
     self.from_save = False                      # check if savegame is loaded
-    self.password = False                       # optional password to join a game
+    self.password = False                       # optional password to change game options 
     self.save_dir = Path('./savegames/')        # default save dir for megamek
     self.map_dir = Path('./data/boards/astech') # astech will upload maps there
     # command to lauch MegaMek server with provided port
@@ -277,7 +277,7 @@ def tutorial():
 # ----------------------------------------
 
 # main route
-@route('/')
+@get('/')
 def administrator():
   username = request.get_cookie('administrator', secret='comstarwygra')
 
@@ -285,7 +285,7 @@ def administrator():
   veteran = request.get_cookie('veteran', secret='comstarwygra')
 
   # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/', max_age=321, secret='comstarwygra')
+  response.set_cookie('curpage', '/', max_age=1234, secret='comstarwygra')
 
   if username:
     response.delete_cookie('badPassword')
@@ -301,6 +301,25 @@ def administrator():
 
   elif not username:
     redirect('/login')
+
+# main route - setting server password via html form
+@post('/')
+def setMekPassword():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  
+  if username:
+    # check if username and password isn't something like '/mmrestart'
+    if request.forms.get('mekpassword').isalpha():
+      mekpassword = request.forms.get('mekpassword')
+    else:
+      # if mekpassword is not alpha, don't parse it
+      # and redirect to login (just to be safe)
+      response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
+  elif not username:
+    redirect('/login')
+
+
+
 # ----------------------------------------
 
 # a little functions doing bigger functions
