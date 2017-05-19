@@ -338,11 +338,11 @@ def mmturnoff():
     megatech.stop()
   redirect('/')
 
-@route('/mmrestart')
-def mmrestart():
-  if request.get_cookie('administrator', secret='comstarwygra'):
-    megatech.restart()
-  redirect('/')
+#@route('/mmrestart')
+#def mmrestart():
+#  if request.get_cookie('administrator', secret='comstarwygra'):
+#    megatech.restart()
+#  redirect('/')
 
 @route('/logout')
 def logoff():

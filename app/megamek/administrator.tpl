@@ -6,12 +6,13 @@
     <tr width=800px>
       <td width=800px>
         <p>This is a <b>server status</b> page, where you can control MegaMek server and view log files.</p>
-        <p>In server status table you can start, stop or quick restart MegaMek instance.<br />
-           MegaMek server will listen for connections on specified port.<br />
+        <p>In server status table you can start, or stop MegaMek server.<br />
+           MegaMek server will wait for connections on specified port.<br />
            Remember that players (including yourself) have to have the same version of MegaMek to connect.</p>
-        <p>MegaMek Server Log table is showing you the lastest messages from Megamek installed on Astech webpage. It will show players connecting and disconnecting, their MegaMek version and all possible problems with joining game. It will not autorefresh, so hit F5 from time to time to refresh entire webpage.</p>
+        <p>MegaMek Server Log table is showing the lastest messages from Megamek installed on Astech webpage. It will show players connecting and disconnecting, their MegaMek version and all possible problems with joining game. It will not autorefresh, so hit F5 from time to time to refresh entire webpage.</p>
       </td>
     </tr>
+  </table>
 <p>
 % end 
 
@@ -36,14 +37,14 @@
     <td width=250px>Server administration:</td>
     <td width=250px>
       % if not mtison:
-        <a href="mmturnon">turn on</a>
+        <a href="mmturnon"><img src="image/server_off.png"></a>
       % end
       % if mtison:
-        <a href="mmturnoff">turn off</a>
+        <a href="mmturnoff"><img src="image/server_on.png"></a>
       % end
-      <br /><a href="mmrestart">quick restart</a>
-      <br /><font size = '-1'>If you turn off, or restart the server,<br />
-      game in progress will be lost.</font>
+      <!-- <br /><a href="mmrestart">quick restart</a> -->
+      <!-- <br /><font size = '-1'>If you turn off the server,<br />
+      game in progress will be lost.</font> -->
     </td>
   </tr>
   
@@ -64,7 +65,23 @@
 </table>
 </p>
 
+<!-- if server is on, display screenshot of Megamek connect window -->
+% if mtison:
+<p><b>How to connect to Astech Megamek server:</b></p>
 
+<p>
+<table width=580px height=345px background="/image/connect_dialog.png" border="1">
+  <tr width=243px>
+    <td>TO JEST BLEEE</td>
+  </tr>
+  <tr width=337px>
+    <td>BUUFIDSDS</td>
+  </tr>
+</table>
+</p>
+% end
+
+<!-- THIS IS OLD TABLE WITH INSTRUCTIONS HOW TO CONNECT
 % if mtison:
 <p>&nbsp;</p>
 <p>
@@ -96,6 +113,7 @@
 </table>
 </p>
 % end
+-->
 
 <p>&nbsp;</p>
 
