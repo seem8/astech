@@ -71,14 +71,14 @@ def crede(l, p):
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    self.ison = False                           # megamek is off by default 
-    self.version = '0.43.2'                     # megamek version
-    self.port = 3477                            # port for megamek server
-    self.domain = 'mek.solaris7.pl'             # nice site name
-    self.from_save = False                      # check if savegame is loaded
-    self.password = False                       # optional password to change game options 
-    self.save_dir = Path('./savegames/')        # default save dir for megamek
-    self.map_dir = Path('./data/boards/astech') # astech will upload maps there
+    self.ison = False                            # megamek is off by default 
+    self.version = '0.43.2'                      # megamek version
+    self.port = 3477                             # port for megamek server
+    self.domain = 'mek.solaris7.pl'              # nice site name
+    self.from_save = False                       # check if savegame is loaded
+    self.password = False                        # optional password to change game options 
+    self.save_dir = Path('./savegames/')         # default save dir for megamek
+    self.map_dir = Path('./data/boards/astech/') # astech will upload maps there
     # command to lauch MegaMek server with provided port
     self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
   
@@ -195,11 +195,10 @@ def do_upload_save():
       # add current time to file name, to avoid
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
-
-      save_file.save(megatech.save_dir, overwrite=True)
+      save_file.save(str(megatech.save_dir), overwrite=True)
 
       # checking filesize and, if bigger than 1M, delete file
-      filestats = os.stat(megatech.save_dir + save_file.filename)
+      filestats = os.stat(str(megatech.save_dir) + '/' + save_file.filename)
       if filestats.st_size > 1000000000:
         # TODO nice info about too big file
         print('FILE IS TOO BIG. :(')
@@ -247,8 +246,9 @@ def do_upload_map():
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites
-      map_file.save(megatech.map_dir, overwrite=True)
-      filestats = os.stat(megatech.map_dir + map_file.filename)
+      map_file.save(str(megatech.map_dir), overwrite=True)
+      filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
+
       # checking filesize and, if bigger than 1M, delete file
       if filestats.st_size > 1000000000:
         # TODO nice info about too big file
