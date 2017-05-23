@@ -71,14 +71,16 @@ def crede(l, p):
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    self.ison = False                            # megamek is off by default 
-    self.version = '0.43.2'                      # megamek version
-    self.port = 3477                             # port for megamek server
-    self.domain = 'mek.solaris7.pl'              # nice site name
-    self.from_save = False                       # check if savegame is loaded
-    self.password = False                        # optional password to change game options 
-    self.save_dir = Path('./savegames/')         # default save dir for megamek
-    self.map_dir = Path('./data/boards/astech/') # astech will upload maps there
+    self.ison = False                               # megamek is off by default 
+    self.version = '0.43.2'                         # megamek version
+    self.port = 3477                                # port for megamek server
+    self.domain = 'mek.solaris7.pl'                 # nice site name
+    self.from_save = False                          # check if savegame is loaded
+    self.password = False                           # optional password to change game options 
+    self.save_dir = Path('./savegames/')            # default save dir for megamek
+    self.map_dir = Path('./data/boards/astech/' )   # astech will upload maps there
+    self.unit_dir = Path('./data/mechfiles/astech') # and custom mechs there
+
     # command to lauch MegaMek server with provided port
     self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
   
@@ -129,6 +131,10 @@ def login():
                            username=username)
 # ----------------------------------------
 
+# ----------------------------------------
+# ------- LOGIN PAGE ---------------------
+# ----------------------------------------
+
 # check credentials and redirect to other routes
 @post('/login')
 def check_login():
@@ -153,6 +159,13 @@ def check_login():
     # and redirect to login (just to be safe)
     response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
     redirect('/login')
+# ----------------------------------------
+
+# TODO - saves, maps and unit uploads are very similar.
+#        Maybe there is a way to write 1 function for all three.
+
+# ----------------------------------------
+# ------- SAVEGAMES PAGE -----------------
 # ----------------------------------------
 
 # savegame upload form
@@ -210,6 +223,10 @@ def do_upload_save():
     redirect('/login')
 # ----------------------------------------
 
+# ----------------------------------------
+# ------- MAPS PAGE ----------------------
+# ----------------------------------------
+
 # map files upload form
 @get('/maps')
 def upload_map():
@@ -225,9 +242,6 @@ def upload_map():
                             veteran=veteran, \
                             # TODO create dir if not exist
                             mapfiles=os.listdir(megatech.map_dir))
-  # an idea to remove saved games:
-  # saves = os.lostdir(./savegames')
-  # os.remove('.savegames/saves[index])
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -260,6 +274,62 @@ def do_upload_map():
     redirect('/login')
 # ----------------------------------------
 
+# ----------------------------------------
+# ------- CUSTOM UNITS PAGE --------------
+# ----------------------------------------
+
+# listing custom units and upload form handling
+@get('/units')
+def upload_units():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/units', max_age=321, secret='comstarwygra')
+
+  # checks if help messages will be displayed
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  if username:
+    return template('units', username=username, \
+                             veteran=veteran, \
+                             # TODO create dir if not exist
+                             unitfiles=os.listdir(megatech.unit_dir))
+  elif not username:
+    redirect('/login')
+# ----------------------------------------
+
+
+# uploading and checking custom units files
+@post('/units')
+def do_upload_units():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  if username:
+    unit_file = request.files.get('unit_file')
+    name, ext = os.path.splitext(unit_file.filename)
+    if ext not in ('.mech'):
+      # TODO nice info about wrong file extension
+      print('WRONG FILE EXTENSION :(')
+    else:
+      # TODO check if directory is present, create if nessesary;
+      # add current time to file name, to avoid
+      # incidental overwrites
+      unit_file.save(str(megatech.unit_dir), overwrite=True)
+      filestats = os.stat(str(megatech.unit_dir) + '/' + unit_file.filename)
+
+      # checking filesize and, if bigger than 1M, delete file
+      if filestats.st_size > 1000000000:
+        # TODO nice info about too big file
+        print('FILE IS TOO BIG. :(')
+        os.remove(megatech.unit_dir + unit_file.filename)
+    sleep(1)
+    redirect('/units')
+  elif not username:
+    redirect('/login')
+# ----------------------------------------
+
+# ----------------------------------------
+# ------- TUTORIAL PAGE ------------------
+# ----------------------------------------
+
 # tutorial
 @route('/firststrike')
 def tutorial():
@@ -275,6 +345,10 @@ def tutorial():
                                     veteran=veteran)
   elif not username:
     redirect('/login')
+# ----------------------------------------
+
+# ----------------------------------------
+# ------- MAIN PAGE ----------------------
 # ----------------------------------------
 
 # main route
@@ -319,13 +393,9 @@ def setMekPassword():
       response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
   elif not username:
     redirect('/login')
-
-
-
 # ----------------------------------------
 
-# a little functions doing bigger functions
-# from MegaTech class
+# A little functions doing bigger functions.
 @route('/mmturnon')
 def mmturnon():
   if request.get_cookie('administrator', secret='comstarwygra'):
