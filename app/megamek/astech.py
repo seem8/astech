@@ -15,11 +15,12 @@ from time import sleep
 from bottle import template, response, request, get, post, error, \
                    redirect, static_file, run, route, debug
 
-# help with file uploading
+# file uploading and listing directories
+# I'll try to use pathlib.Path over os.path, when possible.
 import os
 from pathlib import Path
 
-# we have to append date to filename 
+# we have to append date to filenames 
 import time 
 
 
@@ -109,15 +110,22 @@ class MegaTech:
     self.start()
 
 megatech = MegaTech()
+# ----------------------------------------
+
+# below is bottle stuff
 
 # ----------------------------------------
-# ------- BOTTLE STUFF -------------------
+# ------- STATIC FILES -------------------
 # ----------------------------------------
 
 # site logo (thanks ManganMan) and other images
 @route('/image/<filename>')
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
+# ----------------------------------------
+
+# ----------------------------------------
+# ------- LOGIN PAGE ---------------------
 # ----------------------------------------
 
 # a little login template
@@ -129,10 +137,6 @@ def login():
   bad_password = request.get_cookie('badPassword', secret='comstarprzegra')
   return template('login', badPass=bad_password, \
                            username=username)
-# ----------------------------------------
-
-# ----------------------------------------
-# ------- LOGIN PAGE ---------------------
 # ----------------------------------------
 
 # check credentials and redirect to other routes
@@ -162,7 +166,8 @@ def check_login():
 # ----------------------------------------
 
 # TODO - saves, maps and unit uploads are very similar.
-#        Maybe there is a way to write 1 function for all three.
+#        Maybe there is a way to write 1
+#        function and template for all three.
 
 # ----------------------------------------
 # ------- SAVEGAMES PAGE -----------------
