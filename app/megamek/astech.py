@@ -91,7 +91,7 @@ class MegaTech:
     if self.password != False:
       self.command += ' -password ' + self.password + ' '
     self.process = subprocess.Popen(self.command.split()) 
-    # TODO testing parameters to load save games and passwords - not ready yet
+    # TODO testing parameters to load save games - not ready yet
     # dedicated servers parameters are as follows:
     # -port [port] -password [password] [savedgame]
     sleep(2)
@@ -112,7 +112,7 @@ class MegaTech:
 megatech = MegaTech()
 # ----------------------------------------
 
-# below is bottle stuff
+# below is bottle.py related stuff
 
 # ----------------------------------------
 # ------- STATIC FILES -------------------
@@ -166,7 +166,7 @@ def check_login():
 # ----------------------------------------
 
 # TODO - saves, maps and unit uploads are very similar.
-#        Maybe there is a way to write 1
+#        Maybe there is a way to write one 
 #        function and template for all three.
 
 # ----------------------------------------
@@ -413,6 +413,7 @@ def mmturnoff():
     megatech.stop()
   redirect('/')
 
+# it's not used anywhere now
 #@route('/mmrestart')
 #def mmrestart():
 #  if request.get_cookie('administrator', secret='comstarwygra'):
