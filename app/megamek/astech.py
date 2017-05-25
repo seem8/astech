@@ -173,6 +173,36 @@ def check_login():
 # ------- SAVEGAMES PAGE -----------------
 # ----------------------------------------
 
+# savegame upload form
+@get('/saves')
+def upload_save():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/saves', max_age=321, secret='comstarwygra')
+  
+  # checks if help messages will be displayed
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  if username:
+    return template('saves', username=username, \
+                             veteran=veteran, \
+                             # TODO create dir if not exist
+                             savegames=os.listdir(megatech.save_dir)) #, \
+                             # removeSave=os.remove('.savegames/'+item))
+  # an idea to remove saved games:
+  # saves = os.listdir(./savegames')
+  # os.remove('.savegames/saves[index])
+  elif not username:
+    redirect('/login')
+# ----------------------------------------
+
+# checking and uploading files to savegames dir
+@post('/saves')
+def do_upload_save():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  if username:
+    save_file = request.files.get('saved_game')
+
     # check if file extension is .gz
     name, ext = os.path.splitext(save_file.filename)
     if ext not in ('.gz'):
