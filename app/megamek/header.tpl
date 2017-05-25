@@ -24,3 +24,4 @@
 <!-- main menu -->
 <p><a href="/">server status</a> | <a href="maps">map files</a> | <a href="saves">saved games</a> | <a href="units">units</a> | <a href="firststrike">help</a> | <a href="logout">log out</a></p>
 % end
+<p>&nbsp;</p>

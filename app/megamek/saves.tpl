@@ -1,19 +1,19 @@
 % include('header', title='Astech - for better MegaMek administration')
 
 % if not veteran:
-  <table>
-    <tr width=800px>
-      <td width=800px>
-        <p>This is a <b>saved games</b> page, where you can upload them to Astech webpage and use them when launching MegaMek.</p>
-        <p>Keep it simple. Please avoid file names with spaces, or special characters.</p>
-        <p>Savegame files are usually in <i>savegames</i> on your local MegaMek installation folder and have .sav.gz extension.<br />
-           After uploading, they will be at <i>savegames</i> on this server.</p>
-      </td>
-    </tr>
-  </table>
+<table bgcolor='dddddd'>
+  <tr width=500px>
+    <td width=500px>
+      <font size="-1"><b>Tutorial:</b></font>
+    </td>
+  <tr width=500px>
+    <td width=500px>
+      <font size="-1">This is a MegaMek saves upload form. Click BLE to choose file with a .sav.gz extension on your computer, witch is typically in your savegames folder. Choose one file at a time. I has to have .gz extension (with is standard file from MegaMek save game) and be below 1 megabyte in size. File will be uploaded to savegames folder on your MegaMek server. You have to restart the server to load new save.</font>
+    </td>
+  </tr>
+</table>
 % end
 
-<p>
 <table border="0">
   <tr width=500px>
     <td width=250px>
@@ -25,9 +25,22 @@
     </td>
   </tr>
 </table>
-</p>
+<p>&nbsp;</p>
 
-<p>
+% if not veteran:
+<table bgcolor='dddddd'>
+  <tr width=800px>
+    <td width=800px>
+      <font size="-1"><b>Tutorial:</b></font>
+    </td>
+  <tr width=800px>
+    <td width=800px>
+      <font size="-1">Below is the list of uploaded saves. You can load game from save by .<br />You also can delete your uploaded maps with <i>delete</i> link in front of each of them.</font>
+    </td>
+  </tr>
+</table>
+% end
+
 <table border="1">
   <tr width=800px>
     <td width=60px></td>
@@ -40,6 +53,5 @@
     </tr>
   % end
 </table>
-<p>
 
 % include('footer')

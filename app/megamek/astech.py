@@ -31,7 +31,7 @@ import time
 # megamek log files into lists
 # TODO rewrite with WITH
 def getFile(filename):
-  '''filename -> list of last 22 lines'''
+  '''filename -> list of last 44 lines'''
   try:
     logfile = open(filename,'r')
   except(FileNotFoundError):
@@ -40,8 +40,8 @@ def getFile(filename):
     logfile = open(filename,'r')
   logfilelines = logfile.readlines()
   logfile.close()
-  # we need only couple of last lines from the file
-  lastlog = logfilelines[len(logfilelines)-22 : len(logfilelines)]
+  # we need only 44 last lines from the file
+  lastlog = logfilelines[len(logfilelines)-44 : len(logfilelines)]
   lastlog.reverse()
   return lastlog 
 
