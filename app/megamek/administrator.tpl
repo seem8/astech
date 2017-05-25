@@ -26,7 +26,6 @@
 </table>
 % end
       
-<p>
 <table>
   <tr width=750px>
     <td width=250px><b>Server info</b></td>
@@ -62,7 +61,6 @@
       </td>
     </tr>
 </table>
-</p>
 
 <p>&nbsp;</p>
 
@@ -81,8 +79,7 @@
 </table>
 % end
 
-<p>
-<table border=0>
+<table>
   <tr>
     <td width=700px>
       <p><b>Megamek server log</b> (newest first):</p>
@@ -95,6 +92,5 @@
   % end
   <tr><td width=700px>[...]</td></tr>
 </table>
-<p>
 
 % include('footer')

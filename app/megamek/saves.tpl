@@ -16,9 +16,9 @@
 
 <table border="0">
   <tr width=500px>
-    <td width=250px>
+    <td width=250px valign="TOP">
       <b>Upload save:</b><br /><font size="-1">Only files with .gz extension are accepted.</font></td>
-    <td width=250px>
+    <td width=250px valign="TOP">
       <form action="/saves" method="post" enctype="multipart/form-data">
         <input type="file" name="saved_game" /><br />
         <input type="submit" value="Upload" />
@@ -41,7 +41,7 @@
 </table>
 % end
 
-<table border="1">
+<table>
   <tr width=800px>
     <td width=60px></td>
     <td width=740px>Here are your saves:</td>

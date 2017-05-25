@@ -25,6 +25,7 @@
     </td>
   </tr>
 </table>
+<p>&nbsp;</p>
 
 % if not veteran:
 <font size="-1">

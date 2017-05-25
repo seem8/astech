@@ -13,7 +13,6 @@
   </table>
 % end
 
-<p>
 <table border="0">
   <tr width=500px>
     <td width=250px>
@@ -25,10 +24,9 @@
     </td>
   </tr>
 </table>
-</p>
+<p>&nbsp;</p>
 
-<p>
-<table border="1">
+<table>
   <tr width=800px>
     <td width=60px></td>
     <td width=740px>Here are your units:</td>
@@ -40,6 +38,5 @@
     </tr>
   % end
 </table>
-<p>
 
 % include('footer')
