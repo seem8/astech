@@ -1,12 +1,12 @@
 Starting MegaMek v0.43.2 ...
 Compiled on Sun Apr 09 10:31:52 CEST 2017
-Today is Sun May 21 11:56:56 CEST 2017
+Today is Thu May 25 08:11:56 CEST 2017
 Java vendor Oracle Corporation
 Java version 1.8.0_131
 Platform Linux 4.10.15-200.fc25.x86_64 (amd64)
 Total memory available to MegaMek: 3 620 864 kB
 
-Starting Dedicated Server. args: [-port 3477 -password dubstep]
+Starting Dedicated Server. args: [-port 3477]
 MMRandom: generating RNG type #1
 s: starting a new server...
 s: hostname = 'union' port = 3477
@@ -14,10 +14,3 @@ s: hosting on address = 192.168.111.112
 s: hosting on address = 192.168.122.1
 s: hosting on address = fe80:0:0:0:156c:71cb:bee8:7829%2
 s: hosting on address = fdf7:6b81:d2ff:0:9301:6a1a:5e19:5a12%2
-s: password = dubstep
-s: listening for clients...
-s: accepting player connection #0 ...
-s: player #0, SeeM connected from /127.0.0.1
-SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
-s:Contents of Send Queue: 
-s: connection 0 disconnected

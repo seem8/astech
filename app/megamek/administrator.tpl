@@ -16,52 +16,43 @@
 <p>
 % end 
 
-<table border="1">
-  <tr width=500px>
-    <td width=250px>Server status:</td>
+<p>&nbsp;</p>
+
+<p>
+<table border="0">
+  <tr width=750px>
+    <td width=250px><b>Server info:</b></td>
+    <td width=250px><b>Game password:</b></td>
+    <td width=250px><b>Master switch</b></td>
+  <tr width=750opx>
     <td width=250px>
-      % if mtison:
-        server is <b>turned on</b>
-      % end
-      % if not mtison:
-        server is <b>turned off</b>
-      % end
-      <br />
-      version: {{mtver}}<br />
-      address: {{mtdomain}}<br />
-      port: {{mtport}}
-    </td>
-  </tr>
-  
-  <tr width=500px>
-    <td width=250px>Server administration:</td>
-    <td width=250px>
-      % if not mtison:
-        <a href="mmturnon"><img src="image/server_off.png"></a>
-      % end
-      % if mtison:
-        <a href="mmturnoff"><img src="image/server_on.png"></a>
-      % end
-      <!-- <br /><a href="mmrestart">quick restart</a> -->
-      <!-- <br /><font size = '-1'>If you turn off the server,<br />
-      game in progress will be lost.</font> -->
-    </td>
-  </tr>
-  
-  <tr>
-    <td width=250px>Server password:</td>
-    <td width=250px>
-      <form action="/" method="post">
-        % if mtpassword:
-          <input name="mekpassword" type="text" value="{{mtpassword}}" /><br />
+        version: {{mtver}}<br />
+        address: {{mtdomain}}<br />
+        port: {{mtport}}
+      </td>
+      <td width=250px>
+        <form action="/" method="post">
+          % if mtpassword:
+            <input name="mekpassword" type="text" value="{{mtpassword}}" /><br />
+          % end
+          % if not mtpassword:
+            <input name="mekpassword" type="text" /><br />
+          % end
+          <font size="-1">(please use only latin characters)</font></br />
+          <input value="OK" type="submit" />
+        </form>
+      <td width=250px>
+        % if not mtison:
+          <a href="mmturnon"><img src="image/server_off.png"></a>
         % end
-        % if not mtpassword:
-          <input name="mekpassword" type="text" /><br />
+        % if mtison:
+          <a href="mmturnoff"><img src="image/server_on.png"></a>
         % end
-        <font size="-1">(please use only latin characters)</font></br />
-        <input value="OK" type="submit" />
-      </form>
-    </td>
+        <!-- <br /><a href="mmrestart">quick restart</a> -->
+        <!-- <br /><font size = '-1'>If you turn off the server,<br />
+        game in progress will be lost.</font> -->
+      </td>
+    </tr>
 </table>
 </p>
 
@@ -80,40 +71,6 @@
 </table>
 </p>
 % end
-
-<!-- THIS IS OLD TABLE WITH INSTRUCTIONS HOW TO CONNECT
-% if mtison:
-<p>&nbsp;</p>
-<p>
-<table border="0">
-  <tr width=476px>
-    <td width=175px>&nbsp;</td>
-    <td width=292px>How to connect to the game:</td>
-  </tr>
-  <tr width=467px>
-    <td width=175px><img src="/image/connect_dialog-0-0.png"></td>
-    <td width=292px><img src="/image/connect_dialog-1-0.png"></td>
-  </tr>
-  <tr width=467px>
-    <td width=175px><img src="/image/connect_dialog-0-1.png"></td>
-    <td width=292px><img src="/image/connect_dialog-1-1.png"></td>
-  </tr>
-  <tr width=467px>
-    <td width=175px><img src="/image/connect_dialog-0-2.png"></td>
-    <td width=292px><img src="/image/connect_dialog-1-2.png"></td>
-  </tr>
-  <tr width=467px>
-    <td width=175px><img src="/image/connect_dialog-0-3.png"></td>
-    <td width=292px><img src="/image/connect_dialog-1-3.png"></td>
-  </tr>
-  <tr width=467px>
-    <td width=175px><img src="/image/connect_dialog-0-4.png"></td>
-    <td width=292px><img src="/image/connect_dialog-1-4.png"></td>
-  </tr>
-</table>
-</p>
-% end
--->
 
 <p>&nbsp;</p>
 

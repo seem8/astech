@@ -310,7 +310,7 @@ def do_upload_units():
   if username:
     unit_file = request.files.get('unit_file')
     name, ext = os.path.splitext(unit_file.filename)
-    if ext not in ('.mech'):
+    if ext not in ('.mtf'):
       # TODO nice info about wrong file extension
       print('WRONG FILE EXTENSION :(')
     else:
