@@ -1,17 +1,17 @@
 % include('header', title='Astech - for better MegaMek administration')
 
 % if not veteran:
-  <table>
-    <tr width=800px>
-      <td width=800px>
-        <p>This is a <b>Units page</b> page, where you can upload them to Astech webpage and choose them in MegaMek lobby screen.</p>
-        <p>Keep it simple. Please avoid file names with spaces, or special characters.</p>
-        <p>Unit files are usually in <i>data/mechfiles</i> on your local MegaMek installation folder and have .board extension.<br />
-           After uploading, they will be at <i>data/mechfiles/astech on this server</i>.</p>
-      </td>
-    </tr>
-  </table>
-% end
+<table bgcolor='dddddd'>
+  <tr width=500px>
+    <td width=500px>
+      <font size="-1"><b>Tutorial:</b></font>
+    </td>
+  <tr width=500px>
+    <td width=500px>
+      <font size="-1">This is a MegaMek units upload form. Click BLE to choose file with a .mtf extension on your computer. Choose one file at a time. I has to have .mtf extension (with is standard file from MegaMek Lab) and be below 1 megabyte in size. File will be uploaded to data/mechfiles/astech folder on your MegaMek server. You have to restart the server to use a new unit.</font>
+    </td>
+  </tr>
+</table>
 
 <table border="0">
   <tr width=500px>
@@ -26,10 +26,23 @@
 </table>
 <p>&nbsp;</p>
 
+% if not veteran:
+<table bgcolor='dddddd'>
+  <tr width=800px>
+    <td width=800px>
+      <font size="-1"><b>Tutorial:</b></font>
+    </td>
+  <tr width=800px>
+    <td width=800px>
+      <font size="-1">Below is the list of uploaded custom units. You, as well as any other player, can choose them in the lobby screen.<br />You also can delete your uploaded units with <i>delete</i> link in front of each of them.</font>
+    </td>
+  </tr>
+</table>
+
 <table>
   <tr width=800px>
     <td width=60px></td>
-    <td width=740px>Here are your units:</td>
+    <td width=740px><b>Here are your units:</b></td>
   </tr>
   % for unit in unitfiles:
     <tr width=800px>

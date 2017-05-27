@@ -332,27 +332,6 @@ def do_upload_units():
 # ----------------------------------------
 
 # ----------------------------------------
-# ------- TUTORIAL PAGE ------------------
-# ----------------------------------------
-
-# tutorial
-@route('/firststrike')
-def tutorial():
-  username = request.get_cookie('administrator', secret='comstarwygra')
-  
-  # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/firststrike', max_age=321, secret='comstarwygra')
-  
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
-  if username:
-    return template('first_strike', username=username, \
-                                    veteran=veteran)
-  elif not username:
-    redirect('/login')
-# ----------------------------------------
-
-# ----------------------------------------
 # ------- MAIN PAGE ----------------------
 # ----------------------------------------
 
@@ -445,7 +424,19 @@ def become_green():
 @error(404)
 def route404(error):
   username = request.get_cookie('administrator', secret='comstarwygra')
-  return template('error404', username=username)
+
+  # checks if help messages will be displayed
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+
+  response.set_cookie('curpage', '404', max_age=1234, secret='comstarwygra')
+  
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  if username:
+    return template('error404', username=username, \
+                                veteran=veteran)
+  elif not username:
+    redirect('/login')
+
 
 # ----------------------------------------
 # main debug run

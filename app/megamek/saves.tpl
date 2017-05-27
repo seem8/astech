@@ -8,7 +8,7 @@
     </td>
   <tr width=500px>
     <td width=500px>
-      <font size="-1">This is a MegaMek saves upload form. Click BLE to choose file with a .sav.gz extension on your computer, witch is typically in your savegames folder. Choose one file at a time. I has to have .gz extension (with is standard file from MegaMek save game) and be below 1 megabyte in size. File will be uploaded to savegames folder on your MegaMek server. You have to restart the server to load new save.</font>
+      <font size="-1">This is a MegaMek saves upload form. Click BLE to choose file with a .sav.gz extension on your computer, witch is typically in your savegames folder. Choose one file at a time. I has to have .gz extension (with is standard file from MegaMek save game) and be below 1 megabyte in size. File will be uploaded to savegames folder on your MegaMek server and a timestamp will be added to filename. You have to restart the server to load new save.</font>
     </td>
   </tr>
 </table>
@@ -44,7 +44,7 @@
 <table>
   <tr width=800px>
     <td width=60px></td>
-    <td width=740px>Here are your saves:</td>
+    <td width=740px><b>Here are your saves:</b></td>
   </tr>
   % for save in savegames:
     <tr width=800px>

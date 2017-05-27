@@ -28,7 +28,6 @@
 <p>&nbsp;</p>
 
 % if not veteran:
-<font size="-1">
 <table bgcolor='dddddd'>
   <tr width=800px>
     <td width=800px>
@@ -45,7 +44,7 @@
 <table>
   <tr width=800px>
     <td width=60px></td>
-    <td width=740px>Here are your maps:</td>
+    <td width=740px><b>Here are your maps:</b></td>
   </tr>
   % for map in mapfiles:
     <tr width=800px>
