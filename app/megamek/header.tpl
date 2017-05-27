@@ -11,7 +11,7 @@
 
 <!-- header image and title -->
 <center>
-<p><img src="image/mm_sol7_logo.png"></p>
+<p><img src="image/astech_logo.png"></p>
 <p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.1)<br />
 
 % if username:

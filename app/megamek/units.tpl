@@ -12,12 +12,13 @@
     </td>
   </tr>
 </table>
+% end
 
 <table border="0">
   <tr width=500px>
-    <td width=250px>
+    <td width=250px valign="TOP">
       <b>Upload unit:</b><br /><font size="-1">Only files with .mech extension are accepted.</font></td>
-    <td width=250px>
+    <td width=250px valign="TOP">
       <form action="/maps" method="post" enctype="multipart/form-data">
         <input type="file" name="unit_file" /><br />
         <input type="submit" value="Upload" />
@@ -38,6 +39,7 @@
     </td>
   </tr>
 </table>
+% end
 
 <table>
   <tr width=800px>

@@ -101,6 +101,7 @@ class MegaTech:
     '''stops MegaMek server'''
     if self.ison == True:
       self.process.kill()
+      self.password = False
       self.ison = False
   
   def restart(self):
@@ -375,6 +376,8 @@ def setMekPassword():
       # if mekpassword is not alpha, don't parse it
       # and redirect to login (just to be safe)
       response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
+      megatech.password = False
+      redirect('/')
   elif not username:
     redirect('/login')
 # ----------------------------------------

@@ -1,14 +1,16 @@
 Starting MegaMek v0.43.2 ...
-Compiled on Tue May 02 00:08:44 CEST 2017
-Today is Fri May 26 17:25:24 CEST 2017
+Compiled on Sun Apr 09 10:31:52 CEST 2017
+Today is Sat May 27 21:26:56 CEST 2017
 Java vendor Oracle Corporation
-Java version 1.8.0_121
-Platform Linux 4.12.0-0.rc1.git4.1.fc27.x86_64 (amd64)
-Total memory available to MegaMek: 1 686 016 kB
+Java version 1.8.0_131
+Platform Linux 4.10.17-200.fc25.x86_64 (amd64)
+Total memory available to MegaMek: 3 620 864 kB
 
-Starting Dedicated Server. args: [-port 3477]
+Starting Dedicated Server. args: [-port 3477 -password dubstep]
 MMRandom: generating RNG type #1
 s: starting a new server...
-s: hostname = 'gazelle' port = 3477
-s: hosting on address = 127.0.0.1
-s: password = null
+s: hostname = 'union' port = 3477
+s: hosting on address = 192.168.111.112
+s: hosting on address = 192.168.122.1
+s: hosting on address = fe80:0:0:0:156c:71cb:bee8:7829%2
+s: hosting on address = fdf7:6b81:d2ff:0:9301:6a1a:5e19:5a12%2
