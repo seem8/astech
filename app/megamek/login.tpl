@@ -19,6 +19,9 @@
 </form>
 </p>
 
+<p>Default login: <i>somelogin</i>,
+default password: <i>somepassword</i></p>
+
 % if badPass:
   <p><font size = '-1' color="red">Wrong login, or password.</font></p>
 % end

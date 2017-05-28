@@ -1,4 +1,4 @@
-#!/home/lukasz/progi/python/astech/bin/python3
+#!/usr/bin/python3
 '''Megamek server administration page.
 This is ALPHA quality software,
 expect some bugs and glitches.
@@ -50,7 +50,7 @@ def stringTime():
 # TODO looks secure so far... but have to be updated for
 # database and encryption
 def crede(l, p):
- if l == 'lukasz' and p == 'falconwins':
+ if l == 'somelogin' and p == 'somepassword':
    return True
  else:
    return False
@@ -166,9 +166,9 @@ def delunitfile(filename):
 @get('/login')
 def login():
   # username variable is required for header template
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
   # cookie with information about bad password
-  bad_password = request.get_cookie('badPassword', secret='comstarprzegra')
+  bad_password = request.get_cookie('badPassword', secret='sseeccrreett22')
   return template('login', badPass=bad_password, \
                            username=username)
 # ----------------------------------------
@@ -185,17 +185,17 @@ def check_login():
     if crede(username, password):
       # good password
       # signed cookie for a period of time in seconds (about a day)
-      response.set_cookie('administrator', username, max_age=87654, secret='comstarwygra')
+      response.set_cookie('administrator', username, max_age=87654, secret='sseeccrreett11')
       response.delete_cookie('badPassword')
       redirect('/')
     elif not crede(username,password):
       # bad password
-      response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
+      response.set_cookie('badPassword', 'nopass', max_age=21, secret='sseeccrreett22')
       redirect('/login')
   else:
     # if login and/or password are not alpha, don't parse them
     # and redirect to login (just to be safe)
-    response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
+    response.set_cookie('badPassword', 'nopass', max_age=21, secret='sseeccrreett22')
     redirect('/login')
 # ----------------------------------------
 
@@ -207,13 +207,13 @@ def check_login():
 # main route
 @get('/')
 def administrator():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
 
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
 
   # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/', max_age=1234, secret='comstarwygra')
+  response.set_cookie('curpage', '/', max_age=1234, secret='sseeccrreett11')
 
   if username:
     response.delete_cookie('badPassword')
@@ -233,7 +233,7 @@ def administrator():
 # main route - setting server password via html form
 @post('/')
 def setMekPassword():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
   
   if username:
     # check if username and password isn't something like '/mmrestart'
@@ -244,7 +244,7 @@ def setMekPassword():
     else:
       # if mekpassword is not alpha, don't parse it
       # and redirect to login (just to be safe)
-      response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
+      response.set_cookie('noalpha', 'noalpha', max_age=21, secret='sseeccrreett22')
       game_pass = False
       megatech.password = False
       redirect('/')
@@ -260,13 +260,13 @@ def setMekPassword():
 # map files upload form
 @get('/maps')
 def upload_map():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
 
   # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/maps', max_age=321, secret='comstarwygra')
+  response.set_cookie('curpage', '/maps', max_age=321, secret='sseeccrreett11')
 
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
   if username:
     print(os.listdir(megatech.map_dir))
     return template('maps', username=username, \
@@ -280,7 +280,7 @@ def upload_map():
 # checking and uploading files to savegames dir
 @post('/maps')
 def do_upload_map():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
     map_file = request.files.get('map_file')
     name, ext = os.path.splitext(map_file.filename)
@@ -316,13 +316,13 @@ def do_upload_map():
 # savegame upload form
 @get('/saves')
 def upload_save():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
 
   # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/saves', max_age=321, secret='comstarwygra')
+  response.set_cookie('curpage', '/saves', max_age=321, secret='sseeccrreett11')
   
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
   if username:
     return template('saves', username=username, \
                              veteran=veteran, \
@@ -339,7 +339,7 @@ def upload_save():
 # checking and uploading files to savegames dir
 @post('/saves')
 def do_upload_save():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
     save_file = request.files.get('saved_game')
 
@@ -375,13 +375,13 @@ def do_upload_save():
 # listing custom units and upload form handling
 @get('/units')
 def upload_units():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
 
   # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/units', max_age=321, secret='comstarwygra')
+  response.set_cookie('curpage', '/units', max_age=321, secret='sseeccrreett11')
 
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
   if username:
     return template('units', username=username, \
                              veteran=veteran, \
@@ -394,7 +394,7 @@ def upload_units():
 # uploading and checking custom units files
 @post('/units')
 def do_upload_units():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
     unit_file = request.files.get('unit_file')
     name, ext = os.path.splitext(unit_file.filename)
@@ -425,7 +425,7 @@ def do_upload_units():
 # turn on MegaMek server via MegaTech class
 @route('/mmturnon')
 def mmturnon():
-  if request.get_cookie('administrator', secret='comstarwygra'):
+  if request.get_cookie('administrator', secret='sseeccrreett11'):
     megatech.start()
   redirect('/')
 # ----------------------------------------
@@ -434,7 +434,7 @@ def mmturnon():
 # turn off MegaMek server via MegaTech class
 @route('/mmturnoff')
 def mmturnoff():
-  if request.get_cookie('administrator', secret='comstarwygra'):
+  if request.get_cookie('administrator', secret='sseeccrreett11'):
     megatech.stop()
   redirect('/')
 # ----------------------------------------
@@ -451,34 +451,34 @@ def logoff():
 # set vetran cookie to hide tutorial messages
 @route('/veteran')
 def become_veteran():
-  if request.get_cookie('administrator', secret='comstarwygra'):
-    response.set_cookie('veteran', 'veteran', secret='comstarwygra')
+  if request.get_cookie('administrator', secret='sseeccrreett11'):
+    response.set_cookie('veteran', 'veteran', secret='sseeccrreett11')
   # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret='comstarwygra'))
+  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
 # ----------------------------------------
 
 
 # delete veteran cookie to show tutorial messages 
 @route('/green')
 def become_green():
-  if request.get_cookie('administrator', secret='comstarwygra'):
+  if request.get_cookie('administrator', secret='sseeccrreett11'):
     response.delete_cookie('veteran')
   # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret='comstarwygra'))
+  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
 # ----------------------------------------
 
 
 # 404 error page
 @error(404)
 def route404(error):
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
 
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
 
-  response.set_cookie('curpage', '404', max_age=1234, secret='comstarwygra')
+  response.set_cookie('curpage', '404', max_age=1234, secret='sseeccrreett11')
   
-  username = request.get_cookie('administrator', secret='comstarwygra')
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
     return template('error404', username=username, \
                                 veteran=veteran)
