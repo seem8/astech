@@ -76,18 +76,26 @@ class MegaTech:
     self.unit_dir = Path('./data/mechfiles/astech') # and custom mechs there
 
     # command to lauch MegaMek server with provided port
-    self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
+    # self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
   
   def start(self):
     '''starts MegaMek server'''
+    # TODO I'm trying to delete password from request.forms.get('mekpassword'),
+    # it's stored somehow, even in I set megatech.password to False;
     # if password is set, add it to the lauch command
     if self.password != False:
-      self.command += ' -password ' + self.password + ' '
+      self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
+                     str(self.port) + ' -password ' + str(self.password) + ' '
+    elif self.password == False:
+      self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
+    
+    # start MegaMek dedicated server with parameters
     self.process = subprocess.Popen(self.command.split()) 
+    
     # TODO testing parameters to load save games - not ready yet
     # dedicated servers parameters are as follows:
     # -port [port] -password [password] [savedgame]
-    sleep(2)
+    sleep(1)
     self.ison = True
   
   def stop(self):
@@ -97,6 +105,7 @@ class MegaTech:
       self.password = False
       self.ison = False
   
+  # restart is not used anymore
   def restart(self):
     '''quick restart with start and stop functions'''
     self.stop()
@@ -363,13 +372,15 @@ def setMekPassword():
   
   if username:
     # check if username and password isn't something like '/mmrestart'
-    if request.forms.get('mekpassword').isalpha():
-      megatech.password = request.forms.get('mekpassword')
+    game_pass = request.forms.get('mekpassword')
+    if game_pass.isalpha():
+      megatech.password = game_pass
       redirect('/')
     else:
       # if mekpassword is not alpha, don't parse it
       # and redirect to login (just to be safe)
       response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
+      game_pass = False
       megatech.password = False
       redirect('/')
   elif not username:
