@@ -55,9 +55,6 @@
         % if mtison:
           <a href="mmturnoff"><img src="image/server_on.png"></a>
         % end
-        <!-- <br /><a href="mmrestart">quick restart</a> -->
-        <!-- <br /><font size = '-1'>If you turn off the server,<br />
-        game in progress will be lost.</font> -->
       </td>
     </tr>
 </table>

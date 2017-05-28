@@ -29,21 +29,14 @@ import time
 # ----------------------------------------
 
 # megamek log files into lists
-# TODO rewrite with WITH
 def getFile(filename):
-  '''filename -> list of last 44 lines'''
-  try:
-    logfile = open(filename,'r')
-  except(FileNotFoundError):
-    # when filename does not exist
-    create_file = open(filename,'x').close()
-    logfile = open(filename,'r')
-  logfilelines = logfile.readlines()
-  logfile.close()
-  # we need only 44 last lines from the file
-  lastlog = logfilelines[len(logfilelines)-44 : len(logfilelines)]
-  lastlog.reverse()
-  return lastlog 
+  '''filename -> list of lat 44 lines'''
+  with open(filename,'r') as myfile:
+    mylines = myfile.readlines()
+    # we need just L
+    lastlog = mylines[len(mylines)-44 : len(mylines)]
+    lastlog.reverse()
+    return lastlog
 
 # get a string from localtime
 def stringTime():
@@ -113,13 +106,14 @@ class MegaTech:
 megatech = MegaTech()
 # ----------------------------------------
 
+
 # below is bottle.py related stuff
 
 # ----------------------------------------
 # ------- STATIC FILES -------------------
 # ----------------------------------------
 
-# site logo (thanks ManganMan) and other images
+# site logo and other images
 @route('/image/<filename>')
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
@@ -264,8 +258,8 @@ def do_upload_map():
       print('WRONG FILE EXTENSION :(')
     else:
       # TODO check if directory is present, create if nessesary;
-      # add current time to file name, to avoid
-      # incidental overwrites
+      # add current time to file name,
+      # to avoid incidental overwrites
       map_file.save(str(megatech.map_dir), overwrite=True)
       filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
 
