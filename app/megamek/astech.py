@@ -80,8 +80,6 @@ class MegaTech:
   
   def start(self):
     '''starts MegaMek server'''
-    # TODO I'm trying to delete password from request.forms.get('mekpassword'),
-    # it's stored somehow, even in I set megatech.password to False;
     # if password is set, add it to the lauch command
     if self.password != False:
       self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
