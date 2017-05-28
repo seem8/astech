@@ -1,9 +1,5 @@
 % include('header', title='Astech - for better MegaMek administration')
 
-% if badPass:
-  <p><font size = '-1'>Wrong login/password, try again.</font></p>
-% end
-
 <p>
 <form action="/login" method="post">
 <table border="0">
@@ -22,5 +18,9 @@
 </table>
 </form>
 </p>
+
+% if badPass:
+  <p><font size = '-1' color="red">Wrong login, or password.</font></p>
+% end
 
 % include('footer')

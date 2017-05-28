@@ -8,7 +8,7 @@
     </td>
   <tr width=500px>
     <td width=500px>
-      <font size="-1">This is a MegaMek map upload form. Click BLE to choose file with a .board extension on your computer, witch is typically in your data/boards folder. Choose one file at a time. I has to have .board extension (with is standard file from MegaMek map editor) and be below 1 megabyte in size. File will be uploaded to data/boards/astech folder on your MegaMek server. You have to restart the server to play on new maps.</font>
+      <font size="-1">This is a MegaMek map upload form. Click <i>browse</i> to choose file with a .board extension on your computer, witch is typically in your data/boards folder. Choose one file at a time. I has to have .board extension (with is standard file from MegaMek map editor) and be below 1 megabyte in size. File will be uploaded to data/boards/astech folder on your MegaMek server. You have to restart the server to play on new maps.</font>
     </td>
   </tr>
 </table>
@@ -35,7 +35,7 @@
     </td>
   <tr width=800px>
     <td width=800px>
-      <font size="-1">Below is the list of uploaded maps. You can choose them in the game options in MegaMek lobby screen. Remember to search them by size in MegaMek.<br />You also can delete your uploaded maps with <i>delete</i> link in front of each of them.</font>
+      <font size="-1">Below is the list of uploaded maps. You can choose them in the game options in MegaMek lobby screen. Remember to search them by size in MegaMek.<br />You also can delete and download your uploaded maps with link in the left.</font>
     </td>
   </tr>
 </table>
@@ -43,13 +43,15 @@
 
 <table>
   <tr width=800px>
-    <td width=60px></td>
-    <td width=740px><b>Here are your maps:</b></td>
+    <td width=40px></td>
+    <td width=40px></td>
+    <td width=720px><b>Here are your maps:</b></td>
   </tr>
   % for map in mapfiles:
     <tr width=800px>
-      <td width=80px>ble</td>
-      <td width=740px>{{map}}</td>
+      <td width=40px><a href="delmap/{{map}}"><img src="image/delete.png"></a></td>
+      <td width=40px><a href="map/{{map}}"><img src="image/download.png"></a></td>
+      <td width=720px>{{map}}</td>
     </tr>
   % end
 </table>

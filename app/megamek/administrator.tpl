@@ -70,7 +70,7 @@
   </tr>
   <tr width=700px>
     <td width=700px>
-      <font size="-1">Below is 40 newest lines of megameklog.txt file. It's not game log file that you see on MegaMek window below the map, nor a savegame info. It provides output of players joining and leaving MegaMek server, as well some additional information for troubleshooting (eg. wrong MegaMek versions). Astech will not autorefresh this file, so to see exact newest logs, refresh server status page.</font>
+      <font size="-1">Below is the megameklog.txt file. It's not game log file that you see on MegaMek window below the map, nor a savegame info. It provides output of players joining and leaving MegaMek server, as well some additional information for troubleshooting (eg. wrong MegaMek versions). Astech will not autorefresh this file, so to see exact newest logs, refresh server status page.</font>
     </td>
   </tr>
 </table>

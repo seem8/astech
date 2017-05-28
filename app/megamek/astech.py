@@ -1,4 +1,4 @@
-#!/home/lukasz/progi/python/botle/bin/python3
+#!/home/lukasz/progi/python/astech/bin/python3
 '''Megamek server administration page.
 This is ALPHA quality software,
 expect some bugs and glitches.
@@ -50,7 +50,7 @@ def stringTime():
 # TODO looks secure so far... but have to be updated for
 # database and encryption
 def crede(l, p):
- if l == 'brathac' and p == 'deathabovefrom':
+ if l == 'lukasz' and p == 'falconwins':
    return True
  else:
    return False
@@ -68,7 +68,7 @@ class MegaTech:
     self.ison = False                               # megamek is off by default 
     self.version = '0.43.2'                         # megamek version
     self.port = 3477                                # port for megamek server
-    self.domain = 'mek.solaris7.pl'                 # nice site name
+    self.domain = 'some.server.com'                 # nice site name
     self.from_save = False                          # check if savegame is loaded
     self.password = False                           # optional password to change game options 
     self.save_dir = Path('./savegames/')            # default save dir for megamek
@@ -102,16 +102,9 @@ class MegaTech:
     '''stops MegaMek server'''
     if self.ison == True:
       self.process.kill()
-      self.password = False
+      # self.password = False
       self.ison = False
   
-  # restart is not used anymore
-  def restart(self):
-    '''quick restart with start and stop functions'''
-    self.stop()
-    sleep(1)
-    self.start()
-
 megatech = MegaTech()
 # ----------------------------------------
 
@@ -126,7 +119,44 @@ megatech = MegaTech()
 @route('/image/<filename>')
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
+
+# TODO: those below are so similar, that probably could
+# be only two: download/parameters and delete/parameters
+
+# map files downloads
+@route('/map/<filename>')
+def mapfile(filename):
+  return static_file(filename, root='./data/boards/astech/', download=filename)
+
+# map files removal
+@route('/delmap/<filename>')
+def delmapfile(filename):
+  os.remove('./data/boards/astech/' + filename)
+  redirect('/maps')
+
+# savegame files downloads
+@route('/savegame/<filename>')
+def savefile(filename):
+  return static_file(filename, root='./savegames/', download=filename)
+
+# savegame files removal
+@route('/delsavegame/<filename>')
+def delsavefile(filename):
+  os.remove('./savegames/' + filename)
+  redirect('/saves')
+
+# custom unit files downloads
+@route('/unit/<filename>')
+def unitfile(filename):
+  return static_file(filename, root='./data/mechfiles/astech/', download=filename)
+
+# custom unit files removal
+@route('/delunit/<filename>')
+def delunitfile(filename):
+  os.remove('./data/mechfiles/astech/' + filename)
+  redirect('/units')
 # ----------------------------------------
+
 
 # ----------------------------------------
 # ------- LOGIN PAGE ---------------------
@@ -166,6 +196,112 @@ def check_login():
     # if login and/or password are not alpha, don't parse them
     # and redirect to login (just to be safe)
     response.set_cookie('badPassword', 'nopass', max_age=21, secret='comstarprzegra')
+    redirect('/login')
+# ----------------------------------------
+
+
+# ----------------------------------------
+# ------- MAIN PAGE ----------------------
+# ----------------------------------------
+
+# main route
+@get('/')
+def administrator():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+
+  # checks if help messages will be displayed
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/', max_age=1234, secret='comstarwygra')
+
+  if username:
+    response.delete_cookie('badPassword')
+    return template('administrator', username = username, \
+                                     veteran = veteran, \
+                                     mtison = megatech.ison, \
+                                     mtver = megatech.version, \
+                                     mtport = str(megatech.port), \
+                                     mtdomain = megatech.domain, \
+                                     getLogFile = getFile('logs/megameklog.txt'), \
+                                     mtpassword = megatech.password, \
+                                     mtfromSave = megatech.from_save)
+
+  elif not username:
+    redirect('/login')
+
+# main route - setting server password via html form
+@post('/')
+def setMekPassword():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  
+  if username:
+    # check if username and password isn't something like '/mmrestart'
+    game_pass = request.forms.get('mekpassword')
+    if game_pass.isalpha():
+      megatech.password = game_pass
+      redirect('/')
+    else:
+      # if mekpassword is not alpha, don't parse it
+      # and redirect to login (just to be safe)
+      response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
+      game_pass = False
+      megatech.password = False
+      redirect('/')
+  elif not username:
+    redirect('/login')
+# ----------------------------------------
+
+
+# ----------------------------------------
+# ------- MAPS PAGE ----------------------
+# ----------------------------------------
+
+# map files upload form
+@get('/maps')
+def upload_map():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+
+  # current page for become_veteran and become_rookie functions
+  response.set_cookie('curpage', '/maps', max_age=321, secret='comstarwygra')
+
+  # checks if help messages will be displayed
+  veteran = request.get_cookie('veteran', secret='comstarwygra')
+  if username:
+    print(os.listdir(megatech.map_dir))
+    return template('maps', username=username, \
+                            veteran=veteran, \
+                            # TODO create dir if not exist
+                            mapfiles=os.listdir(megatech.map_dir))
+  elif not username:
+    redirect('/login')
+# ----------------------------------------
+
+# checking and uploading files to savegames dir
+@post('/maps')
+def do_upload_map():
+  username = request.get_cookie('administrator', secret='comstarwygra')
+  if username:
+    map_file = request.files.get('map_file')
+    name, ext = os.path.splitext(map_file.filename)
+    if ext not in ('.board'):
+      # TODO nice info about wrong file extension
+      print('WRONG FILE EXTENSION :(')
+    else:
+      # TODO check if directory is present, create if nessesary;
+      # add current time to file name,
+      # to avoid incidental overwrites
+      map_file.save(str(megatech.map_dir), overwrite=True)
+      filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
+
+      # checking filesize and, if bigger than 1M, delete file
+      if filestats.st_size > 1000000000:
+        # TODO nice info about too big file
+        print('FILE IS TOO BIG. :(')
+        os.remove(megatech.map_dir + map_file.filename)
+    sleep(1)
+    redirect('/maps')
+  elif not username:
     redirect('/login')
 # ----------------------------------------
 
@@ -233,57 +369,6 @@ def do_upload_save():
 # ----------------------------------------
 
 # ----------------------------------------
-# ------- MAPS PAGE ----------------------
-# ----------------------------------------
-
-# map files upload form
-@get('/maps')
-def upload_map():
-  username = request.get_cookie('administrator', secret='comstarwygra')
-
-  # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/maps', max_age=321, secret='comstarwygra')
-
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
-  if username:
-    return template('maps', username=username, \
-                            veteran=veteran, \
-                            # TODO create dir if not exist
-                            mapfiles=os.listdir(megatech.map_dir))
-  elif not username:
-    redirect('/login')
-# ----------------------------------------
-
-# checking and uploading files to savegames dir
-@post('/maps')
-def do_upload_map():
-  username = request.get_cookie('administrator', secret='comstarwygra')
-  if username:
-    map_file = request.files.get('map_file')
-    name, ext = os.path.splitext(map_file.filename)
-    if ext not in ('.board'):
-      # TODO nice info about wrong file extension
-      print('WRONG FILE EXTENSION :(')
-    else:
-      # TODO check if directory is present, create if nessesary;
-      # add current time to file name,
-      # to avoid incidental overwrites
-      map_file.save(str(megatech.map_dir), overwrite=True)
-      filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
-
-      # checking filesize and, if bigger than 1M, delete file
-      if filestats.st_size > 1000000000:
-        # TODO nice info about too big file
-        print('FILE IS TOO BIG. :(')
-        os.remove(megatech.map_dir + map_file.filename)
-    sleep(1)
-    redirect('/maps')
-  elif not username:
-    redirect('/login')
-# ----------------------------------------
-
-# ----------------------------------------
 # ------- CUSTOM UNITS PAGE --------------
 # ----------------------------------------
 
@@ -305,7 +390,6 @@ def upload_units():
   elif not username:
     redirect('/login')
 # ----------------------------------------
-
 
 # uploading and checking custom units files
 @post('/units')
@@ -335,82 +419,34 @@ def do_upload_units():
     redirect('/login')
 # ----------------------------------------
 
-# ----------------------------------------
-# ------- MAIN PAGE ----------------------
-# ----------------------------------------
 
-# main route
-@get('/')
-def administrator():
-  username = request.get_cookie('administrator', secret='comstarwygra')
+# Little routes that call functions.
 
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='comstarwygra')
-
-  # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/', max_age=1234, secret='comstarwygra')
-
-  if username:
-    response.delete_cookie('badPassword')
-    return template('administrator', username = username, \
-                                     veteran = veteran, \
-                                     mtison = megatech.ison, \
-                                     mtver = megatech.version, \
-                                     mtport = str(megatech.port), \
-                                     mtdomain = megatech.domain, \
-                                     getLogFile = getFile('logs/megameklog.txt'), \
-                                     mtpassword = megatech.password, \
-                                     mtfromSave = megatech.from_save)
-
-  elif not username:
-    redirect('/login')
-
-# main route - setting server password via html form
-@post('/')
-def setMekPassword():
-  username = request.get_cookie('administrator', secret='comstarwygra')
-  
-  if username:
-    # check if username and password isn't something like '/mmrestart'
-    game_pass = request.forms.get('mekpassword')
-    if game_pass.isalpha():
-      megatech.password = game_pass
-      redirect('/')
-    else:
-      # if mekpassword is not alpha, don't parse it
-      # and redirect to login (just to be safe)
-      response.set_cookie('noalpha', 'noalpha', max_age=21, secret='comstarprzegra')
-      game_pass = False
-      megatech.password = False
-      redirect('/')
-  elif not username:
-    redirect('/login')
-# ----------------------------------------
-
-# A little functions doing bigger functions.
+# turn on MegaMek server via MegaTech class
 @route('/mmturnon')
 def mmturnon():
   if request.get_cookie('administrator', secret='comstarwygra'):
     megatech.start()
   redirect('/')
+# ----------------------------------------
 
+
+# turn off MegaMek server via MegaTech class
 @route('/mmturnoff')
 def mmturnoff():
   if request.get_cookie('administrator', secret='comstarwygra'):
     megatech.stop()
   redirect('/')
+# ----------------------------------------
 
-# it's not used anywhere now
-#@route('/mmrestart')
-#def mmrestart():
-#  if request.get_cookie('administrator', secret='comstarwygra'):
-#    megatech.restart()
-#  redirect('/')
 
+# logout from astech
 @route('/logout')
 def logoff():
   response.delete_cookie('administrator')
   redirect('/')
+# ----------------------------------------
+
 
 # set vetran cookie to hide tutorial messages
 @route('/veteran')
@@ -419,16 +455,20 @@ def become_veteran():
     response.set_cookie('veteran', 'veteran', secret='comstarwygra')
   # curpage cookie is storing current page (route)
   redirect(request.get_cookie('curpage', secret='comstarwygra'))
+# ----------------------------------------
 
-# delete veteran cookie to show tutorial messages again 
+
+# delete veteran cookie to show tutorial messages 
 @route('/green')
 def become_green():
   if request.get_cookie('administrator', secret='comstarwygra'):
     response.delete_cookie('veteran')
   # curpage cookie is storing current page (route)
   redirect(request.get_cookie('curpage', secret='comstarwygra'))
+# ----------------------------------------
 
-# finally - 404
+
+# 404 error page
 @error(404)
 def route404(error):
   username = request.get_cookie('administrator', secret='comstarwygra')
@@ -444,15 +484,23 @@ def route404(error):
                                 veteran=veteran)
   elif not username:
     redirect('/login')
+# ----------------------------------------
+
+
+# downloads files from the server
+@route('/download/<filename:path>')
+def download(filename):
+  return static_file(filename, root='.data/boards/astech/', download=filename)
+# ----------------------------------------
 
 
 # ----------------------------------------
-# main debug run
+# main debug loop
 # remember to add debug import from bottle
 debug(True)
 run(host='localhost', port=8080, reloader=True)
 
-# main production run
+# main production loop
 # remember to delete debug import from bottle
 #run(host='0.0.0.0', port=8080)
 
