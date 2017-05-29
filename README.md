@@ -19,6 +19,7 @@ It depends on Oracle Java JRE and Python 3.6.x.
 
 4. (optional) If you want to run Astech at boot:
    - copy astech.service file to /etc/systemd/system:
+   
 ----------------------------
 [Unit]
 Description=Astech
@@ -32,6 +33,7 @@ ExecStart=/bin/bash /home/astech/mek/start_server.sh
 [Install]
 WantedBy=multi-user.target
 ----------------------------
+
    - change user line to username from #3, or to your username.
 
 5. If you have firewall, open ports 3477 and 8080.
