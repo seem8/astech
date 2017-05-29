@@ -8,6 +8,14 @@ It depends on Oracle Java JRE and Python 3.6.x.
 
 ![Alt text](https://lukaszposadowski.pl/wp-content/uploads/server_status.jpg "Optional title")
 
+# HOW TO RUN #
+
+1. Install Oracle Java JRE in /usr/java (RPM packages and installation script will do just that).
+
+2. Run "python3.6 astech.py".
+
+3. View "localhost:8080" in your browser.
+
 # INSTALLATION #
 
 1. Install Oracle Java JRE in /usr/java (RPM packages will do just that).
