@@ -9,7 +9,7 @@ It depends on Oracle Java JRE and Python 3.6.x.
 
 # INSTALLATION #
 
-1. Install Oracle Java JRE in /usr/java (RPM packages and installation script will do just that).
+1. Install Oracle Java JRE in /usr/java (RPM packages will do just that).
 
 2. Install Python 3.6.x and make sure you can type "python3.6" in terminal to launch Python Shell.
 
