@@ -6,6 +6,7 @@ It's intended to run on a Linux machine on any virtual, or psychical server.
 
 It depends on Oracle Java JRE and Python 3.6.x.
 
+![Alt text](https://lukaszposadowski.pl/wp-content/uploads/server_status.jpg "Optional title")
 
 # INSTALLATION #
 
