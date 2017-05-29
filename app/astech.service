@@ -1,0 +1,11 @@
+[Unit]
+Description=Astech
+After=network.target
+
+[Service]
+Type=simple
+User=astech
+ExecStart=/bin/bash /home/astech/mek/start_server.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd /home/brathac/mek
+cd /home/astech/mek
 source bin/activate
-cd /home/brathac/mek/megamek
+cd /home/astek/mek/megamek
 python3 astech.py
 
