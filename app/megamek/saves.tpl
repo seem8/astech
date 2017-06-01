@@ -49,8 +49,8 @@
   </tr>
   % for save in savegames:
     <tr width=800px>
-      <td width=40px><a href="delsavegame/{{save}}"><img src="image/delete.png"></a></td>
-      <td width=40px><a href="savegame/{{save}}"><img src="image/download.png"></a></td>
+      <td width=40px><a href="remove/savegame/{{save}}"><img src="image/delete.png"></a></td>
+      <td width=40px><a href="download/savegame/{{save}}"><img src="image/download.png"></a></td>
       <td width=720px>{{save}}</td>
     </tr>
   % end

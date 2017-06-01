@@ -30,11 +30,11 @@ import time
 
 # megamek log files into lists
 def getFile(filename):
-  '''filename -> list of lat 44 lines'''
+  '''filename -> list of last 81 lines'''
   with open(filename,'r') as myfile:
     mylines = myfile.readlines()
-    # we need just L
-    lastlog = mylines[len(mylines)-44 : len(mylines)]
+    # we need just 81 last lines
+    lastlog = mylines[len(mylines)-81 : len(mylines)]
     lastlog.reverse()
     return lastlog
 
@@ -118,41 +118,30 @@ megatech = MegaTech()
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
 
-# TODO: those below are so similar, that probably could
-# be only two: download/parameters and delete/parameters
 
-# map files downloads
-@route('/map/<filename>')
-def mapfile(filename):
-  return static_file(filename, root='./data/boards/astech/', download=filename)
+# download static files
+@route('/download/<filetype>/<filename>')
+def downloadfile(filetype, filename):
+  if filetype == 'map':
+    rootdir = './data/boards/astech/'
+  elif filetype == 'savegame':
+    rootdir = './savegames/'
+  elif filetype == 'unit':
+    rootdir = './data/mechfiles/astech/'
+  return static_file(filename, root=rootdir, download=filename)
+  
 
-# map files removal
-@route('/delmap/<filename>')
-def delmapfile(filename):
-  os.remove('./data/boards/astech/' + filename)
-  redirect('/maps')
-
-# savegame files downloads
-@route('/savegame/<filename>')
-def savefile(filename):
-  return static_file(filename, root='./savegames/', download=filename)
-
-# savegame files removal
-@route('/delsavegame/<filename>')
-def delsavefile(filename):
-  os.remove('./savegames/' + filename)
-  redirect('/saves')
-
-# custom unit files downloads
-@route('/unit/<filename>')
-def unitfile(filename):
-  return static_file(filename, root='./data/mechfiles/astech/', download=filename)
-
-# custom unit files removal
-@route('/delunit/<filename>')
-def delunitfile(filename):
-  os.remove('./data/mechfiles/astech/' + filename)
-  redirect('/units')
+# remove static files
+@route('/remove/<filetype>/<filename>')
+def removefile(filetype, filename):
+  if filetype == 'map':
+    rootdir = './data/boards/astech/'
+  elif filetype == 'savegame':
+    rootdir = './savegames/'
+  elif filetype == 'unit':
+    rootdir = './data/mechfiles/astech/'
+  os.remove(rootdir + filename)
+  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
 # ----------------------------------------
 
 
@@ -266,7 +255,6 @@ def upload_map():
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='sseeccrreett11')
   if username:
-    print(os.listdir(megatech.map_dir))
     return template('maps', username=username, \
                             veteran=veteran, \
                             # TODO create dir if not exist
@@ -482,13 +470,6 @@ def route404(error):
                                 veteran=veteran)
   elif not username:
     redirect('/login')
-# ----------------------------------------
-
-
-# downloads files from the server
-@route('/download/<filename:path>')
-def download(filename):
-  return static_file(filename, root='.data/boards/astech/', download=filename)
 # ----------------------------------------
 
 

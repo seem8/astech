@@ -49,8 +49,8 @@
   </tr>
   % for map in mapfiles:
     <tr width=800px>
-      <td width=40px><a href="delmap/{{map}}"><img src="image/delete.png"></a></td>
-      <td width=40px><a href="map/{{map}}"><img src="image/download.png"></a></td>
+      <td width=40px><a href="remove/map/{{map}}"><img src="image/delete.png"></a></td>
+      <td width=40px><a href="download/map/{{map}}"><img src="image/download.png"></a></td>
       <td width=720px>{{map}}</td>
     </tr>
   % end
