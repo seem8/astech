@@ -7,7 +7,7 @@ author: Łukasz Posadowski,  mail [at] lukaszposadowski.pl'''
 # import subprocess, for launching jar files
 import subprocess
 
-# sleep may help with subprocess
+# sleep may help with subprocess,
 from time import sleep
 
 # import bottle
@@ -38,6 +38,7 @@ def getFile(filename):
     lastlog.reverse()
     return lastlog
 
+
 # get a string from localtime
 def stringTime():
   '''returns string: year-month-day__hour-minute-second_'''
@@ -45,6 +46,7 @@ def stringTime():
   strtime = str(t[0]) + "-" + str(t[1]) + "-" + str(t[2]) + "__" + \
             str(t[3]) + "-" + str(t[4]) + "-" + str(t[5]) + "_"
   return strtime
+
 
 # login and password (without encryption)
 # TODO looks secure so far... but have to be updated for

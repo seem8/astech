@@ -1,4 +1,4 @@
-% include('header', title='Astech - for better MegaMek administration')
+% include('header', title='Units - Astech: easier MegaMek administration')
 
 % if not veteran:
 <table bgcolor='dddddd'>
