@@ -18,7 +18,7 @@ from bottle import template, response, request, get, post, error, \
 # file uploading and listing directories
 # I'll try to use pathlib.Path over os.path, when possible.
 import os
-from pathlib import Path
+# from pathlib import Path
 
 # we have to append date to filenames 
 import time 
@@ -130,6 +130,7 @@ def downloadfile(filetype, filename):
     rootdir = './savegames/'
   elif filetype == 'unit':
     rootdir = './data/mechfiles/astech/'
+  # force download
   return static_file(filename, root=rootdir, download=filename)
   
 
