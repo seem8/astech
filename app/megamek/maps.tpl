@@ -22,6 +22,12 @@
       <form action="/maps" method="post" enctype="multipart/form-data">
         <input type="file" name="map_file" /><br />
         <input type="submit" value="Upload" />
+        % if wrongboard:
+          <br /><font size="-1" color="red">Choose file with .board extension.</font>
+        % end
+        % if bigboard:
+          <br /><font size="-1" color="red">File is too big.</font>
+        % end
     </td>
   </tr>
 </table>
