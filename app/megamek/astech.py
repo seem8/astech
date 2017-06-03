@@ -7,7 +7,7 @@ author: Łukasz Posadowski,  mail [at] lukaszposadowski.pl'''
 # import subprocess, for launching jar files
 import subprocess
 
-# sleep may help with subprocess
+# sleep may help with subprocess,
 from time import sleep
 
 # import bottle
@@ -18,7 +18,7 @@ from bottle import template, response, request, get, post, error, \
 # file uploading and listing directories
 # I'll try to use pathlib.Path over os.path, when possible.
 import os
-from pathlib import Path
+# from pathlib import Path
 
 # we have to append date to filenames 
 import time 
@@ -30,13 +30,14 @@ import time
 
 # megamek log files into lists
 def getFile(filename):
-  '''filename -> list of lat 44 lines'''
+  '''filename -> list of last 81 lines'''
   with open(filename,'r') as myfile:
     mylines = myfile.readlines()
-    # we need just L
-    lastlog = mylines[len(mylines)-44 : len(mylines)]
+    # we need just 81 last lines
+    lastlog = mylines[len(mylines)-81 : len(mylines)]
     lastlog.reverse()
     return lastlog
+
 
 # get a string from localtime
 def stringTime():
@@ -45,6 +46,7 @@ def stringTime():
   strtime = str(t[0]) + "-" + str(t[1]) + "-" + str(t[2]) + "__" + \
             str(t[3]) + "-" + str(t[4]) + "-" + str(t[5]) + "_"
   return strtime
+
 
 # login and password (without encryption)
 # TODO looks secure so far... but have to be updated for
@@ -65,15 +67,15 @@ def crede(l, p):
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    self.ison = False                               # megamek is off by default 
-    self.version = '0.43.2'                         # megamek version
-    self.port = 3477                                # port for megamek server
-    self.domain = 'some.server.com'                 # nice site name
-    self.from_save = False                          # check if savegame is loaded
-    self.password = False                           # optional password to change game options 
-    self.save_dir = Path('./savegames/')            # default save dir for megamek
-    self.map_dir = Path('./data/boards/astech/' )   # astech will upload maps there
-    self.unit_dir = Path('./data/mechfiles/astech') # and custom mechs there
+    self.ison = False                          # megamek is off by default 
+    self.version = '0.43.2'                    # megamek version
+    self.port = 3477                           # port for megamek server
+    self.domain = 'some.server.com'            # nice site name
+    self.from_save = False                     # check if savegame is loaded
+    self.password = False                      # optional password to change game options 
+    self.save_dir = './savegames/'             # default save dir for megamek
+    self.map_dir = './data/boards/astech/'     # astech will upload maps there
+    self.unit_dir = './data/mechfiles/astech/' # and custom mechs there
 
     # command to lauch MegaMek server with provided port
     # self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
@@ -118,41 +120,31 @@ megatech = MegaTech()
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
 
-# TODO: those below are so similar, that probably could
-# be only two: download/parameters and delete/parameters
 
-# map files downloads
-@route('/map/<filename>')
-def mapfile(filename):
-  return static_file(filename, root='./data/boards/astech/', download=filename)
+# download static files
+@route('/download/<filetype>/<filename>')
+def downloadfile(filetype, filename):
+  if filetype == 'map':
+    rootdir = './data/boards/astech/'
+  elif filetype == 'savegame':
+    rootdir = './savegames/'
+  elif filetype == 'unit':
+    rootdir = './data/mechfiles/astech/'
+  # force download
+  return static_file(filename, root=rootdir, download=filename)
+  
 
-# map files removal
-@route('/delmap/<filename>')
-def delmapfile(filename):
-  os.remove('./data/boards/astech/' + filename)
-  redirect('/maps')
-
-# savegame files downloads
-@route('/savegame/<filename>')
-def savefile(filename):
-  return static_file(filename, root='./savegames/', download=filename)
-
-# savegame files removal
-@route('/delsavegame/<filename>')
-def delsavefile(filename):
-  os.remove('./savegames/' + filename)
-  redirect('/saves')
-
-# custom unit files downloads
-@route('/unit/<filename>')
-def unitfile(filename):
-  return static_file(filename, root='./data/mechfiles/astech/', download=filename)
-
-# custom unit files removal
-@route('/delunit/<filename>')
-def delunitfile(filename):
-  os.remove('./data/mechfiles/astech/' + filename)
-  redirect('/units')
+# remove static files
+@route('/remove/<filetype>/<filename>')
+def removefile(filetype, filename):
+  if filetype == 'map':
+    rootdir = './data/boards/astech/'
+  elif filetype == 'savegame':
+    rootdir = './savegames/'
+  elif filetype == 'unit':
+    rootdir = './data/mechfiles/astech/'
+  os.remove(rootdir + filename)
+  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
 # ----------------------------------------
 
 
@@ -251,6 +243,10 @@ def setMekPassword():
 # ----------------------------------------
 
 
+# TODO - saves, maps and unit uploads are very similar.
+#        Maybe there is a way to write one 
+#        function and template for all three.
+
 # ----------------------------------------
 # ------- MAPS PAGE ----------------------
 # ----------------------------------------
@@ -259,6 +255,8 @@ def setMekPassword():
 @get('/maps')
 def upload_map():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
+  wrongboard = request.get_cookie('wrongboard', secret='sseeccrreett22')
+  bigboard = request.get_cookie('bigboard', secret='sseeccrreett22')
 
   # current page for become_veteran and become_rookie functions
   response.set_cookie('curpage', '/maps', max_age=321, secret='sseeccrreett11')
@@ -266,11 +264,12 @@ def upload_map():
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='sseeccrreett11')
   if username:
-    print(os.listdir(megatech.map_dir))
     return template('maps', username=username, \
                             veteran=veteran, \
                             # TODO create dir if not exist
-                            mapfiles=os.listdir(megatech.map_dir))
+                            mapfiles=os.listdir(megatech.map_dir), \
+                            wrongboard=wrongboard, \
+                            bigboard=bigboard)
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -283,29 +282,27 @@ def do_upload_map():
     map_file = request.files.get('map_file')
     name, ext = os.path.splitext(map_file.filename)
     if ext not in ('.board'):
-      # TODO nice info about wrong file extension
-      print('WRONG FILE EXTENSION :(')
+      # page template will show error message with this cookie 
+      response.set_cookie('wrongboard', 'wrongboard', max_age=21, secret='sseeccrreett22')
     else:
       # TODO check if directory is present, create if nessesary;
-      # add current time to file name,
-      # to avoid incidental overwrites
-      map_file.save(str(megatech.map_dir), overwrite=True)
+      map_file.save(megatech.map_dir, overwrite=True)
       filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
+      response.delete_cookie('wrongboard')
 
       # checking filesize and, if bigger than 1M, delete file
-      if filestats.st_size > 1000000000:
-        # TODO nice info about too big file
-        print('FILE IS TOO BIG. :(')
+      if filestats.st_size > 1000000:
+        # page template will show error message with this cookie 
+        response.set_cookie('bigboard', 'bigboard', max_age=21, secret='sseeccrreett22')
         os.remove(megatech.map_dir + map_file.filename)
+      elif filestats.st_size <= 1000000:
+       response.delete_cookie('bigboard') 
     sleep(1)
     redirect('/maps')
   elif not username:
     redirect('/login')
 # ----------------------------------------
 
-# TODO - saves, maps and unit uploads are very similar.
-#        Maybe there is a way to write one 
-#        function and template for all three.
 
 # ----------------------------------------
 # ------- SAVEGAMES PAGE -----------------
@@ -344,17 +341,17 @@ def do_upload_save():
     # check if file extension is .gz
     name, ext = os.path.splitext(save_file.filename)
     if ext not in ('.gz'):
-      # TODO nice info about wrong file extension
-      print('WRONG FILE EXTENSION :(')
+      # page template will show error message with this cookie
+      response.set_cookie('wrongsave', 'save', max_age=21, secret='sseeccrreett22')
     else:
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
-      save_file.save(str(megatech.save_dir), overwrite=True)
+      save_file.save(megatech.save_dir, overwrite=True)
 
       # checking filesize and, if bigger than 1M, delete file
-      filestats = os.stat(str(megatech.save_dir) + '/' + save_file.filename)
+      filestats = os.stat(megatech.save_dir + '/' + save_file.filename)
       if filestats.st_size > 1000000000:
         # TODO nice info about too big file
         print('FILE IS TOO BIG. :(')
@@ -397,14 +394,14 @@ def do_upload_units():
     unit_file = request.files.get('unit_file')
     name, ext = os.path.splitext(unit_file.filename)
     if ext not in ('.mtf'):
-      # TODO nice info about wrong file extension
-      print('WRONG FILE EXTENSION :(')
+      # page template will show error message with this cookie 
+      response.set_cookie('wrongunit', 'unit', max_age=21, secret='sseeccrreett22')
     else:
       # TODO check if directory is present, create if nessesary;
       # add current time to file name, to avoid
       # incidental overwrites
-      unit_file.save(str(megatech.unit_dir), overwrite=True)
-      filestats = os.stat(str(megatech.unit_dir) + '/' + unit_file.filename)
+      unit_file.save(megatech.unit_dir, overwrite=True)
+      filestats = os.stat(megatech.unit_dir + '/' + unit_file.filename)
 
       # checking filesize and, if bigger than 1M, delete file
       if filestats.st_size > 1000000000:
@@ -482,13 +479,6 @@ def route404(error):
                                 veteran=veteran)
   elif not username:
     redirect('/login')
-# ----------------------------------------
-
-
-# downloads files from the server
-@route('/download/<filename:path>')
-def download(filename):
-  return static_file(filename, root='.data/boards/astech/', download=filename)
 # ----------------------------------------
 
 

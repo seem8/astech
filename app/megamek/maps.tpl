@@ -1,4 +1,4 @@
-% include('header', title='Astech - for better MegaMek administration')
+% include('header', title='Map files - Astech: easier MegaMek administration')
 
 % if not veteran:
 <table bgcolor='dddddd'>
@@ -22,6 +22,12 @@
       <form action="/maps" method="post" enctype="multipart/form-data">
         <input type="file" name="map_file" /><br />
         <input type="submit" value="Upload" />
+        % if wrongboard:
+          <br /><font size="-1" color="red">Choose file with .board extension.</font>
+        % end
+        % if bigboard:
+          <br /><font size="-1" color="red">File is too big.</font>
+        % end
     </td>
   </tr>
 </table>
@@ -49,8 +55,8 @@
   </tr>
   % for map in mapfiles:
     <tr width=800px>
-      <td width=40px><a href="delmap/{{map}}"><img src="image/delete.png"></a></td>
-      <td width=40px><a href="map/{{map}}"><img src="image/download.png"></a></td>
+      <td width=40px><a href="remove/map/{{map}}"><img src="image/delete.png"></a></td>
+      <td width=40px><a href="download/map/{{map}}"><img src="image/download.png"></a></td>
       <td width=720px>{{map}}</td>
     </tr>
   % end

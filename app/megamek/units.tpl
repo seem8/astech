@@ -1,4 +1,4 @@
-% include('header', title='Astech - for better MegaMek administration')
+% include('header', title='Units - Astech: easier MegaMek administration')
 
 % if not veteran:
 <table bgcolor='dddddd'>
@@ -49,8 +49,8 @@
   </tr>
   % for unit in unitfiles:
     <tr width=800px>
-      <td width=40px><a href="delunit/{{unit}}"><img src="image/delete.png"></a></td>
-      <td width=40px><a href="unit/{{unit}}"><img src="image/download.png"></a></td>
+      <td width=40px><a href="remove/unit/{{unit}}"><img src="image/delete.png"></a></td>
+      <td width=40px><a href="download/unit/{{unit}}"><img src="image/download.png"></a></td>
       <td width=720px>{{unit}}</td>
     </tr>
   % end

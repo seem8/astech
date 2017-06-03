@@ -1,4 +1,4 @@
-% include('header', title='Astech - for better MegaMek administration')
+% include('header', title='Astech: easier MegaMek administration')
 
 <p>
 <form action="/login" method="post">
