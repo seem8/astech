@@ -21,7 +21,13 @@
     <td width=250px valign="TOP">
       <form action="/units" method="post" enctype="multipart/form-data">
         <input type="file" name="unit_file" /><br />
-        <input type="submit" value="Upload" />
+      <input type="submit" value="Upload" />
+      % if wrongunit:
+        <br /><font size="-1" color="red">Choose file with .mtf extension.</font>
+      % end
+      % if bigunit:
+        <br /><font size="-1" color="red">File is too big.</font>
+      % end
     </td>
   </tr>
 </table>

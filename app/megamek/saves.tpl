@@ -22,6 +22,12 @@
       <form action="/saves" method="post" enctype="multipart/form-data">
         <input type="file" name="saved_game" /><br />
         <input type="submit" value="Upload" />
+        % if wrongsave:
+          <br /><font size="-1" color="red">Choose file with .gz extension.</font>
+        % end
+        % if bigsave:
+          <br /><font size="-1" color="red">File is too big.</font>
+        % end
     </td>
   </tr>
 </table>
