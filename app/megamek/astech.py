@@ -71,7 +71,6 @@ class MegaTech:
     self.version = '0.43.2'                    # megamek version
     self.port = 3477                           # port for megamek server
     self.domain = 'some.server.com'            # nice site name
-    self.from_save = False                     # check if savegame is loaded
     self.password = False                      # optional password to change game options 
     self.save_dir = './savegames/'             # default save dir for megamek
     self.map_dir = './data/boards/astech/'     # astech will upload maps there
@@ -95,7 +94,10 @@ class MegaTech:
     # TODO testing parameters to load save games - not ready yet
     # dedicated servers parameters are as follows:
     # -port [port] -password [password] [savedgame]
+
+    # we're sleeping, while wainting for Megamek to write to a log file
     sleep(1)
+
     self.ison = True
   
   def stop(self):
@@ -125,11 +127,11 @@ def image(filename):
 @route('/download/<filetype>/<filename>')
 def downloadfile(filetype, filename):
   if filetype == 'map':
-    rootdir = './data/boards/astech/'
+    rootdir = megatech.map_dir
   elif filetype == 'savegame':
-    rootdir = './savegames/'
+    rootdir = megatech.save_dir
   elif filetype == 'unit':
-    rootdir = './data/mechfiles/astech/'
+    rootdir = megatech.unit_dir
   # force download
   return static_file(filename, root=rootdir, download=filename)
   
@@ -138,11 +140,11 @@ def downloadfile(filetype, filename):
 @route('/remove/<filetype>/<filename>')
 def removefile(filetype, filename):
   if filetype == 'map':
-    rootdir = './data/boards/astech/'
+    rootdir = megatech.map_dir
   elif filetype == 'savegame':
-    rootdir = './savegames/'
+    rootdir = megatech.save_dir
   elif filetype == 'unit':
-    rootdir = './data/mechfiles/astech/'
+    rootdir = megatech.unit_dir
   os.remove(rootdir + filename)
   redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
 # ----------------------------------------
@@ -214,8 +216,7 @@ def administrator():
                                      mtport = str(megatech.port), \
                                      mtdomain = megatech.domain, \
                                      getLogFile = getFile('logs/megameklog.txt'), \
-                                     mtpassword = megatech.password, \
-                                     mtfromSave = megatech.from_save)
+                                     mtpassword = megatech.password )
 
   elif not username:
     redirect('/login')
@@ -274,7 +275,7 @@ def upload_map():
     redirect('/login')
 # ----------------------------------------
 
-# checking and uploading files to savegames dir
+# checking and uploading files to ./data/maps/astech dir
 @post('/maps')
 def do_upload_map():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
@@ -282,7 +283,7 @@ def do_upload_map():
     map_file = request.files.get('map_file')
     name, ext = os.path.splitext(map_file.filename)
     if ext not in ('.board'):
-      # page template will show error message with this cookie 
+      # page template will show error message with this cookie
       response.set_cookie('wrongboard', 'wrongboard', max_age=21, secret='sseeccrreett22')
     else:
       # TODO check if directory is present, create if nessesary;
@@ -292,11 +293,12 @@ def do_upload_map():
 
       # checking filesize and, if bigger than 1M, delete file
       if filestats.st_size > 1000000:
-        # page template will show error message with this cookie 
+        # page template will show error message with this cookie
         response.set_cookie('bigboard', 'bigboard', max_age=21, secret='sseeccrreett22')
         os.remove(megatech.map_dir + map_file.filename)
       elif filestats.st_size <= 1000000:
-       response.delete_cookie('bigboard') 
+       response.delete_cookie('bigboard')
+
     sleep(1)
     redirect('/maps')
   elif not username:
@@ -312,6 +314,8 @@ def do_upload_map():
 @get('/saves')
 def upload_save():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
+  wrongsave = request.get_cookie('wrongsave', secret='sseeccrreett22')
+  bigsave = request.get_cookie('bigsave', secret='sseeccrreett22')
 
   # current page for become_veteran and become_rookie functions
   response.set_cookie('curpage', '/saves', max_age=321, secret='sseeccrreett11')
@@ -322,11 +326,9 @@ def upload_save():
     return template('saves', username=username, \
                              veteran=veteran, \
                              # TODO create dir if not exist
-                             savegames=os.listdir(megatech.save_dir)) #, \
-                             # removeSave=os.remove('.savegames/'+item))
-  # an idea to remove saved games:
-  # saves = os.listdir(./savegames')
-  # os.remove('.savegames/saves[index])
+                             savegames=os.listdir(megatech.save_dir), \
+                             wrongsave=wrongsave, \
+                             bigsave=bigsave, )
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -349,13 +351,16 @@ def do_upload_save():
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
       save_file.save(megatech.save_dir, overwrite=True)
+      filestats = os.stat(str(megatech.save_dir) + '/' + save_file.filename)
+      response.delete_cookie('wrongsave')
 
       # checking filesize and, if bigger than 1M, delete file
-      filestats = os.stat(megatech.save_dir + '/' + save_file.filename)
-      if filestats.st_size > 1000000000:
-        # TODO nice info about too big file
-        print('FILE IS TOO BIG. :(')
+      if filestats.st_size > 1000000:
+        # page template will show error message with this cookie
+        response.set_cookie('bigsave', 'bigsave', max_age=21, secret='sseeccrreett22')
         os.remove(megatech.save_dir + save_file.filename)
+      elif filestats.st_size <= 1000000:
+       response.delete_cookie('bigsave')
 
     sleep(1)
     redirect('/saves')
@@ -371,6 +376,8 @@ def do_upload_save():
 @get('/units')
 def upload_units():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
+  wrongunit = request.get_cookie('wrongunit', secret='sseeccrreett22')
+  bigunit = request.get_cookie('bigunit', secret='sseeccrreett22')
 
   # current page for become_veteran and become_rookie functions
   response.set_cookie('curpage', '/units', max_age=321, secret='sseeccrreett11')
@@ -381,7 +388,9 @@ def upload_units():
     return template('units', username=username, \
                              veteran=veteran, \
                              # TODO create dir if not exist
-                             unitfiles=os.listdir(megatech.unit_dir))
+                             unitfiles=os.listdir(megatech.unit_dir), \
+                             wrongunit=wrongunit, \
+                             bigunit=bigunit )
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -394,20 +403,20 @@ def do_upload_units():
     unit_file = request.files.get('unit_file')
     name, ext = os.path.splitext(unit_file.filename)
     if ext not in ('.mtf'):
-      # page template will show error message with this cookie 
-      response.set_cookie('wrongunit', 'unit', max_age=21, secret='sseeccrreett22')
+      # page template will show error message with this cookie
+      response.set_cookie('wrongunit', 'wrongunit', max_age=21, secret='sseeccrreett22')
     else:
       # TODO check if directory is present, create if nessesary;
-      # add current time to file name, to avoid
-      # incidental overwrites
       unit_file.save(megatech.unit_dir, overwrite=True)
-      filestats = os.stat(megatech.unit_dir + '/' + unit_file.filename)
+      filestats = os.stat(str(megatech.unit_dir) + '/' + unit_file.filename)
+      response.delete_cookie('wrongunit')
 
       # checking filesize and, if bigger than 1M, delete file
-      if filestats.st_size > 1000000000:
-        # TODO nice info about too big file
-        print('FILE IS TOO BIG. :(')
+      if filestats.st_size > 1000000:
+        # page template will show error message with this cookie
+        response.set_cookie('bigunit', 'bigunit', max_age=21, secret='sseeccrreett22')
         os.remove(megatech.unit_dir + unit_file.filename)
+
     sleep(1)
     redirect('/units')
   elif not username:
