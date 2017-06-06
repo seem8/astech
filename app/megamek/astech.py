@@ -126,27 +126,47 @@ def image(filename):
 # download static files
 @route('/download/<filetype>/<filename>')
 def downloadfile(filetype, filename):
-  if filetype == 'map':
-    rootdir = megatech.map_dir
-  elif filetype == 'savegame':
-    rootdir = megatech.save_dir
-  elif filetype == 'unit':
-    rootdir = megatech.unit_dir
-  # force download
-  return static_file(filename, root=rootdir, download=filename)
+  # check if we are logged in before download, to prevent link guessing
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  if username:
+    if filetype == 'map':
+      rootdir = megatech.map_dir
+    elif filetype == 'savegame':
+      rootdir = megatech.save_dir
+    elif filetype == 'unit':
+     rootdir = megatech.unit_dir
+    else:
+      # er404 leads to nothing, so it will return 404 error page
+      rootdir = 'er404'
+
+    # force download
+    return static_file(filename, root=rootdir, download=filename)
+  elif not username:
+    redirect('/login')
   
 
 # remove static files
 @route('/remove/<filetype>/<filename>')
 def removefile(filetype, filename):
-  if filetype == 'map':
-    rootdir = megatech.map_dir
-  elif filetype == 'savegame':
-    rootdir = megatech.save_dir
-  elif filetype == 'unit':
-    rootdir = megatech.unit_dir
-  os.remove(rootdir + filename)
-  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
+  # check if we are logged in before download, to prevent link guessing
+  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  if username:
+    if filetype == 'map':
+      rootdir = megatech.map_dir
+    elif filetype == 'savegame':
+      rootdir = megatech.save_dir
+    elif filetype == 'unit':
+      rootdir = megatech.unit_dir
+    else:
+      # er404 leads to nothing, so it will return 404 error page
+      rootdir = 'er404'
+    
+    # remove the file
+    os.remove(rootdir + filename)
+    # and quickly return to the maps/saves/units/ page
+    redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
+  elif not username:
+    redirect('/login')
 # ----------------------------------------
 
 
