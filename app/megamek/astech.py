@@ -76,9 +76,6 @@ class MegaTech:
     self.map_dir = './data/boards/astech/'     # astech will upload maps there
     self.unit_dir = './data/mechfiles/astech/' # and custom mechs there
 
-    # command to lauch MegaMek server with provided port
-    # self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
-  
   def start(self):
     '''starts MegaMek server'''
     # if password is set, add it to the lauch command
@@ -306,7 +303,11 @@ def do_upload_map():
       # page template will show error message with this cookie
       response.set_cookie('wrongboard', 'wrongboard', max_age=21, secret='sseeccrreett22')
     else:
-      # TODO check if directory is present, create if nessesary;
+      # create directory for maps, if not already present 
+      if not os.isdir('./data/maps/astech'):
+        os.mkdir('./data/maps/astech')
+
+      # uploading file to astech directory
       map_file.save(megatech.map_dir, overwrite=True)
       filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
       response.delete_cookie('wrongboard')
@@ -366,10 +367,14 @@ def do_upload_save():
       # page template will show error message with this cookie
       response.set_cookie('wrongsave', 'save', max_age=21, secret='sseeccrreett22')
     else:
-      # TODO check if directory is present, create if nessesary;
+      # create directory for saves if not already present 
+      if not os.isdir('./savegames'):
+        os.mkdir('./savegames')
       # add current time to file name, to avoid
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
+
+      # uploading file to astech directory
       save_file.save(megatech.save_dir, overwrite=True)
       filestats = os.stat(str(megatech.save_dir) + '/' + save_file.filename)
       response.delete_cookie('wrongsave')
@@ -426,7 +431,11 @@ def do_upload_units():
       # page template will show error message with this cookie
       response.set_cookie('wrongunit', 'wrongunit', max_age=21, secret='sseeccrreett22')
     else:
-      # TODO check if directory is present, create if nessesary;
+      # create directory for units if not already present 
+      if not os.isdir('./data/mechfiles/astech'):
+        os.mkdir('./data/mechfiles/astech')
+
+      # uploading file to astech directory
       unit_file.save(megatech.unit_dir, overwrite=True)
       filestats = os.stat(str(megatech.unit_dir) + '/' + unit_file.filename)
       response.delete_cookie('wrongunit')
