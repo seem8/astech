@@ -1,4 +1,4 @@
-% include('header', 'title='Astech: easier MegaMek administration')
+% include('header', title='Astech: easier MegaMek administration')
 
 <p>
 I told you, astech. It's a Mad Cat, not a Catapult!<br /><br />
