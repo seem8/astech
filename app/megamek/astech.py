@@ -263,7 +263,7 @@ def setMekPassword():
 
 
 # TODO - saves, maps and unit uploads are very similar.
-#        Maybe there is a way to write one 
+#        Maybe there is an *elegant* way to write one 
 #        function and template for all three.
 
 # ----------------------------------------
@@ -276,16 +276,20 @@ def upload_map():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
   wrongboard = request.get_cookie('wrongboard', secret='sseeccrreett22')
   bigboard = request.get_cookie('bigboard', secret='sseeccrreett22')
-
-  # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/maps', max_age=321, secret='sseeccrreett11')
-
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+  
   if username:
+    # current page for become_veteran and become_rookie functions
+    response.set_cookie('curpage', '/maps', max_age=321, secret='sseeccrreett11')
+
+    # create directory for maps, if not already present 
+    if not os.path.isdir(megatech.map_dir):
+      os.mkdir(megatech.map_dir)
+
+    # checks if help messages will be displayed
+    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+
     return template('maps', username=username, \
                             veteran=veteran, \
-                            # TODO create dir if not exist
                             mapfiles=os.listdir(megatech.map_dir), \
                             wrongboard=wrongboard, \
                             bigboard=bigboard)
@@ -305,12 +309,12 @@ def do_upload_map():
       response.set_cookie('wrongboard', 'wrongboard', max_age=21, secret='sseeccrreett22')
     else:
       # create directory for maps, if not already present 
-      if not os.isdir('./data/maps/astech'):
-        os.mkdir('./data/maps/astech')
+      if not os.path.isdir(megatech.map_dir):
+        os.mkdir(megatech.map_dir)
 
       # uploading file to astech directory
       map_file.save(megatech.map_dir, overwrite=True)
-      filestats = os.stat(str(megatech.map_dir) + '/' + map_file.filename)
+      filestats = os.stat(megatech.map_dir + map_file.filename)
       response.delete_cookie('wrongboard')
 
       # checking filesize and, if bigger than 1M, delete file
@@ -339,18 +343,24 @@ def upload_save():
   wrongsave = request.get_cookie('wrongsave', secret='sseeccrreett22')
   bigsave = request.get_cookie('bigsave', secret='sseeccrreett22')
 
-  # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/saves', max_age=321, secret='sseeccrreett11')
-  
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
   if username:
+    # current page for become_veteran and become_rookie functions
+    response.set_cookie('curpage', '/saves', max_age=321, secret='sseeccrreett11')
+
+    # create directory for saves if not already present 
+    if not os.path.isdir(megatech.save_dir):
+      os.mkdir(megatech.save_dir)
+  
+    # checks if help messages will be displayed
+    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+
     return template('saves', username=username, \
                              veteran=veteran, \
                              # TODO create dir if not exist
                              savegames=os.listdir(megatech.save_dir), \
                              wrongsave=wrongsave, \
                              bigsave=bigsave, )
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -369,15 +379,15 @@ def do_upload_save():
       response.set_cookie('wrongsave', 'save', max_age=21, secret='sseeccrreett22')
     else:
       # create directory for saves if not already present 
-      if not os.isdir('./savegames'):
-        os.mkdir('./savegames')
+      if not os.path.isdir(megatech.save_dir):
+        os.mkdir(megatech.save_dir)
       # add current time to file name, to avoid
       # incidental overwrites
       save_file.filename = stringTime() + save_file.filename
 
       # uploading file to astech directory
       save_file.save(megatech.save_dir, overwrite=True)
-      filestats = os.stat(str(megatech.save_dir) + '/' + save_file.filename)
+      filestats = os.stat(megatech.save_dir + save_file.filename)
       response.delete_cookie('wrongsave')
 
       # checking filesize and, if bigger than 1M, delete file
@@ -404,17 +414,24 @@ def upload_units():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
   wrongunit = request.get_cookie('wrongunit', secret='sseeccrreett22')
   bigunit = request.get_cookie('bigunit', secret='sseeccrreett22')
-
-  # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/units', max_age=321, secret='sseeccrreett11')
-
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+  
   if username:
+    # current page for become_veteran and become_rookie functions
+    response.set_cookie('curpage', '/units', max_age=321, secret='sseeccrreett11')
+
+    # create directory for units if not already present 
+    if not os.path.isdir(megatech.unit_dir):
+      os.mkdir(megatech.unit_dir)
+
+    # prepare list conatining every file in astech unit directory
+    unitfiles = os.listdir(megatech.unit_dir)
+    unitfiles.sort()
+
+    # checks if help messages will be displayed
+    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
     return template('units', username=username, \
                              veteran=veteran, \
-                             # TODO create dir if not exist
-                             unitfiles=os.listdir(megatech.unit_dir), \
+                             unitfiles=unitfiles, \
                              wrongunit=wrongunit, \
                              bigunit=bigunit )
   elif not username:
@@ -433,12 +450,12 @@ def do_upload_units():
       response.set_cookie('wrongunit', 'wrongunit', max_age=21, secret='sseeccrreett22')
     else:
       # create directory for units if not already present 
-      if not os.isdir('./data/mechfiles/astech'):
-        os.mkdir('./data/mechfiles/astech')
+      if not os.path.isdir(megatech.unit_dir):
+        os.mkdir(megatech.unit_dir)
 
       # uploading file to astech directory
       unit_file.save(megatech.unit_dir, overwrite=True)
-      filestats = os.stat(str(megatech.unit_dir) + '/' + unit_file.filename)
+      filestats = os.stat(megatech.unit_dir + unit_file.filename)
       response.delete_cookie('wrongunit')
 
       # checking filesize and, if bigger than 1M, delete file
@@ -507,13 +524,13 @@ def become_green():
 def route404(error):
   username = request.get_cookie('administrator', secret='sseeccrreett11')
 
-  # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
-
-  response.set_cookie('curpage', '404', max_age=1234, secret='sseeccrreett11')
-  
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
+    # checks if help messages will be displayed
+    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+
+    response.set_cookie('curpage', '404', max_age=1234, secret='sseeccrreett11')
+  
+    username = request.get_cookie('administrator', secret='sseeccrreett11')
     return template('error404', username=username, \
                                 veteran=veteran)
   elif not username:
