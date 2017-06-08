@@ -217,6 +217,7 @@ def check_login():
 @get('/')
 def administrator():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
+  noalpha = request.get_cookie('noalpha', secret='sseeccrreett22')
 
   # checks if help messages will be displayed
   veteran = request.get_cookie('veteran', secret='sseeccrreett11')
@@ -233,7 +234,8 @@ def administrator():
                                      mtport = str(megatech.port), \
                                      mtdomain = megatech.domain, \
                                      getLogFile = getFile('logs/megameklog.txt'), \
-                                     mtpassword = megatech.password )
+                                     mtpassword = megatech.password, \
+                                     noalpha = noalpha )
 
   elif not username:
     redirect('/login')
@@ -251,7 +253,6 @@ def setMekPassword():
       redirect('/')
     else:
       # if mekpassword is not alpha, don't parse it
-      # and redirect to login (just to be safe)
       response.set_cookie('noalpha', 'noalpha', max_age=21, secret='sseeccrreett22')
       game_pass = False
       megatech.password = False

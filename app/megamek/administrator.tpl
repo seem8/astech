@@ -48,6 +48,10 @@
           <font size="-1">(please use only latin characters)</font></br />
           <input value="Set" type="submit" />
         </form>
+        % if noalpha:
+          <br /><font size="-1" color="red">Please use only latin characters as password.</font>
+        % end
+      </td>
       <td width=250px valign="TOP">
         % if not mtison:
           <a href="mmturnon"><img src="image/server_off.png"></a>
