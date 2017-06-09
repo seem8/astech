@@ -22,7 +22,7 @@ It depends on Oracle Java JRE and Python 3.6.x.
 
 2. Install Python 3.6.x and make sure you can type "python3.6" in terminal to launch Python Shell.
 
-3. (optional) Create user astech to "use" Astech and unpack astech-version.zip in his home directory.
+3. (optional) Create user astech to "use" Astech and unpack mek folder from astech-master.zip in his home directory.
    That user have to run both Java and Python.
    You may lock that user account with "usermod -L username".
 
