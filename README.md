@@ -35,3 +35,7 @@ It depends on Oracle Java JRE and Python 3.6.x.
 6. Run "systemctl start astech" as root, or with sudo.
 
 7. Type your.domain:8080, or ip.ip.ip.ip:8080 in your browser.
+
+------------------------------------
+
+More info in the wiki: https://github.com/seem8/astech/wiki
