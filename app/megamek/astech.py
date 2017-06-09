@@ -101,7 +101,6 @@ class MegaTech:
     '''stops MegaMek server'''
     if self.ison == True:
       self.process.kill()
-      # self.password = False
       self.ison = False
   
 megatech = MegaTech()
@@ -118,6 +117,7 @@ megatech = MegaTech()
 @route('/image/<filename>')
 def image(filename):
   return static_file(filename, root='./img/', mimetype='image/png')
+# ----------------------------------------
 
 
 # download static files
@@ -138,8 +138,10 @@ def downloadfile(filetype, filename):
 
     # force download
     return static_file(filename, root=rootdir, download=filename)
+
   elif not username:
     redirect('/login')
+# ----------------------------------------
   
 
 # remove static files
@@ -162,6 +164,7 @@ def removefile(filetype, filename):
     os.remove(rootdir + filename)
     # and quickly return to the maps/saves/units/ page
     redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -257,6 +260,7 @@ def setMekPassword():
       game_pass = False
       megatech.password = False
       redirect('/')
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -309,6 +313,7 @@ def do_upload_map():
   if username:
     map_file = request.files.get('map_file')
     name, ext = os.path.splitext(map_file.filename)
+
     if ext not in ('.board'):
       # page template will show error message with this cookie
       response.set_cookie('wrongboard', 'wrongboard', max_age=21, secret='sseeccrreett22')
@@ -332,6 +337,7 @@ def do_upload_map():
 
     sleep(1)
     redirect('/maps')
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -384,6 +390,7 @@ def do_upload_save():
 
     # check if file extension is .gz
     name, ext = os.path.splitext(save_file.filename)
+
     if ext not in ('.gz'):
       # page template will show error message with this cookie
       response.set_cookie('wrongsave', 'save', max_age=21, secret='sseeccrreett22')
@@ -410,6 +417,7 @@ def do_upload_save():
 
     sleep(1)
     redirect('/saves')
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -446,6 +454,7 @@ def upload_units():
                              unitfiles=unitfiles, \
                              wrongunit=wrongunit, \
                              bigunit=bigunit )
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
@@ -478,6 +487,7 @@ def do_upload_units():
 
     sleep(1)
     redirect('/units')
+
   elif not username:
     redirect('/login')
 # ----------------------------------------
