@@ -285,12 +285,17 @@ def upload_map():
     if not os.path.isdir(megatech.map_dir):
       os.mkdir(megatech.map_dir)
 
+    # list of current map files, by alphabet
+    mapfiles = os.listdir(megatech.map_dir)
+    mapfiles.sort()
+
     # checks if help messages will be displayed
     veteran = request.get_cookie('veteran', secret='sseeccrreett11')
 
+    # render web page with template
     return template('maps', username=username, \
                             veteran=veteran, \
-                            mapfiles=os.listdir(megatech.map_dir), \
+                            mapfiles=mapfiles, \
                             wrongboard=wrongboard, \
                             bigboard=bigboard)
   elif not username:
@@ -350,14 +355,19 @@ def upload_save():
     # create directory for saves if not already present 
     if not os.path.isdir(megatech.save_dir):
       os.mkdir(megatech.save_dir)
+
+    # list of saves, by alphabet (and by date, since datastamp
+    # is at the beggining of each file
+    savegames = os.listdir(megatech.save_dir)
+    savegames.sort()
   
     # checks if help messages will be displayed
     veteran = request.get_cookie('veteran', secret='sseeccrreett11')
 
+    # render web page with template
     return template('saves', username=username, \
                              veteran=veteran, \
-                             # TODO create dir if not exist
-                             savegames=os.listdir(megatech.save_dir), \
+                             savegames=savegames, \
                              wrongsave=wrongsave, \
                              bigsave=bigsave, )
 
@@ -429,6 +439,8 @@ def upload_units():
 
     # checks if help messages will be displayed
     veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+
+    # render web page with template
     return template('units', username=username, \
                              veteran=veteran, \
                              unitfiles=unitfiles, \
