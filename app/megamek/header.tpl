@@ -11,7 +11,7 @@
 
 <!-- header image and title -->
 <center>
-<p><img src="image/astech_logo.png"></p>
+<p><img src="/image/astech_logo.png"></p>
 <p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.1)<br />
 
 % if username:
@@ -20,7 +20,7 @@
 <!-- main menu -->
 % if username:
   % if not veteran:
-    <p><a href="/">server status</a> | <a href="maps">map files</a> | <a href="saves">saved games</a> | <a href="units">units</a> | <a href="veteran">hide tutorial</a> | <a href="logout">log out</a><br />&nbsp;</p>
+    <p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/veteran">hide tutorial</a> | <a href="/logout">log out</a><br />&nbsp;</p>
   % end
 % if veteran:
     <p><a href="/">server status</a> | <a href="maps">map files</a> | <a href="saves">saved games</a> | <a href="units">units</a> | <a href="green">show tutorial</a> | <a href="logout">log out</a><br />&nbsp;</p>
