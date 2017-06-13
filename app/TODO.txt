@@ -1,0 +1,19 @@
+TODO for Astech:
+----------------
+
+* Enable savegame load on server status page.
+
+Megamek supports loading savegames by a command line parameter:
+java -jar MegaMek.jar -dedicated -port 2346 -password 'secret' [savegame]
+I still cannot do it right. For now there is an option to use
+MegaMek chat command /load to load savegame.
+
+
+* (maybe) Merge map, save and unit templates.
+They're nearly identical. Every minor change for one of those
+is simply multiplied by 3. It won't be a nice template anymore
+with all those new conditions I'll have to make, but will be easier
+to catch bugs.
+
+
+* 

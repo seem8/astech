@@ -28,6 +28,9 @@
         % if bigboard:
           <br /><font size="-1" color="red">File is too big.</font>
         % end
+        % if noboard:
+          <br /><font size="-1" color="red">Please choose a file first.</font>
+        % end
     </td>
   </tr>
 </table>
