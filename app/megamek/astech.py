@@ -284,7 +284,7 @@ def upload_map():
   # cookies set when uploaded file is wrong
   # wrong extension
   wrongboard = request.get_cookie('wrongboard', secret='sseeccrreett22')
-  # over 1M size
+  # over 1.5M size
   bigboard = request.get_cookie('bigboard', secret='sseeccrreett22')
   # nofile selected
   noboard = request.get_cookie('noboard', secret='sseeccrreett22')
