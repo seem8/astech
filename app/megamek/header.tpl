@@ -12,7 +12,7 @@
 <!-- header image and title -->
 <center>
 <p><img src="/image/astech_logo.png"></p>
-<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.1)<br />
+<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.2)<br />
 
 % if username:
 <font size="-1">You are logged as {{username}}.</font></p>
