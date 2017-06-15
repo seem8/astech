@@ -28,6 +28,9 @@
         % if bigsave:
           <br /><font size="-1" color="red">File is too big.</font>
         % end
+        % if nosave:
+          <br /><font size="-1" color="red">Please choose a file first.</font>
+        % end
     </td>
   </tr>
 </table>
@@ -41,7 +44,7 @@
     </td>
   <tr width=800px>
     <td width=800px>
-      <font size="-1">Below is the list of uploaded saves. You also can delete and download your uploaded saves with link in the left.<br />To load a game type <i>/load [file_name-datestamp]</i> in MegaMek lobby screen.</font>
+      <font size="-1">Below is the list of uploaded saves. You also can delete and download your uploaded saves with link in the left.<br />To load a game type <i>/load [datestamp-filename]</i> in MegaMek lobby screen.</font>
     </td>
   </tr>
 </table>

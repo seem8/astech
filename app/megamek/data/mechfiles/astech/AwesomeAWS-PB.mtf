@@ -1,6 +1,6 @@
 Version:1.0
-Locust
-LCT-PB (Pirate's Bane)
+Awesome
+AWS-PB (Pretty Baby)
 
 Config:Biped
 TechBase:Inner Sphere
@@ -8,61 +8,60 @@ Era:3050
 Source:MechWarrior Online
 Rules Level:2
 
-Mass:20
-Engine:180 XL Engine(IS)
-Structure:IS Endo Steel
+Mass:80
+Engine:320 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:9
+Heat Sinks:19 Double
+Walk MP:4
 Jump MP:0
 
 Armor:Standard(Inner Sphere)
-LA Armor:5
-RA Armor:5
-LT Armor:8
-RT Armor:8
-CT Armor:9
+LA Armor:26
+RA Armor:26
+LT Armor:24
+RT Armor:24
+CT Armor:35
 HD Armor:9
-LL Armor:7
-RL Armor:7
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+LL Armor:34
+RL Armor:34
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
 
-Weapons:6
-Small Laser, Left Torso
-Small Laser, Left Torso
-Small Laser, Right Torso
-Small Laser, Right Torso
-Machine Gun, Center Torso
-Machine Gun, Center Torso
+Weapons:5
+PPC, Left Arm
+SRM 4, Right Arm
+LRM 15, Left Torso
+Large Laser, Right Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
--Empty-
--Empty-
+Lower Arm Actuator
+PPC
+PPC
+PPC
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Lower Arm Actuator
+SRM 4
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 -Empty-
 -Empty-
 
@@ -70,26 +69,26 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Small Laser
-Small Laser
-IS Ammo MG - Full
+LRM 15
+LRM 15
+LRM 15
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+IS Ammo LRM-15
+IS Ammo LRM-15
+-Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Endo Steel
-Small Laser
-Small Laser
-ISGuardianECMSuite
-ISGuardianECMSuite
-IS Ammo MG - Full
+Large Laser
+Large Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ammo SRM-4
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
@@ -105,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Machine Gun
-Machine Gun
+IS Ammo SRM-4
+IS Ammo SRM-4
 
 Head:
 Life Support
 Sensors
 Cockpit
-IS Endo Steel
+Medium Laser
 Sensors
 Life Support
 -Empty-
@@ -127,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo Steel
-IS Endo Steel
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo Steel
-IS Endo Steel
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -150,5 +149,5 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-imagefile:./data/images/fluff/mech/LCT-PB.png
+imagefile:./data/images/fluff/mech/AWS-PB.jpg
 

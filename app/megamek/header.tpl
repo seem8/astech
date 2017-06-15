@@ -3,7 +3,7 @@
 <head>
 <title>{{title}}</title>
 <meta name="author" content="Łukasz Posadowski">
-<meta name="keywords" content="battletech, megamek">
+<meta name="keywords" content="battletech, megamek, astech">
 <meta name="description" content="Play Battletech online easly. Web frontend for MegaMek server.">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head>
