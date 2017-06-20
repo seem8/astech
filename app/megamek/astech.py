@@ -93,7 +93,7 @@ class MegaTech:
     # -port [port] -password [password] [savedgame]
 
     # we're sleeping, while wainting for Megamek to write to a log file
-    sleep(1)
+    sleep(3)
 
     self.ison = True
   
@@ -255,6 +255,10 @@ def setMekPassword():
     game_pass = request.forms.get('mekpassword')
     if game_pass.isalpha():
       megatech.password = game_pass
+      redirect('/')
+    elif game_pass == '':
+      # empty password is no password
+      megatech.password = False
       redirect('/')
     else:
       # if mekpassword is not alpha, don't parse it
