@@ -66,15 +66,18 @@ def crede(l, p):
 # we have a class for a little namespace home 
 class MegaTech:
   '''MegaMek server controls and status'''
-  def __init__(self):
-    self.ison = False                          # megamek is off by default 
-    self.version = '0.43.2'                    # megamek version
-    self.port = 2346                           # port for megamek server
-    self.domain = 'some.server.com'            # nice site name
-    self.password = False                      # optional password to change game options 
-    self.save_dir = './savegames/'             # default save dir for megamek
-    self.map_dir = './data/boards/astech/'     # astech will upload maps there
-    self.unit_dir = './data/mechfiles/astech/' # and custom mechs there
+  def __init__(self, name, version, port):
+    self.name = name
+    self.ison = False                     # megamek is off by default 
+    self.version = version                # megamek version
+    self.port = port                      # port for megamek server
+    self.domain = 'some.server.com'       # nice site name
+    self.password = False                 # optional password to change game options 
+    self.install_dir = './mm_' + self.name                         # megamek directory
+    self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
+    self.map_dir =  self.install_dir + '/data/boards/astech/'      # astech will upload maps there
+    self.unit_dir =  self.install_dir + '/data/mechfiles/astech/'  # and custom mechs there
+    self.logs_dir =  self.install_dir + '/logs/'                   # gamelogs are there
 
   def start(self):
     '''starts MegaMek server'''
@@ -83,17 +86,19 @@ class MegaTech:
       self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
                      str(self.port) + ' -password ' + str(self.password) + ' '
     elif self.password == False:
-      self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + str(self.port)
+      self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
+                     str(self.port)
     
-    # start MegaMek dedicated server with parameters
-    self.process = subprocess.Popen(self.command.split()) 
+    # start MegaMek dedicated server with parameters and in it's working directory
+    self.process = subprocess.Popen(self.command.split(), cwd='./mm_'+self.name) 
     
     # TODO testing parameters to load save games - not ready yet
     # dedicated servers parameters are as follows:
     # -port [port] -password [password] [savedgame]
 
-    # we're sleeping, while wainting for Megamek to write to a log file
-    sleep(3)
+    # we're sleeping, while wainting for Megamek to write a log file;
+    # sometimes MegaMek is slower than 1 second
+    sleep(1)
 
     self.ison = True
   
@@ -103,11 +108,11 @@ class MegaTech:
       self.process.kill()
       self.ison = False
   
-megatech = MegaTech()
+megatech = MegaTech('devel', '0.43.2', 2346)
 # ----------------------------------------
 
 
-# below is bottle.py related stuff
+# below is bottle.py related stuff, mainly routes for web browser
 
 # ----------------------------------------
 # ------- STATIC FILES -------------------
@@ -202,7 +207,7 @@ def check_login():
       response.set_cookie('administrator', username, max_age=87654, secret='sseeccrreett11')
       response.delete_cookie('badPassword')
       redirect('/')
-    elif not crede(username,password):
+    elif not crede(username, password):
       # bad password
       response.set_cookie('badPassword', 'nopass', max_age=21, secret='sseeccrreett22')
       redirect('/login')
@@ -236,9 +241,10 @@ def administrator():
                                      veteran = veteran, \
                                      mtison = megatech.ison, \
                                      mtver = megatech.version, \
+                                     mtname = megatech.name, \
                                      mtport = str(megatech.port), \
                                      mtdomain = megatech.domain, \
-                                     getLogFile = getFile('logs/megameklog.txt'), \
+                                     getLogFile = getFile(megatech.logs_dir + 'megameklog.txt'), \
                                      mtpassword = megatech.password, \
                                      noalpha = noalpha )
 
@@ -251,9 +257,9 @@ def setMekPassword():
   username = request.get_cookie('administrator', secret='sseeccrreett11')
   
   if username:
-    # check if username and password isn't something like '/mmrestart'
     game_pass = request.forms.get('mekpassword')
     if game_pass.isalpha():
+      # check if username and password isn't something like '/mmstop'
       megatech.password = game_pass
       redirect('/')
     elif game_pass == '':
@@ -290,7 +296,7 @@ def upload_map():
   wrongboard = request.get_cookie('wrongboard', secret='sseeccrreett22')
   # over 1.5M size
   bigboard = request.get_cookie('bigboard', secret='sseeccrreett22')
-  # nofile selected
+  # no file selected
   noboard = request.get_cookie('noboard', secret='sseeccrreett22')
   
   if username:
@@ -330,6 +336,7 @@ def do_upload_map():
       name, ext = os.path.splitext(map_file.filename)
       goodboard = True
     except AttributeError:
+      # in the case when no file is choosen;
       # page template will show error message with this cookie
       response.set_cookie('noboard', 'noboard', max_age=21, secret='sseeccrreett22')
       goodboard = False
@@ -421,6 +428,7 @@ def do_upload_save():
       name, ext = os.path.splitext(save_file.filename)
       goodsave = True
     except AttributeError:
+      # in the case when no file is choosen;
       # page template will show error message with this cookie
       response.set_cookie('nosave', 'nosave', max_age=21, secret='sseeccrreett22')
       goodsave = False
@@ -514,6 +522,7 @@ def do_upload_units():
       name, ext = os.path.splitext(unit_file.filename)
       goodunit = True
     except AttributeError:
+      # in the case when no file is choosen;
       # page template will show error message with this cookie
       response.set_cookie('nounit', 'nounit', max_age=21, secret='sseeccrreett22')
       goodunit = False

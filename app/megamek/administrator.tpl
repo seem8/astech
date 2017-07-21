@@ -33,6 +33,7 @@
     <td width=250px><b>Master switch</b></td>
   <tr width=750opx>
     <td width=250px valign="TOP">
+        name: {{mtname}}<br />
         version: {{mtver}}<br />
         address: {{mtdomain}}<br />
         port: {{mtport}}
