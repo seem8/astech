@@ -1,14 +1,16 @@
 Starting MegaMek v0.43.2 ...
 Compiled on Tue May 02 00:08:44 CEST 2017
-Today is Fri Jul 21 18:45:58 CEST 2017
+Today is Tue Jul 25 08:57:09 CEST 2017
 Java vendor Oracle Corporation
 Java version 1.8.0_141
 Platform Linux 3.10.0-514.26.2.el7.x86_64 (amd64)
 Total memory available to MegaMek: 1 691 648 kB
 
-Starting Dedicated Server. args: [-port 2346]
+Starting Dedicated Server. args: [-port 2346 -password falcon]
 MMRandom: generating RNG type #1
 s: starting a new server...
 s: hostname = 'gazelle' port = 2346
+s: hosting on address = 192.168.111.148
 s: hosting on address = 192.168.122.1
-s: password = null
+s: hosting on address = fe80:0:0:0:ce15:63d0:7752:c948%3
+s: hosting on address = fdf7:6b81:d2ff:0:7358:bc2d:fbaf:6c88%3

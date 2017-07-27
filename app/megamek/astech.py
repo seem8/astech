@@ -23,6 +23,11 @@ import os
 # we have to append date to filenames 
 import time 
 
+# migration from filenames and variables to sql is in progress
+import sqlite3
+conn = sqlite3.connect('astech.db')
+c = conn.cursor()
+
 
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
@@ -49,13 +54,21 @@ def stringTime():
 
 
 # login and password (without encryption)
-# TODO looks secure so far... but have to be updated for
-# database and encryption
+# TODO looks secure so far... but have to be
+# updates with encryption
 def crede(l, p):
- if l == 'somelogin' and p == 'somepassword':
-   return True
- else:
-   return False
+  c.execute('''select * from tbl_user''')
+  u = c.fetchone()
+  if l == u[1] and p == u[2]':
+    return True
+  else:
+    return False
+
+# we are checking what megamek instance was set as default the last time
+def defaultMek(t):
+  c.execute('''select * from tbl_megamek where isdefault=?''', t)
+  default = c.fetchone()
+  return default
 
 
 # ----------------------------------------
@@ -63,21 +76,34 @@ def crede(l, p):
 # ----------------------------------------
 
 # MegaMek server status and controls
-# we have a class for a little namespace home 
+# we have a class for a little namespace box 
 class MegaTech:
   '''MegaMek server controls and status'''
-  def __init__(self, name, version, port):
-    self.name = name
+  def __init__(self):
+    '''init for MegaTech'''
+    # first we need info about previously configured megamek servers
+    c.execute('''select * from tbl_megamek''')
+    self.f = c.fetchall()
+    self.megameks = []
+    for i in self.f:
+      self.megameks.append(i)
+    print(self.megameks)
+
+
+    self.name = name                      # name of the instance and install directory
     self.ison = False                     # megamek is off by default 
     self.version = version                # megamek version
     self.port = port                      # port for megamek server
     self.domain = 'some.server.com'       # nice site name
     self.password = False                 # optional password to change game options 
+
     self.install_dir = './mm_' + self.name                         # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
-    self.map_dir =  self.install_dir + '/data/boards/astech/'      # astech will upload maps there
-    self.unit_dir =  self.install_dir + '/data/mechfiles/astech/'  # and custom mechs there
-    self.logs_dir =  self.install_dir + '/logs/'                   # gamelogs are there
+    self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
+    tus123
+
+    self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
+    self.logs_dir = self.install_dir + '/logs/'                    # game logs are there
 
   def start(self):
     '''starts MegaMek server'''
@@ -108,7 +134,7 @@ class MegaTech:
       self.process.kill()
       self.ison = False
   
-megatech = MegaTech('devel', '0.43.2', 2346)
+megatech = MegaTech()
 # ----------------------------------------
 
 
