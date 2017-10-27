@@ -9,20 +9,22 @@
 </head>
 <body bgcolor='eeeeee'>
 
-<!-- header image and title -->
+% # header image and title
 <center>
 <p><img src="/image/astech_logo.png"></p>
-<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.2)<br />
+<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.3)<br />
 
+% # username is a cookie with login
 % if username:
 <font size="-1">You are logged as {{username}}.</font></p>
+% end
 
-<!-- main menu -->
+% # main menu
 % if username:
   % if not veteran:
     <p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/veteran">hide tutorial</a> | <a href="/logout">log out</a><br />&nbsp;</p>
   % end
 % if veteran:
-    <p><a href="/">server status</a> | <a href="maps">map files</a> | <a href="saves">saved games</a> | <a href="units">units</a> | <a href="green">show tutorial</a> | <a href="logout">log out</a><br />&nbsp;</p>
+    <p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/green">show tutorial</a> | <a href="/logout">log out</a><br />&nbsp;</p>
   % end
 % end

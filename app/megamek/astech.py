@@ -23,6 +23,10 @@ import os
 # we have to append date to filenames 
 import time 
 
+# we're checking the password by making hash
+# and comparing with a bytestring
+import hashlib
+
 
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
@@ -30,7 +34,7 @@ import time
 
 # megamek log files into lists
 def getFile(filename):
-  '''filename -> list of last 81 lines'''
+  '''filename -> reversed list of last 81 lines'''
   with open(filename,'r') as myfile:
     mylines = myfile.readlines()
     # we need just 81 last lines
@@ -48,14 +52,18 @@ def stringTime():
   return strtime
 
 
-# login and password (without encryption)
-# TODO looks secure so far... but have to be updated for
-# database and encryption
+# login and password;
+# password encryption is nice,
+# but useless without https
 def crede(l, p):
- if l == 'somelogin' and p == 'somepassword':
-   return True
- else:
-   return False
+  word = 'a1d292f556aa661b720847487960860f17086a0bd11a4320368e9447ff7139de089aa88b6159420814f10194f1aa55a3379fb80ea26ba6397ba75cec811b241a'
+  if l == 'somelogin':
+    if hashlib.sha512(p.encode()).hexdigest() == word:
+      return True
+    else:
+      return False
+  else:
+    return False
 
 
 # ----------------------------------------
@@ -67,17 +75,18 @@ def crede(l, p):
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self, name, version, port):
-    self.name = name
+    self.name = name                      # name of the instance 
     self.ison = False                     # megamek is off by default 
+    self.process = False                  # to check if MegaMek is running
     self.version = version                # megamek version
     self.port = port                      # port for megamek server
     self.domain = 'some.server.com'       # nice site name
     self.password = False                 # optional password to change game options 
     self.install_dir = './mm_' + self.name                         # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
-    self.map_dir =  self.install_dir + '/data/boards/astech/'      # astech will upload maps there
-    self.unit_dir =  self.install_dir + '/data/mechfiles/astech/'  # and custom mechs there
-    self.logs_dir =  self.install_dir + '/logs/'                   # gamelogs are there
+    self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
+    self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
+    self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
 
   def start(self):
     '''starts MegaMek server'''
@@ -99,9 +108,22 @@ class MegaTech:
     # we're sleeping, while wainting for Megamek to write a log file;
     # sometimes MegaMek is slower than 1 second
     sleep(1)
-
+    # we'll rely on this variable often
     self.ison = True
-  
+
+  def check(self):
+    '''check if MegaMek is running'''
+    try:
+      # none means the process is running
+      if self.process.poll() == None:
+        return True 
+      else:
+        # any other result means it's not
+        return False
+    except AttributeError:
+      # in case if the process wansn't initialised yet
+      return False
+
   def stop(self):
     '''stops MegaMek server'''
     if self.ison == True:
@@ -131,6 +153,7 @@ def downloadfile(filetype, filename):
   # check if we are logged in before download, to prevent link guessing
   username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
+    # filetype define directory with files to download
     if filetype == 'map':
       rootdir = megatech.map_dir
     elif filetype == 'savegame':
@@ -155,6 +178,7 @@ def removefile(filetype, filename):
   # check if we are logged in before download, to prevent link guessing
   username = request.get_cookie('administrator', secret='sseeccrreett11')
   if username:
+    # filetype define directory with files to delete 
     if filetype == 'map':
       rootdir = megatech.map_dir
     elif filetype == 'savegame':
@@ -168,6 +192,8 @@ def removefile(filetype, filename):
     # remove the file
     try:
       os.remove(rootdir + filename)
+      # os.remove is displaying blank page, so we have to
+      # quickly return to maps, saves, or units page
       redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
     except FileNotFoundError:
       redirect('/404page')
@@ -189,7 +215,7 @@ def login():
   # cookie with information about bad password
   bad_password = request.get_cookie('badPassword', secret='sseeccrreett22')
   return template('login', badPass=bad_password, \
-                           username=username)
+                           username=username )
 # ----------------------------------------
 
 # check credentials and redirect to other routes
@@ -226,7 +252,9 @@ def check_login():
 # main route
 @get('/')
 def administrator():
+  # check if we are logged in
   username = request.get_cookie('administrator', secret='sseeccrreett11')
+  # check if game password are latin characters only
   noalpha = request.get_cookie('noalpha', secret='sseeccrreett22')
 
   # checks if help messages will be displayed
@@ -236,7 +264,16 @@ def administrator():
   response.set_cookie('curpage', '/', max_age=1234, secret='sseeccrreett11')
 
   if username:
+    # password and login cookie are checked by now
     response.delete_cookie('badPassword')
+    
+    # check if MegaMek is on and correct megatech.ison
+    if megatech.check():
+      megatech.ison = True
+    elif not megatech.check():
+      megatech.ison = False
+
+    # render template
     return template('administrator', username = username, \
                                      veteran = veteran, \
                                      mtison = megatech.ison, \
@@ -258,8 +295,8 @@ def setMekPassword():
   
   if username:
     game_pass = request.forms.get('mekpassword')
+    # check if password isn't something like '/mmstop'
     if game_pass.isalpha():
-      # check if username and password isn't something like '/mmstop'
       megatech.password = game_pass
       redirect('/')
     elif game_pass == '':
@@ -301,7 +338,7 @@ def upload_map():
   
   if username:
     # current page for become_veteran and become_rookie functions
-    response.set_cookie('curpage', '/maps', max_age=321, secret='sseeccrreett11')
+    response.set_cookie('curpage', 'maps', max_age=321, secret='sseeccrreett11')
 
     # create directory for maps, if not already present 
     if not os.path.isdir(megatech.map_dir):
@@ -352,6 +389,7 @@ def do_upload_map():
           os.mkdir(megatech.map_dir)
 
         # uploading file to astech directory
+        map_file.filename = 'astech_' + map_file.filename
         map_file.save(megatech.map_dir, overwrite=True)
         filestats = os.stat(megatech.map_dir + map_file.filename)
         response.delete_cookie('wrongboard')
@@ -538,6 +576,7 @@ def do_upload_units():
           os.mkdir(megatech.unit_dir)
 
         # uploading file to astech directory
+        unit_file.filename = 'astech_' + unit_file.filename
         unit_file.save(megatech.unit_dir, overwrite=True)
         filestats = os.stat(megatech.unit_dir + unit_file.filename)
         response.delete_cookie('wrongunit')

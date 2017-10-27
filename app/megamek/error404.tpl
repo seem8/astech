@@ -9,4 +9,5 @@ by the right of 404 ritual.</b>
 
 <p>Game Over. <a href="/">Try again.</a></p>
 
+% # contant information and closing html tags
 % include('footer')

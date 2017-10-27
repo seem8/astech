@@ -1,5 +1,6 @@
 % include('header', title='Saved games - Astech: easier  MegaMek administration')
 
+% # tutorial messages in veteran cookie is absent
 % if not veteran:
 <table bgcolor='dddddd'>
   <tr width=500px>
@@ -19,9 +20,12 @@
     <td width=250px valign="TOP">
       <b>Upload save:</b><br /><font size="-1">Only files with .gz extension are accepted.</font></td>
     <td width=250px valign="TOP">
+      % # saves upload form
       <form action="/saves" method="post" enctype="multipart/form-data">
         <input type="file" name="saved_game" /><br />
         <input type="submit" value="Upload" />
+        % # wrongsave, bigsave and nosave are cookies set when
+        % # file doesn't met certain conditions
         % if wrongsave:
           <br /><font size="-1" color="red">Choose file with .gz extension.</font>
         % end
@@ -36,6 +40,7 @@
 </table>
 <p>&nbsp;</p>
 
+% # tutorial messages in veteran cookie is absent
 % if not veteran:
 <table bgcolor='dddddd'>
   <tr width=800px>
@@ -56,6 +61,7 @@
     <td width=40px></td>
     <td width=720px><b>Here are your saves:</b></td>
   </tr>
+  # % savegames is a list with all filenames from the saves directory
   % for save in savegames:
     <tr width=800px>
       <td width=40px><a href="remove/savegame/{{save}}"><img src="image/delete.png"></a></td>
@@ -65,4 +71,5 @@
   % end
 </table>
 
+% # contant information and closing html tags
 % include('footer')

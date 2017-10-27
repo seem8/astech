@@ -19,11 +19,14 @@
 </form>
 </p>
 
+% # comment those two lines on production
 <p>Default login: <i>somelogin</i>,
 default password: <i>somepassword</i></p>
 
+% # badpass is a cookie set when wrong login and/or password were submitted
 % if badPass:
   <p><font size = '-1' color="red">Wrong login, or password.</font></p>
 % end
 
+% # contant information and closing html tags
 % include('footer')

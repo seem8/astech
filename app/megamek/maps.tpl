@@ -1,5 +1,6 @@
 % include('header', title='Map files - Astech: easier MegaMek administration')
 
+% # tutorial messages in veteran cookie is absent
 % if not veteran:
 <table bgcolor='dddddd'>
   <tr width=500px>
@@ -19,9 +20,12 @@
     <td width=250px valign="TOP">
       <b>Upload map:</b><br /><font size="-1">Only files with .board extension are allowed.</font></td>
     <td width=250px valign="TOP">
+      % # map upload form
       <form action="/maps" method="post" enctype="multipart/form-data">
         <input type="file" name="map_file" /><br />
         <input type="submit" value="Upload" />
+        % # wrongboard, bigboard and noboard are cookies set when
+        % # the file doesn't met certain conditions
         % if wrongboard:
           <br /><font size="-1" color="red">Choose file with .board extension.</font>
         % end
@@ -36,6 +40,7 @@
 </table>
 <p>&nbsp;</p>
 
+% # tutorial messages in veteran cookie is absent
 % if not veteran:
 <table bgcolor='dddddd'>
   <tr width=800px>
@@ -56,6 +61,7 @@
     <td width=40px></td>
     <td width=720px><b>Here are your maps:</b></td>
   </tr>
+  % # mapfiles is a list of all filenames from the maps directory
   % for map in mapfiles:
     <tr width=800px>
       <td width=40px><a href="remove/map/{{map}}"><img src="image/delete.png"></a></td>
@@ -65,4 +71,5 @@
   % end
 </table>
 
+% # contant information and closing html tags
 % include('footer')
