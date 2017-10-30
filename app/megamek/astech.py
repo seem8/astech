@@ -54,7 +54,8 @@ def stringTime():
 
 # login and password;
 # password encryption is nice,
-# but useless without https
+# but useless without https;
+# defaults are 'somelogin' and 'somepassword'
 def crede(l, p):
   word = 'a1d292f556aa661b720847487960860f17086a0bd11a4320368e9447ff7139de089aa88b6159420814f10194f1aa55a3379fb80ea26ba6397ba75cec811b241a'
   if l == 'somelogin':
@@ -304,7 +305,8 @@ def setMekPassword():
       megatech.password = False
       redirect('/')
     else:
-      # if mekpassword is not alpha, don't parse it
+      # if mekpassword is not alpha, don't parse it;
+      # will display warning message about using nonlatin characters, see administrator.tpl
       response.set_cookie('noalpha', 'noalpha', max_age=21, secret='sseeccrreett22')
       game_pass = False
       megatech.password = False

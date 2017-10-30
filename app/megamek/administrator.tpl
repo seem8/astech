@@ -1,5 +1,6 @@
 % include('header', title='Server status - Astech: easier Megamek administration')
 
+% # tutorial messages
 % if not veteran:
 <table bgcolor='dddddd'>
   <tr width=750px>
@@ -17,10 +18,10 @@
       - port number for MegaMek server.</font>
     </td>
     <td width=250px valign="TOP">
-      <font size="-1">Optional password for changing game options. Use this if you don't know, or trust, your players. Astech accepts only latin characters (A-Z, a-z) at the moment.</font>
+      <font size="-1">Optional password for changing game options. Astech accepts only latin characters (A-Z, a-z) at the moment. To remove a password, set an empty one. You have to restart the server after changing password.</font>
     </td>
     <td width=250px valign="TOP">
-      <font size="-1">Here you can turn on/off your MegaMek server.</font>
+      <font size="-1">Here you can turn on/off your MegaMek server. Astech can detect a crash of MegaMek and will display "OFF" button.</font>
     </td>
   </tr>
 </table>
@@ -33,12 +34,14 @@
     <td width=250px><b>Master switch</b></td>
   <tr width=750opx>
     <td width=250px valign="TOP">
+        % # variables from MegaTech class
         name: {{mtname}}<br />
         version: {{mtver}}<br />
         address: {{mtdomain}}<br />
         port: {{mtport}}
       </td>
       <td width=250px valign="TOP">
+        % # setting password for changing game options
         <form action="/" method="post">
           % if mtpassword:
             <input name="mekpassword" type="text" value="{{mtpassword}}" /><br />
@@ -50,6 +53,7 @@
           <input value="Set" type="submit" />
         </form>
         % if noalpha:
+          % # noalpha is a cookie set after trying to use nonlatin characters as a password
           <br /><font size="-1" color="red">Please use only latin characters as password.</font>
         % end
       </td>
@@ -66,6 +70,7 @@
 
 <p>&nbsp;</p>
 
+% # more tutorial messages
 % if not veteran:
 <table bgcolor='dddddd'>
   <tr width=700px>
@@ -87,6 +92,7 @@
       <p><b>Megamek server log</b> (newest first):</p>
     <td>
   </tr>
+  % # megameklog.txt file in reverser order
   % for i in getLogFile:
     <tr>
       <td width=700px>{{i}}</td>
