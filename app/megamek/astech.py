@@ -35,6 +35,11 @@ import hashlib
 # megamek log files into lists
 def getFile(filename):
   '''filename -> reversed list of last 81 lines'''
+  try:
+    # log file doesn't exist by default in MegaMek
+    open(filename,'r').close()
+  except FileNotFoundError:
+    open(filename,'w').close()
   with open(filename,'r') as myfile:
     mylines = myfile.readlines()
     # we need just 81 last lines

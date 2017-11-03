@@ -21,7 +21,7 @@ I'll have to create nginx and apache configuration files.
 
 
 * Encrypted password.
-Yes.
+Yes. DONE
 
 
 * Use SQLite for static files and game info.
@@ -33,7 +33,7 @@ be more secure to place those files in the database and not to scan directories.
 * Remove MegaMek "fork" from Astech.
 Astech uses it's own - unmodified - MegaMek 0.43.2. I'll figure out how to
 easly download (and maybe update) MegaMek by the user.
-
+WORK IN PROGRESS
 
 * Improve GitHub wiki.
 A little more documentation woudn't hurt. 
@@ -42,4 +42,5 @@ A little more documentation woudn't hurt.
 * Create docker image.
 Secure installation is a time consuming process: create user, scp all files,
 untar, copy service file, open firewall ports, etc... Docker could handle that.
+DOCKER WILL BE DIFFICULT, BUT INSTALLATION GOT EASIER LATELY
 
