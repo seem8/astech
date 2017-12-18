@@ -61,7 +61,7 @@
     <td width=40px></td>
     <td width=720px><b>Here are your saves:</b></td>
   </tr>
-  # % savegames is a list with all filenames from the saves directory
+  % # savegames is a list with all filenames from the saves directory
   % for save in savegames:
     <tr width=800px>
       <td width=40px><a href="remove/savegame/{{save}}"><img src="image/delete.png"></a></td>
