@@ -59,10 +59,10 @@
       </td>
       <td width=250px valign="TOP">
         % if not mtison:
-          <a href="mmturnon"><img src="image/server_off.png"></a>
+          <a href="/mmturnon"><img src="/image/server_off.png"></a>
         % end
         % if mtison:
-          <a href="mmturnoff"><img src="image/server_on.png"></a>
+          <a href="/mmturnoff"><img src="/image/server_on.png"></a>
         % end
       </td>
     </tr>

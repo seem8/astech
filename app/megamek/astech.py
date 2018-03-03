@@ -10,6 +10,9 @@ import subprocess
 # sleep may help with subprocess,
 from time import sleep
 
+# pickle is for the config file
+import pickle
+
 # import bottle
 # remember to delete debug for production
 from bottle import template, response, request, get, post, error, \
@@ -27,12 +30,32 @@ import time
 # and comparing with a bytestring
 import hashlib
 
+# for a randomish signed cookies
+import random
+random.seed()
 
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
 # ----------------------------------------
 
-# megamek log files into lists
+# secrets for signed cookies
+#def secret_cookie():
+#  sign = ''
+#  for i in range(random.randint(31,39)):
+#    sign += random.choice(['q','w','e','r','t','y','u','i','o','p',\
+#                           'a','s','d','f','g','h','j','k','l',\
+#                           'z','x','c','v','b','n','m',\
+#                           '1','2','3','4','5','6','7','8','9','0'])
+#  return sign
+
+# we need two separate secrets:
+# 1: for cookies with ~1 day expiration time,
+# 2: for 5 second cookies to display warnings on templates
+secret1 = 'gn39nBFUnfi38nooPP' 
+secret2 = 'jfc21012naxlibNYhdds'
+
+
+# convert megamek log files into lists
 def getFile(filename):
   '''filename -> reversed list of last 81 lines'''
   try:
@@ -47,6 +70,22 @@ def getFile(filename):
     lastlog.reverse()
     return lastlog
 
+# parse Astech config file
+def getConfig():
+  try:
+    confile = open('astech.conf', 'r+b')
+  except(FileNotFoundError):
+    print('------ Config file astech.conf not found. ------')
+  return pickle.load(confile)
+
+# write Astech config file
+def writeConfig():
+  try:
+    confile = open('astech.conf', 'w+b')
+  except(FileNotFoundError):
+    print('------ Config file astech.conf not found. ------')
+  astech_cf = { 'name': megatech.name, 'version': megatech.version }
+  pickle.dump(astech_cf, confile, protocol=0)
 
 # get a string from localtime
 def stringTime():
@@ -157,7 +196,7 @@ def image(filename):
 @route('/download/<filetype>/<filename>')
 def downloadfile(filetype, filename):
   # check if we are logged in before download, to prevent link guessing
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   if username:
     # filetype define directory with files to download
     if filetype == 'map':
@@ -182,7 +221,7 @@ def downloadfile(filetype, filename):
 @route('/remove/<filetype>/<filename>')
 def removefile(filetype, filename):
   # check if we are logged in before download, to prevent link guessing
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   if username:
     # filetype define directory with files to delete 
     if filetype == 'map':
@@ -200,7 +239,7 @@ def removefile(filetype, filename):
       os.remove(rootdir + filename)
       # os.remove is displaying blank page, so we have to
       # quickly return to maps, saves, or units page
-      redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
+      redirect(request.get_cookie('curpage', secret=secret1))
     except FileNotFoundError:
       redirect('/404page')
 
@@ -217,9 +256,9 @@ def removefile(filetype, filename):
 @get('/login')
 def login():
   # username variable is required for header template
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   # cookie with information about bad password
-  bad_password = request.get_cookie('badPassword', secret='sseeccrreett22')
+  bad_password = request.get_cookie('badPassword', secret=secret2)
   return template('login', badPass=bad_password, \
                            username=username )
 # ----------------------------------------
@@ -236,17 +275,17 @@ def check_login():
     if crede(username, password):
       # good password
       # signed cookie for a period of time in seconds (about a day)
-      response.set_cookie('administrator', username, max_age=87654, secret='sseeccrreett11')
+      response.set_cookie('administrator', username, max_age=87654, secret=secret1)
       response.delete_cookie('badPassword')
       redirect('/')
     elif not crede(username, password):
       # bad password
-      response.set_cookie('badPassword', 'nopass', max_age=21, secret='sseeccrreett22')
+      response.set_cookie('badPassword', 'nopass', max_age=5, secret=secret2)
       redirect('/login')
   else:
     # if login and/or password are not alpha, don't parse them
     # and redirect to login (just to be safe)
-    response.set_cookie('badPassword', 'nopass', max_age=21, secret='sseeccrreett22')
+    response.set_cookie('badPassword', 'nopass', max_age=5, secret=secret2)
     redirect('/login')
 # ----------------------------------------
 
@@ -259,15 +298,15 @@ def check_login():
 @get('/')
 def administrator():
   # check if we are logged in
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   # check if game password are latin characters only
-  noalpha = request.get_cookie('noalpha', secret='sseeccrreett22')
+  noalpha = request.get_cookie('noalpha', secret=secret2)
 
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+  veteran = request.get_cookie('veteran', secret=secret1)
 
   # current page for become_veteran and become_rookie functions
-  response.set_cookie('curpage', '/', max_age=1234, secret='sseeccrreett11')
+  response.set_cookie('curpage', '/', max_age=321, secret=secret1)
 
   if username:
     # password and login cookie are checked by now
@@ -297,13 +336,14 @@ def administrator():
 # main route - setting server password via html form
 @post('/')
 def setMekPassword():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   
   if username:
     game_pass = request.forms.get('mekpassword')
     # check if password isn't something like '/mmstop'
     if game_pass.isalpha():
       megatech.password = game_pass
+      #response.set_cookie('passet', 'passet', max_age=5, secret=secret2)
       redirect('/')
     elif game_pass == '':
       # empty password is no password
@@ -312,7 +352,7 @@ def setMekPassword():
     else:
       # if mekpassword is not alpha, don't parse it;
       # will display warning message about using nonlatin characters, see administrator.tpl
-      response.set_cookie('noalpha', 'noalpha', max_age=21, secret='sseeccrreett22')
+      response.set_cookie('noalpha', 'noalpha', max_age=5, secret=secret2)
       game_pass = False
       megatech.password = False
       redirect('/')
@@ -333,19 +373,19 @@ def setMekPassword():
 # map files upload form
 @get('/maps')
 def upload_map():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
 
   # cookies set when uploaded file is wrong
   # wrong extension
-  wrongboard = request.get_cookie('wrongboard', secret='sseeccrreett22')
+  wrongboard = request.get_cookie('wrongboard', secret=secret2)
   # over 1.5M size
-  bigboard = request.get_cookie('bigboard', secret='sseeccrreett22')
+  bigboard = request.get_cookie('bigboard', secret=secret2)
   # no file selected
-  noboard = request.get_cookie('noboard', secret='sseeccrreett22')
+  noboard = request.get_cookie('noboard', secret=secret2)
   
   if username:
     # current page for become_veteran and become_rookie functions
-    response.set_cookie('curpage', 'maps', max_age=321, secret='sseeccrreett11')
+    response.set_cookie('curpage', '/maps', max_age=321, secret=secret1)
 
     # create directory for maps, if not already present 
     if not os.path.isdir(megatech.map_dir):
@@ -356,7 +396,7 @@ def upload_map():
     mapfiles.sort()
 
     # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+    veteran = request.get_cookie('veteran', secret=secret1)
 
     # render web page with template
     return template('maps', username=username, \
@@ -373,7 +413,7 @@ def upload_map():
 # checking and uploading files to ./data/maps/astech dir
 @post('/maps')
 def do_upload_map():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   if username:
     map_file = request.files.get('map_file')
     try:
@@ -382,21 +422,20 @@ def do_upload_map():
     except AttributeError:
       # in the case when no file is choosen;
       # page template will show error message with this cookie
-      response.set_cookie('noboard', 'noboard', max_age=21, secret='sseeccrreett22')
+      response.set_cookie('noboard', 'noboard', max_age=5, secret=secret2)
       goodboard = False
 
     if goodboard:
       response.delete_cookie('noboard')
       if ext not in ('.board'):
         # page template will show error message with this cookie
-        response.set_cookie('wrongboard', 'wrongboard', max_age=21, secret='sseeccrreett22')
+        response.set_cookie('wrongboard', 'wrongboard', max_age=5, secret=secret2)
       else:
         # create directory for maps, if not already present 
         if not os.path.isdir(megatech.map_dir):
           os.mkdir(megatech.map_dir)
 
         # uploading file to astech directory
-        map_file.filename = 'astech_' + map_file.filename
         map_file.save(megatech.map_dir, overwrite=True)
         filestats = os.stat(megatech.map_dir + map_file.filename)
         response.delete_cookie('wrongboard')
@@ -404,7 +443,7 @@ def do_upload_map():
         # checking filesize and, if bigger than 1.5M, delete file
         if filestats.st_size > 1500000:
           # page template will show error message with this cookie
-          response.set_cookie('bigboard', 'bigboard', max_age=21, secret='sseeccrreett22')
+          response.set_cookie('bigboard', 'bigboard', max_age=5, secret=secret2)
           os.remove(megatech.map_dir + map_file.filename)
         elif filestats.st_size <= 1500000:
          response.delete_cookie('bigboard')
@@ -424,19 +463,19 @@ def do_upload_map():
 # savegame upload form
 @get('/saves')
 def upload_save():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   
   # cookies set when uploaded file is wrong
   # wrong extension
-  wrongsave = request.get_cookie('wrongsave', secret='sseeccrreett22')
+  wrongsave = request.get_cookie('wrongsave', secret=secret2)
   # file over 1M size
-  bigsave = request.get_cookie('bigsave', secret='sseeccrreett22')
+  bigsave = request.get_cookie('bigsave', secret=secret2)
   # no file selected
-  nosave = request.get_cookie('nosave', secret='sseeccrreett22')
+  nosave = request.get_cookie('nosave', secret=secret2)
 
   if username:
     # current page for become_veteran and become_rookie functions
-    response.set_cookie('curpage', '/saves', max_age=321, secret='sseeccrreett11')
+    response.set_cookie('curpage', '/saves', max_age=321, secret=secret1)
 
     # create directory for saves if not already present 
     if not os.path.isdir(megatech.save_dir):
@@ -448,7 +487,7 @@ def upload_save():
     savegames.sort()
   
     # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+    veteran = request.get_cookie('veteran', secret=secret1)
 
     # render web page with template
     return template('saves', username=username, \
@@ -465,7 +504,7 @@ def upload_save():
 # checking and uploading files to savegames dir
 @post('/saves')
 def do_upload_save():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   if username:
     save_file = request.files.get('saved_game')
 
@@ -475,14 +514,14 @@ def do_upload_save():
     except AttributeError:
       # in the case when no file is choosen;
       # page template will show error message with this cookie
-      response.set_cookie('nosave', 'nosave', max_age=21, secret='sseeccrreett22')
+      response.set_cookie('nosave', 'nosave', max_age=5, secret=secret2)
       goodsave = False
 
     if goodsave:
       response.delete_cookie('nosave')
       if ext not in ('.gz'):
         # page template will show error message with this cookie
-        response.set_cookie('wrongsave', 'save', max_age=21, secret='sseeccrreett22')
+        response.set_cookie('wrongsave', 'save', max_age=5, secret=secret2)
       else:
         # create directory for saves if not already present 
         if not os.path.isdir(megatech.save_dir):
@@ -499,7 +538,7 @@ def do_upload_save():
         # checking filesize and, if bigger than 1M, delete file
         if filestats.st_size > 1000000:
           # page template will show error message with this cookie
-          response.set_cookie('bigsave', 'bigsave', max_age=21, secret='sseeccrreett22')
+          response.set_cookie('bigsave', 'bigsave', max_age=5, secret=secret2)
           os.remove(megatech.save_dir + save_file.filename)
         elif filestats.st_size <= 1000000:
          response.delete_cookie('bigsave')
@@ -518,20 +557,20 @@ def do_upload_save():
 # listing custom units and upload form handling
 @get('/units')
 def upload_units():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   
   # cookies set when uploaded file is wrong
   # wrong extension
-  wrongunit = request.get_cookie('wrongunit', secret='sseeccrreett22')
+  wrongunit = request.get_cookie('wrongunit', secret=secret2)
   # file over 1M size
-  bigunit = request.get_cookie('bigunit', secret='sseeccrreett22')
+  bigunit = request.get_cookie('bigunit', secret=secret2)
   # no file selected
-  nounit = request.get_cookie('nounit', secret='sseeccrreett22')
+  nounit = request.get_cookie('nounit', secret=secret2)
 
   
   if username:
     # current page for become_veteran and become_rookie functions
-    response.set_cookie('curpage', '/units', max_age=321, secret='sseeccrreett11')
+    response.set_cookie('curpage', '/units', max_age=321, secret=secret1)
 
     # create directory for units if not already present 
     if not os.path.isdir(megatech.unit_dir):
@@ -542,7 +581,7 @@ def upload_units():
     unitfiles.sort()
 
     # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+    veteran = request.get_cookie('veteran', secret=secret1)
 
     # render web page with template
     return template('units', username=username, \
@@ -559,7 +598,7 @@ def upload_units():
 # uploading and checking custom units files
 @post('/units')
 def do_upload_units():
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
   if username:
     unit_file = request.files.get('unit_file')
 
@@ -569,21 +608,20 @@ def do_upload_units():
     except AttributeError:
       # in the case when no file is choosen;
       # page template will show error message with this cookie
-      response.set_cookie('nounit', 'nounit', max_age=21, secret='sseeccrreett22')
+      response.set_cookie('nounit', 'nounit', max_age=5, secret=secret2)
       goodunit = False
 
     if goodunit:
       response.delete_cookie('nounit')
       if ext not in ('.mtf'):
         # page template will show error message with this cookie
-        response.set_cookie('wrongunit', 'wrongunit', max_age=21, secret='sseeccrreett22')
+        response.set_cookie('wrongunit', 'wrongunit', max_age=5, secret=secret2)
       else:
         # create directory for units if not already present 
         if not os.path.isdir(megatech.unit_dir):
           os.mkdir(megatech.unit_dir)
 
         # uploading file to astech directory
-        unit_file.filename = 'astech_' + unit_file.filename
         unit_file.save(megatech.unit_dir, overwrite=True)
         filestats = os.stat(megatech.unit_dir + unit_file.filename)
         response.delete_cookie('wrongunit')
@@ -591,7 +629,7 @@ def do_upload_units():
         # checking filesize and, if bigger than 1M, delete file
         if filestats.st_size > 1000000:
           # page template will show error message with this cookie
-          response.set_cookie('bigunit', 'bigunit', max_age=21, secret='sseeccrreett22')
+          response.set_cookie('bigunit', 'bigunit', max_age=5, secret=secret2)
           os.remove(megatech.unit_dir + unit_file.filename)
 
     sleep(1)
@@ -607,7 +645,7 @@ def do_upload_units():
 # turn on MegaMek server via MegaTech class
 @route('/mmturnon')
 def mmturnon():
-  if request.get_cookie('administrator', secret='sseeccrreett11'):
+  if request.get_cookie('administrator', secret=secret1):
     megatech.start()
   redirect('/')
 # ----------------------------------------
@@ -616,7 +654,7 @@ def mmturnon():
 # turn off MegaMek server via MegaTech class
 @route('/mmturnoff')
 def mmturnoff():
-  if request.get_cookie('administrator', secret='sseeccrreett11'):
+  if request.get_cookie('administrator', secret=secret1):
     megatech.stop()
   redirect('/')
 # ----------------------------------------
@@ -633,35 +671,35 @@ def logoff():
 # set vetran cookie to hide tutorial messages
 @route('/veteran')
 def become_veteran():
-  if request.get_cookie('administrator', secret='sseeccrreett11'):
-    response.set_cookie('veteran', 'veteran', secret='sseeccrreett11')
+  if request.get_cookie('administrator', secret=secret1):
+    response.set_cookie('veteran', 'veteran', secret=secret1)
   # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
+  redirect(request.get_cookie('curpage', secret=secret1))
 # ----------------------------------------
 
 
 # delete veteran cookie to show tutorial messages 
 @route('/green')
 def become_green():
-  if request.get_cookie('administrator', secret='sseeccrreett11'):
+  if request.get_cookie('administrator', secret=secret1):
     response.delete_cookie('veteran')
   # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret='sseeccrreett11'))
+  redirect(request.get_cookie('curpage', secret=secret1))
 # ----------------------------------------
 
 
 # 404 error page
 @error(404)
 def route404(error):
-  username = request.get_cookie('administrator', secret='sseeccrreett11')
+  username = request.get_cookie('administrator', secret=secret1)
 
   if username:
     # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret='sseeccrreett11')
+    veteran = request.get_cookie('veteran', secret=secret1)
 
-    response.set_cookie('curpage', '404', max_age=1234, secret='sseeccrreett11')
+    response.set_cookie('curpage', '404', max_age=1234, secret=secret1)
   
-    username = request.get_cookie('administrator', secret='sseeccrreett11')
+    username = request.get_cookie('administrator', secret=secret1)
     return template('error404', username=username, \
                                 veteran=veteran)
   elif not username:

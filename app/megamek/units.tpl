@@ -64,8 +64,8 @@
   % for unit in unitfiles:
   % # unitfiles is a list with all filenames from the unit directory
     <tr width=800px>
-      <td width=40px><a href="remove/unit/{{unit}}"><img src="image/delete.png"></a></td>
-      <td width=40px><a href="download/unit/{{unit}}"><img src="image/download.png"></a></td>
+      <td width=40px><a href="/remove/unit/{{unit}}"><img src="/image/delete.png"></a></td>
+      <td width=40px><a href="/download/unit/{{unit}}"><img src="/image/download.png"></a></td>
       <td width=720px>{{unit}}</td>
     </tr>
   % end
