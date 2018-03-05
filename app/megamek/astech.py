@@ -30,30 +30,9 @@ import time
 # and comparing with a bytestring
 import hashlib
 
-# for a randomish signed cookies
-import random
-random.seed()
-
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
 # ----------------------------------------
-
-# secrets for signed cookies
-#def secret_cookie():
-#  sign = ''
-#  for i in range(random.randint(31,39)):
-#    sign += random.choice(['q','w','e','r','t','y','u','i','o','p',\
-#                           'a','s','d','f','g','h','j','k','l',\
-#                           'z','x','c','v','b','n','m',\
-#                           '1','2','3','4','5','6','7','8','9','0'])
-#  return sign
-
-# we need two separate secrets:
-# 1: for cookies with ~1 day expiration time,
-# 2: for 5 second cookies to display warnings on templates
-secret1 = 'gn39nBFUnfi38nooPP' 
-secret2 = 'jfc21012naxlibNYhdds'
-
 
 # convert megamek log files into lists
 def getFile(filename):
@@ -70,22 +49,31 @@ def getFile(filename):
     lastlog.reverse()
     return lastlog
 
+
 # parse Astech config file
 def getConfig():
+  '''returns dictionary from pickled astech config'''
   try:
     confile = open('astech.conf', 'r+b')
+    # I really want to close that file
+    asconfig = pickle.load(confile)
+    confile.close()
+    return asconfig
   except(FileNotFoundError):
     print('------ Config file astech.conf not found. ------')
-  return pickle.load(confile)
+
 
 # write Astech config file
 def writeConfig():
+  '''pickles astech config into astech.conf file'''
   try:
     confile = open('astech.conf', 'w+b')
+    astech_cf = { 'name': megatech.name, 'version': megatech.version }
+    pickle.dump(astech_cf, confile, protocol=0)
+    confile.close()
   except(FileNotFoundError):
     print('------ Config file astech.conf not found. ------')
-  astech_cf = { 'name': megatech.name, 'version': megatech.version }
-  pickle.dump(astech_cf, confile, protocol=0)
+
 
 # get a string from localtime
 def stringTime():
@@ -101,6 +89,8 @@ def stringTime():
 # but useless without https;
 # defaults are 'somelogin' and 'somepassword'
 def crede(l, p):
+  '''check credentials'''
+  # word is sha512 checksum of a password
   word = 'a1d292f556aa661b720847487960860f17086a0bd11a4320368e9447ff7139de089aa88b6159420814f10194f1aa55a3379fb80ea26ba6397ba75cec811b241a'
   if l == 'somelogin':
     if hashlib.sha512(p.encode()).hexdigest() == word:
@@ -110,6 +100,16 @@ def crede(l, p):
   else:
     return False
 
+
+# we need two separate secrets:
+# 1: for cookies with ~1 day expiration time,
+# 2: for 5 second cookies to display warnings on templates
+secret1 = 'gn39nBFUnfi38nooPP' 
+secret2 = 'jfc21012naxlibNYhdds'
+
+
+# get current config file
+asconf = getConfig()
 
 # ----------------------------------------
 # ------- MAIN LOGIC ---------------------
@@ -121,13 +121,13 @@ class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self, name, version, port):
     self.name = name                      # name of the instance 
-    self.ison = False                     # megamek is off by default 
-    self.process = False                  # to check if MegaMek is running
     self.version = version                # megamek version
     self.port = port                      # port for megamek server
+    self.ison = False                     # megamek is off by default 
+    self.process = False                  # to check if MegaMek is running
     self.domain = 'some.server.com'       # nice site name
     self.password = False                 # optional password to change game options 
-    self.install_dir = './mm_' + self.name                         # megamek directory
+    self.install_dir = 'megamek-' + self.version                   # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
     self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
@@ -174,10 +174,10 @@ class MegaTech:
     if self.ison == True:
       self.process.kill()
       self.ison = False
-  
-megatech = MegaTech('devel', '0.43.2', 2346)
-# ----------------------------------------
 
+# Megatech requires: name, version, port number)
+megatech = MegaTech(asconf['name'], asconf['version'], asconf['port'])
+# ----------------------------------------
 
 # below is bottle.py related stuff, mainly routes for web browser
 
