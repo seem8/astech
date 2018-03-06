@@ -658,7 +658,7 @@ def options():
   
     username = request.get_cookie('administrator', secret=secret1)
     return template('options', username=username, \
-                                veteran=veteran)
+                               veteran=veteran)
 
 
 # Little routes that call functions.
