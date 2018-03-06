@@ -20,11 +20,5 @@
 % end
 
 % # main menu
-% if username:
-  % if not veteran:
-    <p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/veteran">hide tutorial</a> | <a href="/logout">log out</a><br />&nbsp;</p>
-  % end
-% if veteran:
-    <p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/green">show tutorial</a> | <a href="/logout">log out</a><br />&nbsp;</p>
-  % end
-% end
+<p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/options">options</a> | <a href="/logout">log out</a><br />&nbsp;</p>
+

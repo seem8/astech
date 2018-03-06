@@ -68,7 +68,9 @@ def writeConfig():
   '''pickles astech config into astech.conf file'''
   try:
     confile = open('astech.conf', 'w+b')
-    astech_cf = { 'name': megatech.name, 'version': megatech.version }
+    astech_cf = { 'name': megatech.name, \
+                  'version': megatech.version, \
+                  'port': megatech.port }
     pickle.dump(astech_cf, confile, protocol=0)
     confile.close()
   except(FileNotFoundError):
@@ -174,6 +176,7 @@ class MegaTech:
     if self.ison == True:
       self.process.kill()
       self.ison = False
+
 
 # Megatech requires: name, version, port number)
 megatech = MegaTech(asconf['name'], asconf['version'], asconf['port'])
@@ -638,6 +641,24 @@ def do_upload_units():
   elif not username:
     redirect('/login')
 # ----------------------------------------
+
+# ----------------------------------------
+# ----------- OPTIONS PAGE ---------------
+# ----------------------------------------
+
+@get('/options')
+def options():
+  username = request.get_cookie('administrator', secret=secret1)
+
+  if username:
+    # checks if help messages will be displayed
+    veteran = request.get_cookie('veteran', secret=secret1)
+
+    response.set_cookie('curpage', '/options', max_age=1234, secret=secret1)
+  
+    username = request.get_cookie('administrator', secret=secret1)
+    return template('options', username=username, \
+                                veteran=veteran)
 
 
 # Little routes that call functions.
