@@ -19,9 +19,7 @@ from bottle import template, response, request, get, post, error, \
                    redirect, static_file, run, route, debug
 
 # file uploading and listing directories
-# I'll try to use pathlib.Path over os.path, when possible.
 import os
-# from pathlib import Path
 
 # we have to append date to filenames 
 import time 
@@ -92,10 +90,8 @@ def stringTime():
 # defaults are 'somelogin' and 'somepassword'
 def crede(l, p):
   '''check credentials'''
-  # word is sha512 checksum of a password
-  word = 'a1d292f556aa661b720847487960860f17086a0bd11a4320368e9447ff7139de089aa88b6159420814f10194f1aa55a3379fb80ea26ba6397ba75cec811b241a'
-  if l == 'somelogin':
-    if hashlib.sha512(p.encode()).hexdigest() == word:
+  if l == asconf['user']:
+    if hashlib.sha512(p.encode()).hexdigest() == asconf['pass']:
       return True
     else:
       return False
@@ -103,14 +99,17 @@ def crede(l, p):
     return False
 
 
+# ----------------------------------------
+# ------- SOME USEFULL VARIABLES ---------
+# ----------------------------------------
+
 # we need two separate secrets:
 # 1: for cookies with ~1 day expiration time,
 # 2: for 5 second cookies to display warnings on templates
 secret1 = 'gn39nBFUnfi38nooPP' 
 secret2 = 'jfc21012naxlibNYhdds'
 
-
-# get current config file
+# get current config file as a dictionary
 asconf = getConfig()
 
 # ----------------------------------------
@@ -152,7 +151,7 @@ class MegaTech:
                      str(self.port)
     
     # start MegaMek dedicated server with parameters and in it's working directory
-    self.process = subprocess.Popen(self.command.split(), cwd='./mm_'+self.name) 
+    self.process = subprocess.Popen(self.command.split(), cwd=self.install_dir) 
     
     # TODO testing parameters to load save games - not ready yet
     # dedicated servers parameters are as follows:

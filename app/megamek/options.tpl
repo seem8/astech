@@ -15,13 +15,22 @@
 </table>
 % end
 
-% if veteran:
-<p><a href="/green">enable tutorial</a></p>
-% end
+<table>
+  <tr width=200px>
+    <td width=100px>
+      &nbsp;<br><b>Tutorial:<br>&nbsp;</b>
+    </tdi>
+    <td width=100px>
+    % if veteran:
+      <a href="/green">enable</a>
+    % end
 
-% if not veteran:
-<p><a href="/veteran">disable tutorial</a></p>
-% end
+    % if not veteran:
+      <a href="/veteran">disable</a>
+    % end
+    </td>
+  </tr>
+</table>
 
 <table>
   <tr width=800px>
