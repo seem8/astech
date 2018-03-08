@@ -62,14 +62,21 @@
     <td width=720px><b>Here are your maps:</b></td>
   </tr>
   % # mapfiles is a list of all filenames from the maps directory
-  % for map in mapfiles:
-    <tr width=800px>
-      <td width=40px><a href="/remove/map/{{map}}"><img src="/image/delete.png"></a></td>
-      <td width=40px><a href="/download/map/{{map}}"><img src="/image/download.png"></a></td>
-      <td width=720px>{{map}}</td>
-    </tr>
+  % if len(mapfiles) > 0:
+    % for map in mapfiles:
+      <tr width=800px>
+        <td width=40px><a href="/remove/map/{{map}}"><img src="/image/delete.png"></a></td>
+        <td width=40px><a href="/download/map/{{map}}"><img src="/image/download.png"></a></td>
+        <td width=720px>{{map}}</td>
+      </tr>
+    % end
+  </table>
   % end
-</table>
+  
+  % if len(mapfiles) == 0:
+    </table>
+    <p>You have no custom maps yet.</p>
+  % end
 
 % # contant information and closing html tags
 % include('footer')

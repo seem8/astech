@@ -122,18 +122,24 @@ asconf = getConfig()
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self, name, version, port):
+    # first three are stored in astech.config file
     self.name = name                      # name of the instance 
     self.version = version                # megamek version
     self.port = port                      # port for megamek server
+
     self.ison = False                     # megamek is off by default 
     self.process = False                  # to check if MegaMek is running
     self.domain = 'some.server.com'       # nice site name
     self.password = False                 # optional password to change game options 
+
+    # "shortcuts" for various used directories
     self.install_dir = 'megamek-' + self.version                   # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
     self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
     self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
+
+    self.meks_dir = 'meks/'                # avaiable versions of Megamek
 
   def start(self):
     '''starts MegaMek server'''
@@ -646,7 +652,7 @@ def do_upload_units():
 # ----------- OPTIONS PAGE ---------------
 # ----------------------------------------
 
-@get('/options')
+@route('/options')
 def options():
   username = request.get_cookie('administrator', secret=secret1)
 
@@ -657,10 +663,19 @@ def options():
     response.set_cookie('curpage', '/options', max_age=1234, secret=secret1)
   
     username = request.get_cookie('administrator', secret=secret1)
+    
+    # list of avaiable MegaMek version
+    versions = os.listdir(megatech.meks_dir)
+    versions.sort()
+   
     return template('options', username=username, \
-                               veteran=veteran)
+                               veteran=veteran, \
+                               versions=versions)
+  
+  elif not username:
+    redirect('/login')
 
-
+# ----------------------------------------
 # Little routes that call functions.
 
 # turn on MegaMek server via MegaTech class
@@ -691,7 +706,7 @@ def logoff():
 
 # set vetran cookie to hide tutorial messages
 @route('/veteran')
-def become_veteran():
+def becomeVeteran():
   if request.get_cookie('administrator', secret=secret1):
     response.set_cookie('veteran', 'veteran', secret=secret1)
   # curpage cookie is storing current page (route)
@@ -701,13 +716,21 @@ def become_veteran():
 
 # delete veteran cookie to show tutorial messages 
 @route('/green')
-def become_green():
+def becomeGreen():
   if request.get_cookie('administrator', secret=secret1):
     response.delete_cookie('veteran')
   # curpage cookie is storing current page (route)
   redirect(request.get_cookie('curpage', secret=secret1))
 # ----------------------------------------
 
+# chenge MegaMek version
+@route('/ver/<version>')
+def changeVer(version):
+  '''Changes version info in MegaTech instance
+  and installs version of MegaMek'''
+
+
+# ----------------------------------------
 
 # 404 error page
 @error(404)

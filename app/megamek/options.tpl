@@ -23,5 +23,28 @@
 <p><a href="/veteran">disable tutorial</a></p>
 % end
 
+<table>
+  <tr width=800px>
+    <td width=40px></td>
+    <td width=40px></td>
+    <td width=720px><b>Here are your versions of MegaMek:</b></td>
+  </tr>
+  % # versions is a list of all filenames from the meks directory
+  % if len(versions) > 0:
+    % for ver in versions:
+      <tr width=800px>
+        <td width=40px><a href="/remove/map/{{ver}}"><img src="/image/delete.png"></a></td>
+        <td width=40px><a href="/download/map/{{ver}}"><img src="/image/download.png"></a></td>
+        <td width=720px>{{ver}}</td>
+      </tr>
+    % end
+  </table>
+  % end
+  
+% if len(versions) == 0:
+  </table>
+  <p>You have no custom maps yet.</p>
+% end
+
 % # contact information and closing html tags
 % include('footer')

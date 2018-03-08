@@ -20,5 +20,6 @@
 % end
 
 % # main menu
+% if username:
 <p><a href="/">server status</a> | <a href="/maps">map files</a> | <a href="/saves">saved games</a> | <a href="/units">units</a> | <a href="/options">options</a> | <a href="/logout">log out</a><br />&nbsp;</p>
-
+% end

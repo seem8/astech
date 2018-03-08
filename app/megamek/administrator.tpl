@@ -21,7 +21,7 @@
       <font size="-1">Optional password for changing game options. Astech accepts only latin characters (A-Z, a-z) at the moment. To remove a password, set an empty one. You have to restart the server after changing password.</font>
     </td>
     <td width=250px valign="TOP">
-      <font size="-1">Here you can turn on/off your MegaMek server. Astech can detect a crash of MegaMek and will display "OFF" button.</font>
+      <font size="-1">Here you can turn on/off your MegaMek server. If MegaMek will clash, Astech will display OFF button.</font>
     </td>
   </tr>
 </table>

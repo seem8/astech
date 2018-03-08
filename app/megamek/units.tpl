@@ -61,15 +61,21 @@
     <td width=40px></td>
     <td width=720px><b>Here are your custom units:</b></td>
   </tr>
-  % for unit in unitfiles:
-  % # unitfiles is a list with all filenames from the unit directory
-    <tr width=800px>
-      <td width=40px><a href="/remove/unit/{{unit}}"><img src="/image/delete.png"></a></td>
-      <td width=40px><a href="/download/unit/{{unit}}"><img src="/image/download.png"></a></td>
-      <td width=720px>{{unit}}</td>
-    </tr>
-  % end
+  % if len(unitfiles) > 0:
+    % for unit in unitfiles:
+    % # unitfiles is a list with all filenames from the unit directory
+      <tr width=800px>
+        <td width=40px><a href="/remove/unit/{{unit}}"><img src="/image/delete.png"></a></td>
+        <td width=40px><a href="/download/unit/{{unit}}"><img src="/image/download.png"></a></td>
+        <td width=720px>{{unit}}</td>
+      </tr>
+    % end
 </table>
+% end
 
-% # contant information and closing html tags
+% if len(unitfiles) == 0:
+  </table>
+  <p>You have no custom units yet.</p>
+
+% # contact information and closing html tags
 % include('footer')
