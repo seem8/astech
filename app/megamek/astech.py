@@ -84,13 +84,13 @@ def stringTime():
   return strtime
 
 
-# login and password;
+# user name and password;
 # password encryption is nice,
 # but useless without https;
 # defaults are 'somelogin' and 'somepassword'
-def crede(l, p):
+def crede(u, p):
   '''check credentials'''
-  if l == asconf['user']:
+  if u == asconf['user']:
     if hashlib.sha512(p.encode()).hexdigest() == asconf['pass']:
       return True
     else:
@@ -666,10 +666,14 @@ def options():
     # list of avaiable MegaMek version
     versions = os.listdir(megatech.meks_dir)
     versions.sort()
+
+    # we are checking which version is currently selected
+    selected = 'megamek-' + megatech.version + '.tar.gz'
    
     return template('options', username=username, \
                                veteran=veteran, \
-                               versions=versions)
+                               versions=versions, \
+                               selected=selected)
   
   elif not username:
     redirect('/login')
@@ -727,6 +731,7 @@ def becomeGreen():
 def changeVer(version):
   '''Changes version info in MegaTech instance
   and installs version of MegaMek'''
+  pass
 
 
 # ----------------------------------------
