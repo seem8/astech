@@ -18,7 +18,7 @@
 <table>
   <tr width=200px>
     <td width=100px>
-      &nbsp;<br><b>Tutorial:<br>&nbsp;</b>
+      &nbsp;<br><b>Tutorial:</b><br>&nbsp;
     </tdi>
     <td width=100px>
     % if veteran:

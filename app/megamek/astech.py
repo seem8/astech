@@ -659,7 +659,7 @@ def options():
     # checks if help messages will be displayed
     veteran = request.get_cookie('veteran', secret=secret1)
 
-    response.set_cookie('curpage', '/options', max_age=1234, secret=secret1)
+    response.set_cookie('curpage', '/options', max_age=321, secret=secret1)
   
     username = request.get_cookie('administrator', secret=secret1)
     
