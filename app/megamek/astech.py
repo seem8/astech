@@ -46,34 +46,32 @@ def getFile(filename):
     lastlog = mylines[len(mylines)-81 : len(mylines)]
     lastlog.reverse()
     return lastlog
-
+# ----------------------------------------
 
 # parse Astech config file
 def getConfig():
   '''returns dictionary from pickled astech config'''
-  try:
-    confile = open('astech.conf', 'r+b')
-    # I really want to close that file
-    asconfig = pickle.load(confile)
-    confile.close()
-    return asconfig
-  except(FileNotFoundError):
-    print('------ Config file astech.conf not found. ------')
-
+  confile = open('astech.conf', 'r+b')
+  # I really want to close that file
+  asconfig = pickle.load(confile)
+  confile.close()
+  return asconfig
+# ----------------------------------------
 
 # write Astech config file
 def writeConfig():
   '''pickles astech config into astech.conf file'''
-  try:
-    confile = open('astech.conf', 'w+b')
-    astech_cf = { 'name': megatech.name, \
-                  'version': megatech.version, \
-                  'port': megatech.port }
-    pickle.dump(astech_cf, confile, protocol=0)
-    confile.close()
-  except(FileNotFoundError):
-    print('------ Config file astech.conf not found. ------')
-
+  confile = open('astech.conf', 'w+b')
+  username = asconf['user']
+  password = asconf['pass']
+  astech_cf = { 'name': megatech.name, \
+                'version': megatech.version, \
+                'port': megatech.port, \
+                'user': username, \
+                'pass': password }
+  pickle.dump(astech_cf, confile, protocol=0)
+  confile.close()
+# ----------------------------------------
 
 # get a string from localtime
 def stringTime():
@@ -82,7 +80,7 @@ def stringTime():
   strtime = str(t[0]) + "-" + str(t[1]) + "-" + str(t[2]) + "__" + \
             str(t[3]) + "-" + str(t[4]) + "-" + str(t[5]) + "_"
   return strtime
-
+# ----------------------------------------
 
 # user name and password;
 # password encryption is nice,
@@ -97,6 +95,13 @@ def crede(u, p):
       return False
   else:
     return False
+# ----------------------------------------
+
+# extracting version number from megamek-[version].tar.gz filename
+def getVersion(filename):
+  '''megamek archive filename -> version'''
+  return filename[8:-7]
+# ----------------------------------------
 
 
 # ----------------------------------------
@@ -272,7 +277,7 @@ def login():
 # ----------------------------------------
 
 # check credentials and redirect to other routes
-@post('/login')
+post('/login')
 def check_login():
   # check if username and password isn't something like '/mmstop'
   if request.forms.get('username').isalpha() and request.forms.get('password').isalpha():
@@ -319,6 +324,9 @@ def administrator():
   if username:
     # password and login cookie are checked by now
     response.delete_cookie('badPassword')
+    
+    # get current config file as a dictionary
+    asconf = getConfig()
     
     # check if MegaMek is on and correct megatech.ison
     if megatech.check():
@@ -395,6 +403,9 @@ def upload_map():
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/maps', max_age=321, secret=secret1)
 
+    # get current config file as a dictionary
+    asconf = getConfig()
+    
     # create directory for maps, if not already present 
     if not os.path.isdir(megatech.map_dir):
       os.mkdir(megatech.map_dir)
@@ -485,6 +496,9 @@ def upload_save():
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/saves', max_age=321, secret=secret1)
 
+    # get current config file as a dictionary
+    asconf = getConfig()
+    
     # create directory for saves if not already present 
     if not os.path.isdir(megatech.save_dir):
       os.mkdir(megatech.save_dir)
@@ -579,6 +593,9 @@ def upload_units():
   if username:
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/units', max_age=321, secret=secret1)
+    
+    # get current config file as a dictionary
+    asconf = getConfig()
 
     # create directory for units if not already present 
     if not os.path.isdir(megatech.unit_dir):
@@ -659,6 +676,9 @@ def options():
     # checks if help messages will be displayed
     veteran = request.get_cookie('veteran', secret=secret1)
 
+    # get current config file as a dictionary
+    asconf = getConfig()
+
     response.set_cookie('curpage', '/options', max_age=321, secret=secret1)
   
     username = request.get_cookie('administrator', secret=secret1)
@@ -727,13 +747,19 @@ def becomeGreen():
 # ----------------------------------------
 
 # chenge MegaMek version
-@route('/ver/<version>')
-def changeVer(version):
+@route('/ver/<filename>')
+def changeVer(filename):
   '''Changes version info in MegaTech instance
   and installs version of MegaMek'''
-  pass
+  megatech.version = getVersion(filename)
+  
+  # we are going to delete current version of MegaMek
+  megatech.stop()
 
-
+  writeConfig() # updating astech.conf file
+  
+  # curpage cookie is storing current page (route)
+  redirect(request.get_cookie('curpage', secret=secret1))
 # ----------------------------------------
 
 # 404 error page

@@ -32,6 +32,20 @@
   </tr>
 </table>
 
+% # tutorial messages in veteran cookie is absent
+% if not veteran:
+<table bgcolor='dddddd'>
+  <tr width=500px>
+    <td width=500px>
+      <font size="-1"><b>Tutorial:</b></font>
+    </td>
+  <tr width=500px>
+    <td width=500px>
+      <font size="-1">Here you can change your megamek server version. Press arrow in front of desired version. Choosen version has "check" icon in front of it.</font>
+    </td>
+  </tr>
+</table>
+% end
 <table>
   <tr width=600px>
     <td width=40px></td>
