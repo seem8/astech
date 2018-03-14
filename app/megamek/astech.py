@@ -10,7 +10,8 @@ import subprocess
 # sleep may help with subprocess,
 from time import sleep
 
-# pickle is for the config file
+# pickle is for the config file;
+# maybe I will switch to sqlite
 import pickle
 
 # import bottle
@@ -48,7 +49,8 @@ def getFile(filename):
     return lastlog
 # ----------------------------------------
 
-# parse Astech config file
+# parse Astech config file;
+# astech is reading it very often
 def getConfig():
   '''returns dictionary from pickled astech config'''
   confile = open('astech.conf', 'r+b')
@@ -62,13 +64,18 @@ def getConfig():
 def writeConfig():
   '''pickles astech config into astech.conf file'''
   confile = open('astech.conf', 'w+b')
+
+  # login and password are stored only in astech.conf,
   username = asconf['user']
   password = asconf['pass']
+
+  # creating new config
   astech_cf = { 'name': megatech.name, \
                 'version': megatech.version, \
                 'port': megatech.port, \
                 'user': username, \
                 'pass': password }
+
   pickle.dump(astech_cf, confile, protocol=0)
   confile.close()
 # ----------------------------------------
