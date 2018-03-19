@@ -76,6 +76,7 @@
 % if len(savegames) == 0:
   </table>
   <p>You have no saved games yet.</p>
+% end
 
 % # contant information and closing html tags
 % include('footer')

@@ -63,7 +63,7 @@
           <a href="/ver/{{ver}}"><img src="/image/select.png"></a>
         % end
         </td>
-        <td width=460px>{{ver}}</td>
+        <td width=460px>Megamek {{ver}}</td>
       </tr>
     % end
 </table>

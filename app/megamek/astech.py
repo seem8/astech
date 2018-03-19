@@ -284,7 +284,7 @@ def login():
 # ----------------------------------------
 
 # check credentials and redirect to other routes
-post('/login')
+@post('/login')
 def check_login():
   # check if username and password isn't something like '/mmstop'
   if request.forms.get('username').isalpha() and request.forms.get('password').isalpha():
@@ -334,6 +334,7 @@ def administrator():
     
     # get current config file as a dictionary
     asconf = getConfig()
+    megatech.version = asconf['version']
     
     # check if MegaMek is on and correct megatech.ison
     if megatech.check():
@@ -691,11 +692,16 @@ def options():
     username = request.get_cookie('administrator', secret=secret1)
     
     # list of avaiable MegaMek version
-    versions = os.listdir(megatech.meks_dir)
+    archives = os.listdir(megatech.meks_dir)
+    versions = []
+    # cutting 'megamek-' prefix and '.tar.gz' suffix
+    for i in archives:
+      i = getVersion(i)
+      versions.append(i)
     versions.sort()
 
     # we are checking which version is currently selected
-    selected = 'megamek-' + megatech.version + '.tar.gz'
+    selected = megatech.version
    
     return template('options', username=username, \
                                veteran=veteran, \
@@ -754,17 +760,18 @@ def becomeGreen():
 # ----------------------------------------
 
 # chenge MegaMek version
-@route('/ver/<filename>')
-def changeVer(filename):
+@route('/ver/<vernumber>')
+def changeVer(vernumber):
   '''Changes version info in MegaTech instance
   and installs version of MegaMek'''
-  megatech.version = getVersion(filename)
+  megatech.version = vernumber
   
   # we are going to delete current version of MegaMek
   megatech.stop()
 
-  writeConfig() # updating astech.conf file
-  
+  # updating astech.conf file
+  writeConfig()
+
   # curpage cookie is storing current page (route)
   redirect(request.get_cookie('curpage', secret=secret1))
 # ----------------------------------------
