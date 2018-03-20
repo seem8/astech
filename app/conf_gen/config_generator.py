@@ -12,9 +12,9 @@ import hashlib
 # dumb initial configutarion 
 conf = { 'name': '', \
          'version': '', \
-         'port': 1111, \
-         'user': '', \
-         'pass': '' }
+         'port': 1111 }
+crede = { 'user': '', \
+          'pass': '' }
 
 # now we are making real one
 print('Type name: ')
@@ -38,13 +38,19 @@ print('--- saving configuration ---')
 conf['name'] = name
 conf['version'] = version
 conf['port'] = int(port)
-conf['user'] = user
-conf['pass'] = hashlib.sha512(password.encode()).hexdigest()
+crede['user'] = user
+crede['pass'] = hashlib.sha512(password.encode()).hexdigest()
 
+# dumping name, version and port to config file
 confile = open('astech.conf', 'w+b')
 pickle.dump(conf, confile, protocol=0)
 confile.close()
 
+# dumping user and password to credentials file
+credefile = open('astech.crede', 'w+b')
+pickle.dump(crede, credefile, protocol=0)
+confile.close()
+
 # ok
-print('--- astech.conf is ready. ---')
+print('--- config is ready. ---')
 

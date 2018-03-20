@@ -49,37 +49,6 @@ def getFile(filename):
     return lastlog
 # ----------------------------------------
 
-# parse Astech config file;
-# astech is reading it very often
-def getConfig():
-  '''returns dictionary from pickled astech config'''
-  confile = open('astech.conf', 'r+b')
-  # I really want to close that file
-  asconfig = pickle.load(confile)
-  confile.close()
-  return asconfig
-# ----------------------------------------
-
-# write Astech config file
-def writeConfig():
-  '''pickles astech config into astech.conf file'''
-  confile = open('astech.conf', 'w+b')
-
-  # login and password are stored only in astech.conf,
-  username = asconf['user']
-  password = asconf['pass']
-
-  # creating new config
-  astech_cf = { 'name': megatech.name, \
-                'version': megatech.version, \
-                'port': megatech.port, \
-                'user': username, \
-                'pass': password }
-
-  pickle.dump(astech_cf, confile, protocol=0)
-  confile.close()
-# ----------------------------------------
-
 # get a string from localtime
 def stringTime():
   '''returns string: year-month-day__hour-minute-second_'''
@@ -95,8 +64,12 @@ def stringTime():
 # defaults are 'somelogin' and 'somepassword'
 def crede(u, p):
   '''check credentials'''
-  if u == asconf['user']:
-    if hashlib.sha512(p.encode()).hexdigest() == asconf['pass']:
+  credefile = open('astech.crede', 'r+b')
+  # I really want to close that file
+  credentials = pickle.load(credefile)
+  credefile.close()
+  if u == credentials['user']:
+    if hashlib.sha512(p.encode()).hexdigest() == credentials['pass']:
       return True
     else:
       return False
@@ -121,8 +94,6 @@ def getVersion(filename):
 secret1 = 'gn39nBFUnfi38nooPP' 
 secret2 = 'jfc21012naxlibNYhdds'
 
-# get current config file as a dictionary
-asconf = getConfig()
 
 # ----------------------------------------
 # ------- MAIN LOGIC ---------------------
@@ -132,16 +103,20 @@ asconf = getConfig()
 # we have a class for a little namespace home 
 class MegaTech:
   '''MegaMek server controls and status'''
-  def __init__(self, name, version, port):
-    # first three are stored in astech.config file
-    self.name = name                      # name of the instance 
-    self.version = version                # megamek version
-    self.port = port                      # port for megamek server
+  def __init__(self):
+    confile = open('astech.conf', 'r+b')   # Astech configuration file
+    self.mtconfig = pickle.load(confile)   # restore dictionary from a file
+    confile.close()
+ 
+    # first five vars are stored in astech.config and astech.crede files
+    self.name = self.mtconfig['name']         # name of the instance 
+    self.version = self.mtconfig['version']   # megamek version
+    self.port = self.mtconfig['port']         # port for megamek server
 
     self.ison = False                     # megamek is off by default 
     self.process = False                  # to check if MegaMek is running
     self.domain = 'some.server.com'       # nice site name
-    self.password = False                 # optional password to change game options 
+    self.game_password = False            # optional password to change game options 
 
     # "shortcuts" for various used directories
     self.install_dir = 'megamek-' + self.version                   # megamek directory
@@ -150,15 +125,16 @@ class MegaTech:
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
     self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
 
-    self.meks_dir = 'meks/'                # avaiable versions of Megamek
+    self.meks_dir = 'meks/'               # avaiable versions of Megamek
+
 
   def start(self):
     '''starts MegaMek server'''
     # if password is set, add it to the lauch command
-    if self.password != False:
+    if self.game_password != False:
       self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
-                     str(self.port) + ' -password ' + str(self.password) + ' '
-    elif self.password == False:
+                     str(self.port) + ' -password ' + str(self.game_password) + ' '
+    elif self.game_password == False:
       self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
                      str(self.port)
     
@@ -170,7 +146,7 @@ class MegaTech:
     # -port [port] -password [password] [savedgame]
 
     # we're sleeping, while wainting for Megamek to write a log file;
-    # sometimes MegaMek is slower than 1 second
+    # MegaMek is rarely slower than 1 second
     sleep(1)
     # we'll rely on this variable often
     self.ison = True
@@ -194,9 +170,40 @@ class MegaTech:
       self.process.kill()
       self.ison = False
 
+  def getConfig(self):
+    '''creates dictionary from pickled astech config'''
+    confile = open('astech.conf', 'r+b')
+    # I really want to close that file
+    self.asconfig = pickle.load(confile)
+    confile.close()
+    print(self.asconfig)
+
+    # updating variables from config file 
+    self.name = self.asconfig['name']
+    self.version = self.asconfig['version']
+    self.port = self.asconfig['port']
+    
+    # "shortcuts" for various used directories
+    self.install_dir = 'megamek-' + self.version                   # megamek directory
+    self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
+    self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
+    self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
+    self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
+
+  def writeConfig(self):
+    '''pickles astech config into astech.conf file'''
+    confile = open('astech.conf', 'w+b')
+
+    # creating new config
+    self.asconfig = { 'name': megatech.name, \
+                      'version': megatech.version, \
+                      'port': megatech.port }
+
+    print(self.asconfig)
+    pickle.dump(self.asconfig, confile, protocol=0)
 
 # Megatech requires: name, version, port number)
-megatech = MegaTech(asconf['name'], asconf['version'], asconf['port'])
+megatech = MegaTech()
 # ----------------------------------------
 
 # below is bottle.py related stuff, mainly routes for web browser
@@ -332,10 +339,6 @@ def administrator():
     # password and login cookie are checked by now
     response.delete_cookie('badPassword')
     
-    # get current config file as a dictionary
-    asconf = getConfig()
-    megatech.version = asconf['version']
-    
     # check if MegaMek is on and correct megatech.ison
     if megatech.check():
       megatech.ison = True
@@ -343,16 +346,17 @@ def administrator():
       megatech.ison = False
 
     # render template
-    return template('administrator', username = username, \
-                                     veteran = veteran, \
-                                     mtison = megatech.ison, \
-                                     mtver = megatech.version, \
-                                     mtname = megatech.name, \
-                                     mtport = str(megatech.port), \
-                                     mtdomain = megatech.domain, \
-                                     getLogFile = getFile(megatech.logs_dir + 'megameklog.txt'), \
-                                     mtpassword = megatech.password, \
-                                     noalpha = noalpha )
+    return template('administrator', \
+                    username = username, \
+                    veteran = veteran, \
+                    mtison = megatech.ison, \
+                    mtver = megatech.version, \
+                    mtname = megatech.name, \
+                    mtport = str(megatech.port), \
+                    mtdomain = megatech.domain, \
+                    getLogFile = getFile(megatech.logs_dir + 'megameklog.txt'), \
+                    mtpassword = megatech.game_password, \
+                    noalpha = noalpha )
 
   elif not username:
     redirect('/login')
@@ -411,9 +415,6 @@ def upload_map():
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/maps', max_age=321, secret=secret1)
 
-    # get current config file as a dictionary
-    asconf = getConfig()
-    
     # create directory for maps, if not already present 
     if not os.path.isdir(megatech.map_dir):
       os.mkdir(megatech.map_dir)
@@ -504,9 +505,6 @@ def upload_save():
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/saves', max_age=321, secret=secret1)
 
-    # get current config file as a dictionary
-    asconf = getConfig()
-    
     # create directory for saves if not already present 
     if not os.path.isdir(megatech.save_dir):
       os.mkdir(megatech.save_dir)
@@ -602,9 +600,6 @@ def upload_units():
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/units', max_age=321, secret=secret1)
     
-    # get current config file as a dictionary
-    asconf = getConfig()
-
     # create directory for units if not already present 
     if not os.path.isdir(megatech.unit_dir):
       os.mkdir(megatech.unit_dir)
@@ -684,9 +679,6 @@ def options():
     # checks if help messages will be displayed
     veteran = request.get_cookie('veteran', secret=secret1)
 
-    # get current config file as a dictionary
-    asconf = getConfig()
-
     response.set_cookie('curpage', '/options', max_age=321, secret=secret1)
   
     username = request.get_cookie('administrator', secret=secret1)
@@ -718,6 +710,7 @@ def options():
 @route('/mmturnon')
 def mmturnon():
   if request.get_cookie('administrator', secret=secret1):
+    print(megatech.version)
     megatech.start()
   redirect('/')
 # ----------------------------------------
@@ -770,7 +763,8 @@ def changeVer(vernumber):
   megatech.stop()
 
   # updating astech.conf file
-  writeConfig()
+  megatech.writeConfig()
+  megatech.getConfig()
 
   # curpage cookie is storing current page (route)
   redirect(request.get_cookie('curpage', secret=secret1))
