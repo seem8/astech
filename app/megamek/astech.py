@@ -109,18 +109,19 @@ class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
     confile = open('astech.conf', 'r+b')   # Astech configuration file
-    self.mtconfig = pickle.load(confile)   # restore dictionary from a file
+    self.asconfig = pickle.load(confile)   # restore dictionary from a file
     confile.close()
  
-    # first three vars are stored in astech.config and astech.crede files
-    self.name = self.mtconfig['name']         # name of the instance 
-    self.version = self.mtconfig['version']   # megamek version
-    self.port = self.mtconfig['port']         # port for megamek server
+    # 4 vars are stored in astech.config and astech.crede files
+    self.name = self.asconfig['name']         # name of the instance 
+    self.version = self.asconfig['version']   # megamek version
+    self.port = self.asconfig['port']         # port for megamek server
+    # optional password to change game options
+    self.game_password = self.asconfig['game_password']
 
     self.ison = False                     # megamek is off by default 
     self.process = False                  # to check if MegaMek is running
     self.domain = 'some.server.com'       # nice site name
-    self.game_password = False            # optional password to change game options 
 
     # "shortcuts" for various used directories
     self.install_dir = 'megamek-' + self.version                   # megamek directory
@@ -185,6 +186,7 @@ class MegaTech:
     self.name = self.asconfig['name']
     self.version = self.asconfig['version']
     self.port = self.asconfig['port']
+    self.game_password = self.asconfig['game_password']
     
     # updating "shortcuts" for various used directories
     self.install_dir = 'megamek-' + self.version                   # megamek directory
@@ -193,6 +195,7 @@ class MegaTech:
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
     self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
 
+
   def writeConfig(self):
     '''pickles astech config into astech.conf file'''
     confile = open('astech.conf', 'w+b')
@@ -200,12 +203,13 @@ class MegaTech:
     # creating new config
     self.asconfig = { 'name': self.name, \
                       'version': self.version, \
-                      'port': self.port }
+                      'port': self.port, \
+                      'game_password': self.game_password }
 
     pickle.dump(self.asconfig, confile, protocol=0)
     confile.close()
 
-# Megatech requires: name, version, port number)
+# sensors... nominal 
 megatech = MegaTech()
 # ----------------------------------------
 
@@ -338,6 +342,9 @@ def administrator():
   # current page for become_veteran and become_rookie functions
   response.set_cookie('curpage', '/', max_age=321, secret=secret1)
 
+  # update data from config file
+  megatech.getConfig()
+
   if username:
     # password and login cookie are checked by now
     response.delete_cookie('badPassword')
@@ -374,19 +381,21 @@ def setMekPassword():
     # check if password isn't something like '/mmstop'
     if game_pass.isalpha():
       megatech.game_password = game_pass
-      #response.set_cookie('passet', 'passet', max_age=5, secret=secret2)
-      redirect('/')
     elif game_pass == '':
       # empty password is no password
       megatech.game_password = False
-      redirect('/')
     else:
       # if mekpassword is not alpha, don't parse it;
       # will display warning message about using nonlatin characters, see administrator.tpl
       response.set_cookie('noalpha', 'noalpha', max_age=5, secret=secret2)
       game_pass = False
       megatech.game_password = False
-      redirect('/')
+    
+    # refreshing config file
+    megatech.writeConfig()
+    megatech.getConfig()
+
+    redirect('/')
 
   elif not username:
     redirect('/login')
@@ -792,6 +801,8 @@ def route404(error):
 # ----------------------------------------
 
 
+# ----------------------------------------
+# ----- ALL SYSTEMS... NOMINAL -----------
 # ----------------------------------------
 # main debug loop
 # remember to add debug import from bottle

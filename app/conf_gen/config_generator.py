@@ -12,7 +12,8 @@ import hashlib
 # dumb initial configutarion 
 conf = { 'name': '', \
          'version': '', \
-         'port': 1111 }
+         'port': 1111, \
+         'game_password': False }
 crede = { 'user': '', \
           'pass': '' }
 
