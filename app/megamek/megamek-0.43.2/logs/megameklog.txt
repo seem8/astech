@@ -1,6 +1,6 @@
 Starting MegaMek v0.43.2 ...
 Compiled on Thu Jan 01 01:00:00 CET 1970
-Today is Tue Mar 20 19:49:28 CET 2018
+Today is Tue Mar 20 20:01:03 CET 2018
 Java vendor Oracle Corporation
 Java version 1.8.0_151
 Platform Linux 4.15.9-300.fc27.x86_64 (amd64)

@@ -71,8 +71,12 @@
   
 % if len(versions) == 0:
   </tr></table>
-  <p>You have no custom maps yet.</p>
+  <p>You have no availble MegaMek version.</p>
 % end
+
+<p><a href="https://github.com/MegaMek/megamek#copyright--license-information">
+MegaMek license information.
+</a></p>
 
 % # contact information and closing html tags
 % include('footer')

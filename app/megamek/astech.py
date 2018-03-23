@@ -29,6 +29,10 @@ import time
 # and comparing with a bytestring
 import hashlib
 
+# for downloading new versions of megamek
+import urllib.request
+
+
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
 # ----------------------------------------
@@ -108,7 +112,7 @@ class MegaTech:
     self.mtconfig = pickle.load(confile)   # restore dictionary from a file
     confile.close()
  
-    # first five vars are stored in astech.config and astech.crede files
+    # first three vars are stored in astech.config and astech.crede files
     self.name = self.mtconfig['name']         # name of the instance 
     self.version = self.mtconfig['version']   # megamek version
     self.port = self.mtconfig['port']         # port for megamek server
@@ -176,14 +180,13 @@ class MegaTech:
     # I really want to close that file
     self.asconfig = pickle.load(confile)
     confile.close()
-    print(self.asconfig)
 
     # updating variables from config file 
     self.name = self.asconfig['name']
     self.version = self.asconfig['version']
     self.port = self.asconfig['port']
     
-    # "shortcuts" for various used directories
+    # updating "shortcuts" for various used directories
     self.install_dir = 'megamek-' + self.version                   # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
     self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
@@ -195,12 +198,12 @@ class MegaTech:
     confile = open('astech.conf', 'w+b')
 
     # creating new config
-    self.asconfig = { 'name': megatech.name, \
-                      'version': megatech.version, \
-                      'port': megatech.port }
+    self.asconfig = { 'name': self.name, \
+                      'version': self.version, \
+                      'port': self.port }
 
-    print(self.asconfig)
     pickle.dump(self.asconfig, confile, protocol=0)
+    confile.close()
 
 # Megatech requires: name, version, port number)
 megatech = MegaTech()
@@ -370,19 +373,19 @@ def setMekPassword():
     game_pass = request.forms.get('mekpassword')
     # check if password isn't something like '/mmstop'
     if game_pass.isalpha():
-      megatech.password = game_pass
+      megatech.game_password = game_pass
       #response.set_cookie('passet', 'passet', max_age=5, secret=secret2)
       redirect('/')
     elif game_pass == '':
       # empty password is no password
-      megatech.password = False
+      megatech.game_password = False
       redirect('/')
     else:
       # if mekpassword is not alpha, don't parse it;
       # will display warning message about using nonlatin characters, see administrator.tpl
       response.set_cookie('noalpha', 'noalpha', max_age=5, secret=secret2)
       game_pass = False
-      megatech.password = False
+      megatech.game_password = False
       redirect('/')
 
   elif not username:
