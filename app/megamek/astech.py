@@ -108,20 +108,20 @@ secret2 = 'jfc21012naxlibNYhdds'
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    confile = open('astech.conf', 'r+b')   # Astech configuration file
-    self.asconfig = pickle.load(confile)   # restore dictionary from a file
+    confile = open('astech.conf', 'r+b')      # Astech configuration file
+    self.asconfig = pickle.load(confile)      # restore dictionary from a file
     confile.close()
  
-    # 4 vars are stored in astech.config and astech.crede files
+    # 4 vars are stored in astech.config file
     self.name = self.asconfig['name']         # name of the instance 
     self.version = self.asconfig['version']   # megamek version
     self.port = self.asconfig['port']         # port for megamek server
     # optional password to change game options
     self.game_password = self.asconfig['game_password']
 
-    self.ison = False                     # megamek is off by default 
-    self.process = False                  # to check if MegaMek is running
-    self.domain = 'some.server.com'       # nice site name
+    self.ison = False                         # megamek is off by default 
+    self.process = False                      # to check if MegaMek is running
+    self.domain = 'some.server.com'           # nice site name
 
     # "shortcuts" for various used directories
     self.install_dir = 'megamek-' + self.version                   # megamek directory
@@ -130,7 +130,7 @@ class MegaTech:
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
     self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
 
-    self.meks_dir = 'meks/'               # avaiable versions of Megamek
+    self.meks_dir = 'meks/'                   # avaiable versions of Megamek
 
 
   def start(self):
@@ -785,6 +785,7 @@ def changeVer(vernumber):
 # 404 error page
 @error(404)
 def route404(error):
+  '''Page not found page.'''
   username = request.get_cookie('administrator', secret=secret1)
 
   if username:
@@ -799,6 +800,47 @@ def route404(error):
   elif not username:
     redirect('/login')
 # ----------------------------------------
+
+# we can download Linux version of MegaMek
+@route('/download/<release>')
+def downloadMek(release):
+  username = request.get_cookie('administrator', secret=secret1)
+
+  if username:
+    try:
+      urllib.request.urlretrieve('https://github.com/MegaMek/megamek/releases/download/v'+release+'/megamek-0.'+release+'.tar.gz', megatech.meks_dir+'megamek-0.'+release+'.tar.gz.')
+    # URLError is for remote file, FileNotFound is for local dir
+    except (urllib.error.URLError, FileNotFoundError):
+      print('NIE ZROBIŁO SIĘ!!!!1 :-O (tymczasowy)')
+
+  elif not username:
+    redirect('/login')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # ----------------------------------------
