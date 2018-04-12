@@ -68,7 +68,7 @@ def stringTime():
 # defaults are 'somelogin' and 'somepassword'
 def crede(u, p):
   '''check credentials'''
-  credefile = open('astech.crede', 'r+b')
+  credefile = open('config/astech.crede', 'r+b')
   # I really want to close that file
   credentials = pickle.load(credefile)
   credefile.close()
@@ -86,6 +86,18 @@ def getVersion(filename):
   '''megamek archive filename -> version'''
   return filename[8:-7]
 # ----------------------------------------
+
+def installMek(release):
+  # save MegaMek archive in meks/ directory
+  try:
+    urllib.request.urlretrieve('https://github.com/MegaMek/megamek/releases/download/v'+release+'/megamek-0.'+release+'.tar.gz', megatech.meks_dir+'megamek-0.'+release+'.tar.gz')
+    return True
+
+  # URLError is for remote file, FileNotFound is for local dir
+  except (urllib.error.URLError, FileNotFoundError):
+    response.set_cookie('wrongurl', 'wrongurl', max_age=11, secret=secret2)
+    print('NIE WGRAŁO SIĘ!!!!1 :-O (tymczasowy)')
+    return False
 
 
 # ----------------------------------------
@@ -108,8 +120,8 @@ secret2 = 'jfc21012naxlibNYhdds'
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    confile = open('astech.conf', 'r+b')      # Astech configuration file
-    self.asconfig = pickle.load(confile)      # restore dictionary from a file
+    confile = open('config/astech.conf', 'r+b') # Astech configuration file
+    self.asconfig = pickle.load(confile)        # restore dictionary from a file
     confile.close()
  
     # 4 vars are stored in astech.config file
@@ -124,13 +136,15 @@ class MegaTech:
     self.domain = 'some.server.com'           # nice site name
 
     # "shortcuts" for various used directories
-    self.install_dir = 'megamek-' + self.version                   # megamek directory
+    self.meks_dir = 'megamek/installed'       # avaiable versions of Megamek
+    self.archive_dir = 'megamek/archives'      # downloaded versions of MegaMek
+    
+    self.install_dir = self.meks_dir + '/megamek-' + self.version  # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
     self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
     self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
 
-    self.meks_dir = 'meks/'                   # avaiable versions of Megamek
 
 
   def start(self):
@@ -177,7 +191,7 @@ class MegaTech:
 
   def getConfig(self):
     '''creates dictionary from pickled astech config'''
-    confile = open('astech.conf', 'r+b')
+    confile = open('config/astech.conf', 'r+b')
     # I really want to close that file
     self.asconfig = pickle.load(confile)
     confile.close()
@@ -189,7 +203,7 @@ class MegaTech:
     self.game_password = self.asconfig['game_password']
     
     # updating "shortcuts" for various used directories
-    self.install_dir = 'megamek-' + self.version                   # megamek directory
+    self.install_dir = self.meks_dir + '/megamek-' + self.version  # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
     self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
@@ -198,7 +212,7 @@ class MegaTech:
 
   def writeConfig(self):
     '''pickles astech config into astech.conf file'''
-    confile = open('astech.conf', 'w+b')
+    confile = open('config/astech.conf', 'w+b')
 
     # creating new config
     self.asconfig = { 'name': self.name, \
@@ -209,7 +223,7 @@ class MegaTech:
     pickle.dump(self.asconfig, confile, protocol=0)
     confile.close()
 
-# sensors... nominal 
+# sensors... engaged 
 megatech = MegaTech()
 # ----------------------------------------
 
@@ -222,7 +236,7 @@ megatech = MegaTech()
 # site logo and other images
 @route('/image/<filename>')
 def image(filename):
-  return static_file(filename, root='./img/', mimetype='image/png')
+  return static_file(filename, root='./static/', mimetype='image/png')
 # ----------------------------------------
 
 
@@ -696,7 +710,7 @@ def options():
     username = request.get_cookie('administrator', secret=secret1)
     
     # list of avaiable MegaMek version
-    archives = os.listdir(megatech.meks_dir)
+    archives = os.listdir(megatech.archive_dir)
     versions = []
     # cutting 'megamek-' prefix and '.tar.gz' suffix
     for i in archives:
@@ -764,7 +778,7 @@ def becomeGreen():
   redirect(request.get_cookie('curpage', secret=secret1))
 # ----------------------------------------
 
-# chenge MegaMek version
+# change MegaMek version
 @route('/ver/<vernumber>')
 def changeVer(vernumber):
   '''Changes version info in MegaTech instance
@@ -804,14 +818,15 @@ def route404(error):
 # we can download Linux version of MegaMek
 @route('/download/<release>')
 def downloadMek(release):
+  '''Downloads MegaMek archive.
+  <release> is eg. '42.2' '''
   username = request.get_cookie('administrator', secret=secret1)
 
   if username:
-    try:
-      urllib.request.urlretrieve('https://github.com/MegaMek/megamek/releases/download/v'+release+'/megamek-0.'+release+'.tar.gz', megatech.meks_dir+'megamek-0.'+release+'.tar.gz.')
-    # URLError is for remote file, FileNotFound is for local dir
-    except (urllib.error.URLError, FileNotFoundError):
-      print('NIE ZROBIŁO SIĘ!!!!1 :-O (tymczasowy)')
+  
+    response.delete_cookie('wrongurl')
+
+    return template('download', release=release, installMek=installMek(release))
 
   elif not username:
     redirect('/login')

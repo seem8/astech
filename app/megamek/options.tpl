@@ -19,7 +19,7 @@
   <tr width=200px>
     <td width=100px>
       &nbsp;<br><b>Tutorial:</b><br>&nbsp;
-    </tdi>
+    </td>
     <td width=100px>
     % if veteran:
       <a href="/green">enable</a>
