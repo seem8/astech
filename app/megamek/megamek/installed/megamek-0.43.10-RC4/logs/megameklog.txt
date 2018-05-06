@@ -1,0 +1,28 @@
+
+10:36:30,754 INFO [megamek.MegaMek] {main} 
+Starting MegaMek v0.43.10-RC4 ...
+	Compiled on Wed Apr 18 19:43:53 CEST 2018
+	Today is Sun May 06 10:36:30 CEST 2018
+	Java vendor Oracle Corporation
+	Java version 1.8.0_171
+	Platform Linux 4.17.0-0.rc3.git3.1.fc29.x86_64 (amd64)
+	Total memory available to MegaMek: 1 683 968 kB
+
+10:36:30,761 INFO [megamek.MegaMek] {main} 
+Starting Dedicated Server. args: [-port 2346]
+
+10:36:33,589 INFO [megamek.server.Server] {main} 
+s: starting a new server...
+
+10:36:33,636 INFO [megamek.server.Server] {main} 
+s: hostname = 'gazelle' port = 2346
+s: hosting on address = 192.168.111.148
+s: hosting on address = fe80:0:0:0:5cd8:2af7:a0ec:d9c3%3
+s: hosting on address = fdf7:6b81:d2ff:0:219d:8465:9249:7e11
+
+
+10:36:33,636 INFO [megamek.server.Server] {main} 
+s: password = null
+
+10:36:33,679 INFO [megamek.server.Server] {Connection Listener} 
+s: listening for clients...

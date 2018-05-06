@@ -84,9 +84,10 @@ def crede(u, p):
 # extracting version number from megamek-[version].tar.gz filename
 def getVersion(filename):
   '''megamek archive filename -> version'''
-  return filename[8:-7]
+  return filename[8:]
 # ----------------------------------------
 
+# downloading and installing MegaMek for Linux
 def installMek(release):
   # save MegaMek archive in meks/ directory
   try:
@@ -709,11 +710,10 @@ def options():
   
     username = request.get_cookie('administrator', secret=secret1)
     
-    # list of avaiable MegaMek version
-    archives = os.listdir(megatech.archive_dir)
+    # list of avaiable MegaMek versions
     versions = []
     # cutting 'megamek-' prefix and '.tar.gz' suffix
-    for i in archives:
+    for i in os.listdir(megatech.meks_dir):
       i = getVersion(i)
       versions.append(i)
     versions.sort()
@@ -755,7 +755,7 @@ def mmturnoff():
 @route('/logout')
 def logoff():
   response.delete_cookie('administrator')
-  redirect('/')
+  redirect('/login')
 # ----------------------------------------
 
 
@@ -814,47 +814,6 @@ def route404(error):
   elif not username:
     redirect('/login')
 # ----------------------------------------
-
-# we can download Linux version of MegaMek
-@route('/download/<release>')
-def downloadMek(release):
-  '''Downloads MegaMek archive.
-  <release> is eg. '42.2' '''
-  username = request.get_cookie('administrator', secret=secret1)
-
-  if username:
-  
-    response.delete_cookie('wrongurl')
-
-    return template('download', release=release, installMek=installMek(release))
-
-  elif not username:
-    redirect('/login')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
