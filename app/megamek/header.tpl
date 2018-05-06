@@ -12,7 +12,7 @@
 % # header image and title
 <center>
 <p><img src="/image/astech_logo.png"></p>
-<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.3)<br />
+<p><b>ASTECH</b>: easier MegaMek server administration. (ver. 0.4)<br />
 
 % # username is a cookie with login
 % if username:
