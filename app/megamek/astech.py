@@ -85,11 +85,7 @@ def crede(u, p):
 # Megamek main dirnames are either:
 # megamek-[version], or megamek-v[version]
 def getVersion(filename):
-  name = filename[8:]
-  if name[0] == 'v':
-    return name[1:]
-  elif name[0] != 'v':
-    return name
+  return filename[8:]
 # ----------------------------------------
 
 
@@ -143,8 +139,6 @@ class MegaTech:
     self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
     self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
     self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
-
-
 
   def start(self):
     '''starts MegaMek server'''
@@ -710,7 +704,7 @@ def options():
     
     # list of avaiable MegaMek versions
     versions = []
-    # cutting 'megamek-' prefix and '.tar.gz' suffix
+    # cutting 'megamek-(v)' prefix
     for i in os.listdir(megatech.meks_dir):
       i = getVersion(i)
       versions.append(i)
