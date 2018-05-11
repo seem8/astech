@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''
-astech.conf generator app for Astech
+config generator app for Astech
 '''
 
 # we are dumping dictiorany to a file
@@ -9,6 +9,12 @@ import pickle
 # we will hash the password
 import hashlib
 
+# we need a little random string for signed cookies
+import random
+import string
+random.seed()
+
+# ---------------------------------------
 # dumb initial configutarion 
 conf = { 'name': '', \
          'version': '', \
@@ -16,7 +22,10 @@ conf = { 'name': '', \
          'game_password': False }
 crede = { 'user': '', \
           'pass': '' }
+secret = { 'alpha': '', \
+           'beta': '' }
 
+# ---------------------------------------
 # now we are making real one
 print('Type name: ')
 name = input()
@@ -36,6 +45,7 @@ password = input()
 # we have all the data we need
 print('--- saving configuration ---')
 
+# ---------------------------------------
 conf['name'] = name
 conf['version'] = version
 conf['port'] = int(port)
@@ -52,6 +62,19 @@ credefile = open('astech.crede', 'w+b')
 pickle.dump(crede, credefile, protocol=0)
 confile.close()
 
+# ---------------------------------------
+# generating random strings for signed cookiess
+secret['alpha'] = ''.join(random.choices(string.ascii_letters + string.digits, \
+                                   k=34+random.randint(0,8)))
+secret['beta'] = ''.join(random.choices(string.ascii_letters + string.digits, \
+                                   k=34+random.randint(0,8)))
+
+cookiefile = open('astech.cookie', 'w+b')
+pickle.dump(secret, cookiefile, protocol=0)
+cookiefile.close()
+
+
+# ---------------------------------------
 # ok
 print('--- config is ready. ---')
 

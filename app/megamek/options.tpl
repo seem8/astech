@@ -41,7 +41,7 @@
     </td>
   <tr width=500px>
     <td width=500px>
-      <font size="-1">Here you can change your megamek server version. Press arrow in front of desired version. Choosen version has "check" icon in front of it.</font>
+      <font size="-1">Here you can change your megamek server version. Click an arrow in front of desired version. Choosen version has "check" icon in front of it.</font>
     </td>
   </tr>
 </table>
@@ -74,9 +74,6 @@
   <p>You have no availble MegaMek version.</p>
 % end
 
-<p><a href="https://github.com/MegaMek/megamek#copyright--license-information">
-MegaMek license information.
-</a></p>
 
 % # contact information and closing html tags
 % include('footer')

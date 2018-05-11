@@ -81,24 +81,16 @@ def crede(u, p):
     return False
 # ----------------------------------------
 
-# extracting version number from megamek-[version].tar.gz filename
+# extracting version number from  dir name
+# Megamek main dirnames are either:
+# megamek-[version], or megamek-v[version]
 def getVersion(filename):
   '''megamek archive filename -> version'''
-  return filename[8:]
+  if filename[0] == 'v':
+    return filename[9:]
+  elif filename[0] != 'v':
+    return filename[8:]
 # ----------------------------------------
-
-# downloading and installing MegaMek for Linux
-def installMek(release):
-  # save MegaMek archive in meks/ directory
-  try:
-    urllib.request.urlretrieve('https://github.com/MegaMek/megamek/releases/download/v'+release+'/megamek-0.'+release+'.tar.gz', megatech.meks_dir+'megamek-0.'+release+'.tar.gz')
-    return True
-
-  # URLError is for remote file, FileNotFound is for local dir
-  except (urllib.error.URLError, FileNotFoundError):
-    response.set_cookie('wrongurl', 'wrongurl', max_age=11, secret=secret2)
-    print('NIE WGRAŁO SIĘ!!!!1 :-O (tymczasowy)')
-    return False
 
 
 # ----------------------------------------
@@ -108,8 +100,12 @@ def installMek(release):
 # we need two separate secrets:
 # 1: for cookies with ~1 day expiration time,
 # 2: for 5 second cookies to display warnings on templates
-secret1 = 'gn39nBFUnfi38nooPP' 
-secret2 = 'jfc21012naxlibNYhdds'
+secretfile = open('config/astech.cookie', 'r+b')
+cookies = pickle.load(secretfile)
+
+secret1 = cookies['alpha']
+secret2 = cookies['beta']
+secretfile.close()
 
 
 # ----------------------------------------
@@ -138,7 +134,7 @@ class MegaTech:
 
     # "shortcuts" for various used directories
     self.meks_dir = 'megamek/installed'       # avaiable versions of Megamek
-    self.archive_dir = 'megamek/archives'      # downloaded versions of MegaMek
+    self.archive_dir = 'megamek/archives'     # downloaded versions of MegaMek
     
     self.install_dir = self.meks_dir + '/megamek-' + self.version  # megamek directory
     self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
@@ -785,7 +781,7 @@ def changeVer(vernumber):
   and installs version of MegaMek'''
   megatech.version = vernumber
   
-  # we are going to delete current version of MegaMek
+  # stop current MegaMek instance 
   megatech.stop()
 
   # updating astech.conf file
