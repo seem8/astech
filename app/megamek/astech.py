@@ -10,7 +10,7 @@ import subprocess
 # sleep may help with subprocess,
 from time import sleep
 
-# pickle is for the config file;
+# pickle is for the config files;
 # maybe I will switch to sqlite
 import pickle
 
@@ -81,15 +81,15 @@ def crede(u, p):
     return False
 # ----------------------------------------
 
-# extracting version number from  dir name
+# extracting version number from dir name
 # Megamek main dirnames are either:
 # megamek-[version], or megamek-v[version]
 def getVersion(filename):
-  '''megamek archive filename -> version'''
-  if filename[0] == 'v':
-    return filename[9:]
-  elif filename[0] != 'v':
-    return filename[8:]
+  name = filename[8:]
+  if name[0] == 'v':
+    return name[1:]
+  elif name[0] != 'v':
+    return name
 # ----------------------------------------
 
 
@@ -100,11 +100,13 @@ def getVersion(filename):
 # we need two separate secrets:
 # 1: for cookies with ~1 day expiration time,
 # 2: for 5 second cookies to display warnings on templates
+# secrets are stored in astech.cookie config file
 secretfile = open('config/astech.cookie', 'r+b')
 cookies = pickle.load(secretfile)
 
 secret1 = cookies['alpha']
 secret2 = cookies['beta']
+
 secretfile.close()
 
 
