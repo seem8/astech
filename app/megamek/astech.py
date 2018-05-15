@@ -81,13 +81,6 @@ def crede(u, p):
     return False
 # ----------------------------------------
 
-# extracting version number from dir name
-# Megamek main dirnames are either:
-# megamek-[version], or megamek-v[version]
-def getVersion(filename):
-  return filename[8:]
-# ----------------------------------------
-
 
 # ----------------------------------------
 # ------- SOME USEFULL VARIABLES ---------
@@ -706,8 +699,8 @@ def options():
     versions = []
     # cutting 'megamek-(v)' prefix
     for i in os.listdir(megatech.meks_dir):
-      i = getVersion(i)
-      versions.append(i)
+      # skip "megamek-"
+      versions.append(i[8:])
     versions.sort()
 
     # we are checking which version is currently selected
@@ -716,7 +709,7 @@ def options():
     return template('options', username=username, \
                                veteran=veteran, \
                                versions=versions, \
-                               selected=selected)
+                               selected=selected, ) 
   
   elif not username:
     redirect('/login')
