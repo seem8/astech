@@ -180,7 +180,6 @@ class MegaTech:
     confile = open('config/astech.conf', 'r+b')
     # I really want to close that file
     self.asconfig = pickle.load(confile)
-    confile.close()
 
     # updating variables from config file 
     self.name = self.asconfig['name']
@@ -364,7 +363,7 @@ def administrator():
                     mtname = megatech.name, \
                     mtport = str(megatech.port), \
                     mtdomain = megatech.domain, \
-                    getLogFile = getFile(megatech.logs_dir + 'megameklog.txt'), \
+                    logFile = getFile(megatech.logs_dir + 'megameklog.txt'), \
                     mtpassword = megatech.game_password, \
                     noalpha = noalpha )
 
@@ -709,7 +708,7 @@ def options():
     return template('options', username=username, \
                                veteran=veteran, \
                                versions=versions, \
-                               selected=selected, ) 
+                               selected=selected) 
   
   elif not username:
     redirect('/login')

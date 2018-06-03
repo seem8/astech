@@ -93,7 +93,7 @@
     <td>
   </tr>
   % # megameklog.txt file in reverser order
-  % for i in getLogFile:
+  % for i in logFile:
     <tr>
       <td width=700px>{{i}}</td>
     </tr>
