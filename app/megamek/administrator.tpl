@@ -2,62 +2,61 @@
 
 % # tutorial messages
 % if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=750px>
-    <td width=250px>
-      <b><font size="-1">Tutorial:</font></b>
-    </td>
-    <td width=250px></td>
-    <td width=250px></td>
-  <tr>
-  <tr width=750px>
-    <td width=250px valign="TOP">
-      <font size="-1">Basic server information:<br />
-      - version of MegaMek,<br />
-      - address of Astech server,<br />
-      - port number for MegaMek server.</font>
-    </td>
-    <td width=250px valign="TOP">
-      <font size="-1">Optional password for changing game options. Astech accepts only latin characters (A-Z, a-z) at the moment. To remove a password, set an empty one. You have to restart the server after changing password.</font>
-    </td>
-    <td width=250px valign="TOP">
-      <font size="-1">Here you can turn on/off your MegaMek server. If MegaMek will crash, Astech will display OFF button.</font>
-    </td>
-  </tr>
-</table>
+  <div id="tutorial">
+    <strong>Tutorial:</strong><br>
+    Here you have basic server information:
+    <ul>
+      <li>version of MegaMek,</li>
+      <li>address of Astech server,</li>
+      <li>port number for MegaMek server.</li>
+    </ul>
+    You may provide password for changing game options.
+    Astech accepts only latin characters (A-Z, a-z).
+    To remove a password, set an empty one.
+    You have to restart the server after changing password.<br>
+    Lastly, you can turn on/off your MegaMek server.
+    If MegaMek will crash, Astech will display OFF button.
+    <hr>
+    Below that is the megameklog.txt file. It's not game log file
+    that you see on MegaMek window below the map, nor a savegame info.
+    It provides output of players joining and leaving MegaMek server,
+    as well as some additional information for troubleshooting
+    (eg. wrong MegaMek versions). Astech will not autorefresh this file,
+    so to see exact newest logs, refresh server status page.
+  </div>
 % end
       
 <table>
   <tr width=750px>
-    <td width=250px><b>Server info</b></td>
-    <td width=250px><b>Game password</b></td>
-    <td width=250px><b>Master switch</b></td>
-  <tr width=750opx>
-    <td width=250px valign="TOP">
+    <th width=250px>Server info</th>
+    <th width=250px>Game password</th>
+    <th width=250px>Master switch</th>
+  <tr width=750px>
+    <td width=250px>
         % # variables from MegaTech class
-        name: {{mtname}}<br />
-        version: {{mtver}}<br />
-        address: {{mtdomain}}<br />
+        name: {{mtname}}<br>
+        version: {{mtver}}<br>
+        address: {{mtdomain}}<br>
         port: {{mtport}}
       </td>
-      <td width=250px valign="TOP">
+      <td width=250px>
         % # setting password for changing game options
         <form action="/" method="post">
           % if mtpassword:
-            <input name="mekpassword" type="text" value="{{mtpassword}}" /><br />
+            <input name="mekpassword" type="text" value="{{mtpassword}}" /><br>
           % end
           % if not mtpassword:
-            <input name="mekpassword" type="text" /><br />
+            <input name="mekpassword" type="text" /><br>
           % end
-          <font size="-1">(please use only latin characters)</font></br />
-          <input value="Set" type="submit" />
+          <p class="hint">(please use only latin characters)</p>
+          <input value="Set" type="submit">
         </form>
         % if noalpha:
           % # noalpha is a cookie set after trying to use nonlatin characters as a password
-          <br /><font size="-1" color="red">Please use only latin characters as password.</font>
+          <p class="hint">Please use only latin characters as password.</font>
         % end
       </td>
-      <td width=250px valign="TOP">
+      <td width=250px>
         % if not mtison:
           <a href="/mmturnon"><img src="/image/server_off.png"></a>
         % end
@@ -68,37 +67,24 @@
     </tr>
 </table>
 
-<p>&nbsp;</p>
+<hr>
 
-% # more tutorial messages
-% if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=700px>
-    <td width=700px>
-      <font size="-1"><b>Tutorial:</b>
-    </td>
-  </tr>
-  <tr width=700px>
-    <td width=700px>
-      <font size="-1">Below is the megameklog.txt file. It's not game log file that you see on MegaMek window below the map, nor a savegame info. It provides output of players joining and leaving MegaMek server, as well as some additional information for troubleshooting (eg. wrong MegaMek versions). Astech will not autorefresh this file, so to see exact newest logs, refresh server status page.</font>
-    </td>
-  </tr>
-</table>
-% end
-
-<table>
+<table class="list">
   <tr>
-    <td width=700px>
-      <p><b>Megamek server log</b> (newest first):</p>
+    <td>
+      <h2>Megamek server log (newest first):</h2>
     <td>
   </tr>
   % # megameklog.txt file in reverser order
   % for i in logFile:
     <tr>
-      <td width=700px>{{i}}</td>
+      <td>{{i}}</td>
     </tr>
   % end
-  <tr><td width=700px>[...]</td></tr>
+  <tr>
+    <td>[...]</td>
+  </tr>
 </table>
 
 % include('footer')
+

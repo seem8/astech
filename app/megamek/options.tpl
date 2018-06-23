@@ -2,23 +2,22 @@
 
 % # tutorial messages in veteran cookie is absent
 % if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1">This are Astech options. You can disable / enable tutorial and change Your MegaMek version. If You want to change name, or port of Your MegaMek server, contact me about it.</font>
-    </td>
-  </tr>
-</table>
+  <div id="tutorial">
+    <strong>Tutorial:</strong><br>
+    This are Astech options. You can disable / enable tutorial
+    and change Your MegaMek version. If You want to change name,
+    or port of Your MegaMek server, contact me about it.
+    <hr>
+    Below that you can change your megamek server version. Click
+    an arrow in front of desired version. Choosen version has
+    "check" icon in front of it.
+  </div>
 % end
 
 <table>
   <tr width=200px>
     <td width=100px>
-      &nbsp;<br><b>Tutorial:</b><br>&nbsp;
+      <strong>Tutorial:</strong>
     </td>
     <td width=100px>
     % if veteran:
@@ -32,21 +31,9 @@
   </tr>
 </table>
 
-% # tutorial messages in veteran cookie is absent
-% if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1">Here you can change your megamek server version. Click an arrow in front of desired version. Choosen version has "check" icon in front of it.</font>
-    </td>
-  </tr>
-</table>
-% end
-<table>
+<hr>
+
+<table class="list">
   <tr width=600px>
     <td width=40px></td>
     <td width=460px><b>Here are your versions of MegaMek:</b></td>

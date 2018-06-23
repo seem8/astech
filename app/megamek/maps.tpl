@@ -2,64 +2,58 @@
 
 % # tutorial messages in veteran cookie is absent
 % if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1">This is a MegaMek map upload form. Click <i>browse</i> to choose file with a .board extension on your computer, witch is typically in your data/boards folder. Choose one file at a time. I has to have .board extension (with is standard file from MegaMek map editor) and be below 1 megabyte in size. File will be uploaded to data/boards/astech folder on your MegaMek server. You have to restart the server to play on new maps.</font>
-    </td>
-  </tr>
-</table>
-% end
-
-<table border="0">
-  <tr width=500px>
-    <td width=250px valign="TOP">
-      <b>Upload map:</b><br /><font size="-1">Only files with .board extension are allowed.</font></td>
-    <td width=250px valign="TOP">
-      % # map upload form
-      <form action="/maps" method="post" enctype="multipart/form-data">
-        <input type="file" name="map_file" /><br />
-        <input type="submit" value="Upload" />
-        % # wrongboard, bigboard and noboard are cookies set when
-        % # the file doesn't met certain conditions
-        % if wrongboard:
-          <br /><font size="-1" color="red">Choose file with .board extension.</font>
-        % end
-        % if bigboard:
-          <br /><font size="-1" color="red">File is too big.</font>
-        % end
-        % if noboard:
-          <br /><font size="-1" color="red">Please choose a file first.</font>
-        % end
-    </td>
-  </tr>
-</table>
-<p>&nbsp;</p>
-
-% # tutorial messages in veteran cookie is absent
-% if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=800px>
-    <td width=800px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=800px>
-    <td width=800px>
-      <font size="-1">Below is the list of uploaded maps. You can choose them in the game options in MegaMek lobby screen. Remember to search them by size in MegaMek.<br />You also can delete and download your uploaded maps with link in the left.</font>
-    </td>
-  </tr>
-</table>
+  <div id="tutorial">
+    <strong>Tutorial:</strong><br>
+    This is a MegaMek map upload form. Click <i>browse</i> to choose file
+    with a .board extension on your computer, witch is typically in your
+    data/boards folder. Choose one file at a time. I has to have .board
+    extension (with is standard file from MegaMek map editor) and be below
+    1 megabyte in size. File will be uploaded to data/boards/astech folder
+    on your MegaMek server. You have to restart the server to play on new maps.
+    <hr>
+    Below that is the list of uploaded maps. You can choose them in the game options
+    in MegaMek lobby screen. Remember to search them by size in MegaMek. You also
+    can delete and download your uploaded maps with link in the left.
+</div>
 % end
 
 <table>
+  <tr width=500px>
+    <td width=250px>
+      <b>Upload map:</b>
+      <p class="hint">Only files with .board extension are allowed.</p>
+    </td>
+    <td width=250px>
+      % # map upload form
+      <form action="/maps" method="post" enctype="multipart/form-data">
+        <input type="file" name="map_file"><br>
+        <input type="submit" value="Upload">
+        % # wrongboard, bigboard and noboard are cookies set when
+        % # the file doesn't met certain conditions
+        <p class="error">
+          % if wrongboard:
+            Choose file with .board extension.
+          % end
+          % if bigboard:
+            File is too big.
+          % end
+          % if noboard:
+            Please choose a file first.
+          % end
+        </p>
+    </td>
+  </tr>
+</table>
+
+<hr>
+
+<table class="list">
   <tr width=800px>
     <td width=40px></td>
     <td width=40px></td>
-    <td width=720px><b>Here are your maps:</b></td>
+    <td width=720px>
+      <strong>Here are your maps:</strong>
+    </td>
   </tr>
   % # mapfiles is a list of all filenames from the maps directory
   % if len(mapfiles) > 0:
@@ -78,5 +72,5 @@
     <p>You have no custom maps yet.</p>
   % end
 
-% # contant information and closing html tags
+% # contact information and closing html tags
 % include('footer')

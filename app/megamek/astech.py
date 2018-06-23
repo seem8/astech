@@ -222,6 +222,11 @@ megatech = MegaTech()
 @route('/image/<filename>')
 def image(filename):
   return static_file(filename, root='./static/', mimetype='image/png')
+
+# style.css file for better looking page
+@route('/style')
+def style():
+  return static_file('style.css', root='./static/')
 # ----------------------------------------
 
 

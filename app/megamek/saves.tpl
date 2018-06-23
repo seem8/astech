@@ -2,64 +2,59 @@
 
 % # tutorial messages in veteran cookie is absent
 % if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1">This is a MegaMek saves upload form. Click <i>browse</i> to choose file with a .sav.gz extension on your computer, witch is typically in your savegames folder. Choose one file at a time. I has to have .gz extension (with is standard file from MegaMek save game) and be below 1 megabyte in size. File will be uploaded to savegames folder on your MegaMek server and a timestamp will be added to filename. You have to restart the server to load new save.</font>
-    </td>
-  </tr>
-</table>
+  <div id="tutorial">
+    <strong>Tutorial:</strong><br>
+    This is a MegaMek saves upload form. Click <em>browse</em> to choose
+    file with a .sav.gz extension on your computer, witch is typically
+    in your savegames folder. Choose one file at a time. I has to have .gz
+    extension (with is standard file from MegaMek save game) and be below
+    1 megabyte in size. File will be uploaded to savegames folder on your
+    MegaMek server and a timestamp will be added to filename. You have to
+    restart the server to load new save.
+    <hr>
+     Below that is the list of uploaded saves. You also can delete and
+     download your uploaded saves with link in the left. To load a game
+     type <em>/load [datestamp-filename]</em> in MegaMek lobby screen.
+</div>
 % end
 
-<table border="0">
+<table>
   <tr width=500px>
-    <td width=250px valign="TOP">
-      <b>Upload save:</b><br /><font size="-1">Only files with .gz extension are accepted.</font></td>
-    <td width=250px valign="TOP">
+    <td width=250px>
+      <strong>Upload save:</strong>
+      <p class="hint">Only files with .gz extension are accepted</p>
+    </td>
+    <td width=250px>
       % # saves upload form
       <form action="/saves" method="post" enctype="multipart/form-data">
         <input type="file" name="saved_game" /><br />
         <input type="submit" value="Upload" />
         % # wrongsave, bigsave and nosave are cookies set when
         % # file doesn't met certain conditions
-        % if wrongsave:
-          <br /><font size="-1" color="red">Choose file with .gz extension.</font>
-        % end
-        % if bigsave:
-          <br /><font size="-1" color="red">File is too big.</font>
-        % end
-        % if nosave:
-          <br /><font size="-1" color="red">Please choose a file first.</font>
-        % end
+        <p class="error">
+          % if wrongsave:
+            Choose file with .gz extension.
+          % end
+          % if bigsave:
+            File is too big.
+          % end
+          % if nosave:
+            Please choose a file first.
+          % end
+        </p>
     </td>
   </tr>
 </table>
-<p>&nbsp;</p>
 
-% # tutorial messages in veteran cookie is absent
-% if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=800px>
-    <td width=800px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=800px>
-    <td width=800px>
-      <font size="-1">Below is the list of uploaded saves. You also can delete and download your uploaded saves with link in the left.<br />To load a game type <i>/load [datestamp-filename]</i> in MegaMek lobby screen.</font>
-    </td>
-  </tr>
-</table>
-% end
+<hr>
 
-<table>
+<table class="list">
   <tr width=800px>
     <td width=40px></td>
     <td width=40px></td>
-    <td width=720px><b>Here are your saves:</b></td>
+    <td width=720px>
+      <strong>Here are your saves:</strong>
+    </td>
   </tr>
   % # savegames is a list with all filenames from the saves directory
   % if len(savegames) > 0:
@@ -78,5 +73,5 @@
   <p>You have no saved games yet.</p>
 % end
 
-% # contant information and closing html tags
+% # contact information and closing html tags
 % include('footer')

@@ -1,33 +1,30 @@
 Starting MegaMek v0.43.2 ...
 Compiled on Thu Jan 01 01:00:00 CET 1970
-Today is Tue May 15 10:47:54 CEST 2018
+Today is Sat Jun 23 14:12:54 CEST 2018
 Java vendor Oracle Corporation
 Java version 1.8.0_171
-Platform Linux 4.17.0-0.rc3.git4.1.fc29.x86_64 (amd64)
-Total memory available to MegaMek: 1 683 968 kB
+Platform Linux 3.10.0-862.3.3.el7.x86_64 (amd64)
+Total memory available to MegaMek: 1 691 648 kB
 
-Starting Dedicated Server. args: [-port 3333 -password ble 2018-3-6__17-59-29_potyczka.sav.gz]
+Starting Dedicated Server. args: [-port 2346]
 MMRandom: generating RNG type #1
 s: starting a new server...
-s: hostname = 'gazelle' port = 3333
-s: hosting on address = 127.0.0.2
-s: hosting on address = 0:0:0:0:0:0:0:1
-s: password = ble
+s: hostname = 'gazelle' port = 2346
+s: hosting on address = 192.168.111.148
+s: hosting on address = 192.168.122.1
+s: hosting on address = fe80:0:0:0:96c1:30:d353:7bc0%3
+s: hosting on address = fdf7:6b81:d2ff:0:b59d:8930:a247:2181%3
+s: password = null
 s: listening for clients...
 s: accepting player connection #0 ...
 Bark Bark
 Bark Bark
-Bark Bark
 s: player #0, SeeM connected from /127.0.0.1
-SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
+ERROR: Client/Server Version Mismatch -- Client: 0.43.11-RC5 Server: 0.43.2
+ERROR: Client/Server Checksum Mismatch -- Client: b83dd36d5cf2f770fd0fb155768a63891361405a872f7386b912530babb8dfa0 Server: b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71
 server: got a client name from a non-pending connection
-SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
+ERROR: Client/Server Version Mismatch -- Client: 0.43.11-RC5 Server: 0.43.2
+ERROR: Client/Server Checksum Mismatch -- Client: b83dd36d5cf2f770fd0fb155768a63891361405a872f7386b912530babb8dfa0 Server: b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71
 server: got a client name from a non-pending connection
-SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
-server: got a client name from a non-pending connection
-SUCCESS: Client/Server Version (0.43.2) and Checksum (b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71) matched
-s:Contents of Send Queue: 
-s: connection 0 disconnected
-s: removed player SeeM
-2018-05-15 10:49:05 CEST END OF GAME
-s:
+ERROR: Client/Server Version Mismatch -- Client: 0.43.11-RC5 Server: 0.43.2
+ERROR: Client/Server Checksum Mismatch -- Client: b83dd36d5cf2f770fd0fb155768a63891361405a872f7386b912530babb8dfa0 Server: b6740f8533df4141cb762939bcb480ad596f7b1b6ef808b246eeb96a70583d71

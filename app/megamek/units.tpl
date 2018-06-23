@@ -2,60 +2,52 @@
 
 % # tutorial messages in veteran cookie is absent
 % if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=500px>
-    <td width=500px>
-      <font size="-1">This is a MegaMek units upload form. Click <i>browse</i> to choose file with a .mtf extension on your computer. Choose one file at a time. I has to have .mtf extension (with is standard file from MegaMek Lab) and be below 1 megabyte in size. File will be uploaded to data/mechfiles/astech folder on your MegaMek server. You have to restart the server to use a new unit.</font>
-    </td>
-  </tr>
-</table>
+  <div id="tutorial">
+      <strong>Tutorial:</strong><br>
+      This is a MegaMek units upload form. Click <em>browse</em> to
+      choose file with a .mtf extension on your computer. Choose one
+      file at a time. I has to have .mtf extension (with is standard
+      file from MegaMek Lab) and be below 1 megabyte in size. File will
+      be uploaded to data/mechfiles/astech folder on your MegaMek server.
+      You have to restart the server to use a new unit.
+      <hr>
+      Below is the list of uploaded custom units. You, as well as any other
+      player, can choose them in the lobby screen. You also can delete and
+      download your uploaded saves with link in the left.
+  </div>
 % end
 
 <table border="0">
   <tr width=500px>
-    <td width=250px valign="TOP">
-      <b>Upload unit:</b><br /><font size="-1">Only files with .mtf extension are accepted.</font></td>
-    <td width=250px valign="TOP">
+    <td width=250px>
+      <b>Upload unit:</b>
+      <p class="hint">Only files with .mtf extension are accepted.</p>
+    </td>
+    <td width=250px>
       % # unit upload form
       <form action="/units" method="post" enctype="multipart/form-data">
-        <input type="file" name="unit_file" /><br />
-      <input type="submit" value="Upload" />
+        <input type="file" name="unit_file"><br>
+        <input type="submit" value="Upload">
       % # wrongunit, bigunit and nounit are cookies set when
       % # file doesn't met certain conditions
-      % if wrongunit:
-        <br /><font size="-1" color="red">Choose file with .mtf extension.</font>
-      % end
-      % if bigunit:
-        <br /><font size="-1" color="red">File is too big.</font>
-      % end
-      % if nounit:
-        <br /><font size="-1" color="red">Please choose a file first.</font>
-      % end
+      <p class="error"> 
+        % if wrongunit:
+          Choose file with .mtf extension.
+        % end
+        % if bigunit:
+          File is too big.
+        % end
+        % if nounit:
+          Please choose a file first.
+        % end
+      </p>
     </td>
   </tr>
 </table>
-<p>&nbsp;</p>
 
-% # tutorial messages in veteran cookie is absent
-% if not veteran:
-<table bgcolor='dddddd'>
-  <tr width=800px>
-    <td width=800px>
-      <font size="-1"><b>Tutorial:</b></font>
-    </td>
-  <tr width=800px>
-    <td width=800px>
-      <font size="-1">Below is the list of uploaded custom units. You, as well as any other player, can choose them in the lobby screen.<br />You also can delete and download your uploaded saves with link in the left.</font>
-    </td>
-  </tr>
-</table>
-% end
+<hr>
 
-<table>
+<table class="list">
   <tr width=800px>
     <td width=40px></td>
     <td width=40px></td>
