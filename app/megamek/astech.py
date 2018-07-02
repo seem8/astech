@@ -50,6 +50,22 @@ def getFile(filename):
     # we need just 81 last lines
     lastlog = mylines[len(mylines)-81 : len(mylines)]
     lastlog.reverse()
+    
+    # sometimes the word in file is too long to fit inside template div,
+    # so I'm inserting '\n' all over the lines;
+    # in tpl it is interpreted by SPACE character, which is capable to
+    # break like if necessary (werid, but it works);
+    # TODO it adds verid looking spaces into a log file view
+    for i in range(len(lastlog)):
+      leni = len(lastlog[i])
+      t = list(lastlog[i])
+      try:
+        for ii in (50, 101, 152, 203, 254, 305, 356, 407, 458, 509):
+          t.insert(ii, '\n')
+      except IndexError:
+        pass 
+      lastlog[i] = ''.join(t)
+        
     return lastlog
 # ----------------------------------------
 

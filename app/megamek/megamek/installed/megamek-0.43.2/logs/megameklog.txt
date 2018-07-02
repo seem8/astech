@@ -6,6 +6,8 @@ Java version 1.8.0_171
 Platform Linux 3.10.0-862.3.3.el7.x86_64 (amd64)
 Total memory available to MegaMek: 1 691 648 kB
 
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
 Starting Dedicated Server. args: [-port 2346]
 MMRandom: generating RNG type #1
 s: starting a new server...
