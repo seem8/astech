@@ -4,7 +4,7 @@
 body {
   color: #000000;
   background-color: #eeeeee;
-  margin: 2%;
+  margin-top margin-bottom: 2%;
   margin-left: 5%;
   margin-right: 5%;
 }
@@ -103,6 +103,10 @@ p.hint { /* various short messages */
 }
 
 /* --- Tables --- */
+
+table {
+  font-family: sans-serif;
+}
 
 th, td {
   text-align: left;

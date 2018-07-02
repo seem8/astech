@@ -14,7 +14,7 @@
 <div id="header">
   <img src="/image/astech_logo.png">
 
-  <h1>ASTECH: easier MegaMek server administration. (ver. 0.4)</h1>
+  <h1>ASTECH: easier MegaMek server administration. (ver. 0.5)</h1>
 
   % # username is a cookie with login
   % if username:

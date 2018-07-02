@@ -15,7 +15,7 @@ from time import sleep
 import pickle
 
 # import bottle
-# remember to delete debug for production
+# remember to comment out ', debug'  for production
 from bottle import template, response, request, get, post, error, \
                    redirect, static_file, run, route, debug
 
@@ -135,10 +135,11 @@ class MegaTech:
 
   def start(self):
     '''starts MegaMek server'''
-    # if password is set, add it to the lauch command
+    # if game password is set, add it (with a space character at the end) to the lauch command
     if self.game_password != False:
       self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
                      str(self.port) + ' -password ' + str(self.game_password) + ' '
+    # if game password is not set, just run Megamek
     elif self.game_password == False:
       self.command = '/usr/java/default/bin/java -jar MegaMek.jar -dedicated -port ' + \
                      str(self.port)
@@ -150,7 +151,7 @@ class MegaTech:
     # dedicated servers parameters are as follows:
     # -port [port] -password [password] [savedgame]
 
-    # we're sleeping, while wainting for Megamek to write a log file;
+    # we're sleeping, while waiting for Megamek to write a log file;
     # MegaMek is rarely slower than 1 second
     sleep(1)
     # we'll rely on this variable often
@@ -180,6 +181,7 @@ class MegaTech:
     confile = open('config/astech.conf', 'r+b')
     # I really want to close that file
     self.asconfig = pickle.load(confile)
+    confile.close()
 
     # updating variables from config file 
     self.name = self.asconfig['name']
