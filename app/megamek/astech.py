@@ -57,7 +57,6 @@ def getFile(filename):
     # break like if necessary (werid, but it works);
     # TODO it adds verid looking spaces into a log file view
     for i in range(len(lastlog)):
-      leni = len(lastlog[i])
       t = list(lastlog[i])
       try:
         for ii in (50, 101, 152, 203, 254, 305, 356, 407, 458, 509):
