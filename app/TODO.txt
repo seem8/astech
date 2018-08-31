@@ -8,27 +8,9 @@ I still cannot do it right. For now there is an option to use
 MegaMek chat command /load to load savegame.
 
 
-* (maybe) Merge map, save and unit templates.
-They're nearly identical. Every minor change for one of those
-is simply multiplied by 3. It won't be a nice template anymore
-with all those new conditions I'll have to make, but will be easier
-to catch bugs.
-
-
 * Enable https on entire page.
 Bottle dev server handles the page well, but I need encryption.
 I'll have to create nginx and apache configuration files.
-
-
-* Encrypted password.
-Yes. DONE
-
-
-* Use SQLite for static files and game info.
-It will be usefull to have logs of previous games.
-Everytime Astech is looking for static files, it runs os.listdir. it would
-be more secure to place those files in the database and not to scan directories.
-
 
 * Remove MegaMek "fork" from Astech.
 Astech uses it's own - unmodified - MegaMek 0.43.2. I'll figure out how to
@@ -37,10 +19,3 @@ WORK IN PROGRESS
 
 * Improve GitHub wiki.
 A little more documentation woudn't hurt. 
-
-
-* Create docker image.
-Secure installation is a time consuming process: create user, scp all files,
-untar, copy service file, open firewall ports, etc... Docker could handle that.
-DOCKER WILL BE DIFFICULT, BUT INSTALLATION GOT EASIER LATELY
-
