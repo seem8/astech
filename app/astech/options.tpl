@@ -4,9 +4,9 @@
 % if not veteran:
   <div id="tutorial">
     <strong>Tutorial:</strong><br>
-    This are Astech options. You can disable / enable tutorial
-    and change Your MegaMek version. If You want to change name,
-    or port of Your MegaMek server, contact me about it.
+    This are Astech options. You can show/hide tutoriall
+    messages. If You want to change name, or port of Your
+    MegaMek server, contact me about it.
     <hr>
     Below that you can change your megamek server version. Click
     an arrow in front of desired version. Choosen version has
