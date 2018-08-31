@@ -6,7 +6,18 @@ It's intended to run on a Linux machine on any virtual, or psychical server.
 
 It depends on Oracle Java JRE and Python 3.6.
 
-![Alt text](https://lukaszposadowski.pl/wp-content/uploads/server_status.jpg "Optional title")
+Some of the features are:
+- start/stop MegaMek server,
+- view MegaMek log file,
+- switch between any number of MegaMek versions,
+- upload custom units and maps and saved games.
+
+# HOW IT LOOKS #
+
+![login page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "login page")
+![index page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "index page")
+![files page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_files.png "files page")
+![options page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "options page")
 
 # HOW TO RUN #
 
@@ -22,4 +33,15 @@ It depends on Oracle Java JRE and Python 3.6.
 
 ------------------------------------
 
-More info in the wiki: https://github.com/seem8/astech/wiki
+# WHY ASTECH #
+I'm playing MegaMek for year now. As much as I like miniatures and huge maps, custom hexed terrain and beer, some games are simply impractical on physical table. That's why I choose MegaMek for a lot of my games.
+
+MegaMek has no dedicated server software, just a parameter to launch as a headless (it means without any window) server app. This is important, because it can be run on a Linux VPS server, without need for a graphical interface. It saves a ton or ram and removes any connectivity problems.
+
+But I figured out, that some graphical interface would be great and that's why Astech is here. I created video tutorial for new users: https://youtu.be/r5_qf0LX8p4
+
+# FOR WHO #
+For anyone who wants to host a Megamek server on Linux. Aside from getting new version of MegaMek from time to time, there is no need of console work. Just wget desired MegaMek version and untar it to 'installed' directory and Astech will take care of the rest without the need of restart.
+
+## Want to try it?
+If you want to use Astech, I can provide link, login and password. Ask me here on GitHub, or at Battletech forum: http://bg.battletech.com/forums/index.php?topic=57664.0
