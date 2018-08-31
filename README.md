@@ -16,7 +16,7 @@ Some of the features are:
 
 ![login page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_login.png "login page")
 ![index page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "index page")
-![files page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_files.png "files page")
+![files page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_files_2.png "files page")
 ![options page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_options.png "options page")
 
 # HOW TO RUN #
