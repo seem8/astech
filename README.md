@@ -43,5 +43,5 @@ But I figured out, that some graphical interface would be great and that's why A
 # FOR WHO #
 For anyone who wants to host a Megamek server on Linux. Aside from getting new version of MegaMek from time to time, there is no need of console work. Just wget desired MegaMek version and untar it to 'installed' directory and Astech will take care of the rest without the need of restart.
 
-## Want to try it?
+# TRY IT #
 If you want to use Astech, I can provide link, login and password. Ask me here on GitHub, or at Battletech forum: http://bg.battletech.com/forums/index.php?topic=57664.0
