@@ -14,10 +14,10 @@ Some of the features are:
 
 # HOW IT LOOKS #
 
-![login page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "login page")
+![login page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_login.png "login page")
 ![index page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "index page")
 ![files page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_files.png "files page")
-![options page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_index.png "options page")
+![options page](https://github.com/seem8/astech/blob/master/app/screenshots/astech_options.png "options page")
 
 # HOW TO RUN #
 
