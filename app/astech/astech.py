@@ -198,11 +198,11 @@ class MegaTech:
     self.game_password = self.asconfig['game_password']
 
     # updating "shortcuts" for various used directories
-    self.install_dir = self.meks_dir + '/megamek-' + self.version  # megamek directory
-    self.save_dir = self.install_dir + '/savegames/'               # default save dir for megamek
-    self.map_dir = self.install_dir + '/data/boards/astech/'       # astech will upload maps there
-    self.unit_dir = self.install_dir + '/data/mechfiles/astech/'   # and custom mechs there
-    self.logs_dir = self.install_dir + '/logs/'                    # gamelogs are there
+    self.install_dir = f'{self.meks_dir}/megamek-{self.version}'   # megamek directory
+    self.save_dir = f'{self.install_dir}/savegames/'               # default save dir for megamek
+    self.map_dir = f'{self.install_dir}/data/boards/astech/'       # astech will upload maps there
+    self.unit_dir = f'{self.install_dir}/data/mechfiles/astech/'   # and custom mechs there
+    self.logs_dir = f'{self.install_dir}/logs/'                    # gamelogs are there
 
 
   def writeConfig(self):
