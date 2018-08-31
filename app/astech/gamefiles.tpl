@@ -19,7 +19,7 @@
   <tr width=500px>
     <td width=250px>
       <b>Upload file:</b>
-      <p class="hint">Only files with .board, .mtf, or save.gz<br>
+      <p class="hint">Only files with .board, .mtf, or sav.gz<br>
                       extension are allowed.</p>
     </td>
     <td width=250px>
