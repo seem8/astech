@@ -48,8 +48,8 @@ def getFile(filename):
     open(filename,'w').close()
   with open(filename,'r') as myfile:
     mylines = myfile.readlines()
-    # we need just 81 last lines
-    lastlog = mylines[len(mylines)-81 : len(mylines)]
+    # we need just 300 last lines
+    lastlog = mylines[len(mylines)-300 : len(mylines)]
     lastlog.reverse()
 
     # sometimes the word in file is too long to fit inside template div,
@@ -560,12 +560,14 @@ def options():
 
     # we are checking which version is currently selected
     selected = megatech.version
-   
-    return template('options', username=username, \
-                               veteran=veteran, \
-                               versions=versions, \
-                               selected=selected) 
-  
+
+    return template('options',
+                    username=username,
+                    veteran=veteran,
+                    versions=versions,
+                    selected=selected,
+                   )
+
   elif not username:
     redirect('/login')
 
@@ -647,7 +649,7 @@ def route404(error):
     veteran = request.get_cookie('veteran', secret=secret1)
 
     response.set_cookie('curpage', '404', secret=secret1)
-  
+
     username = request.get_cookie('administrator', secret=secret1)
     return template('error404', username=username, \
                                 veteran=veteran)
