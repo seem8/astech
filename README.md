@@ -10,7 +10,7 @@ Some of the features are:
 - start/stop MegaMek server,
 - view MegaMek log file,
 - switch between any number of MegaMek versions,
-- upload custom units and maps and saved games.
+- upload custom units, maps and saved games.
 
 # HOW IT LOOKS #
 
