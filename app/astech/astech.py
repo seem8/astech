@@ -437,11 +437,12 @@ def list_user_files():
     # current page for become_veteran and become_rookie functions
     response.set_cookie('curpage', '/gamefiles', secret=secret1)
 
-    # specify directory with the file
+    # create diretories, if they not exist
     pathlib.Path(megatech.map_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(megatech.unit_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(megatech.save_dir).mkdir(parents=True, exist_ok=True)
 
+    # specify directories with user files
     map_list = os.listdir(megatech.map_dir)
     unit_list = os.listdir(megatech.unit_dir)
     save_list = os.listdir(megatech.save_dir)
@@ -548,14 +549,13 @@ def options():
 
     response.set_cookie('curpage', '/options', secret=secret1)
 
-    username = request.get_cookie('administrator', secret=secret1)
-
     # list of avaiable MegaMek versions
     versions = []
     # cutting 'megamek-(v)' prefix
     for i in os.listdir(megatech.meks_dir):
-      # skip "megamek-"
-      versions.append(i[8:])
+      if os.path.isdir(i):
+        # skip "megamek-"
+        versions.append(i[8:])
     versions.sort()
 
     # we are checking which version is currently selected
@@ -626,7 +626,7 @@ def changeVer(vernumber):
   '''Changes version info in MegaTech instance
   and installs version of MegaMek'''
   megatech.version = vernumber
-  
+
   # stop current MegaMek instance 
   megatech.stop()
 
@@ -642,21 +642,8 @@ def changeVer(vernumber):
 @error(404)
 def route404(error):
   '''Page not found page.'''
-  username = request.get_cookie('administrator', secret=secret1)
-
-  if username:
-    # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret=secret1)
-
-    response.set_cookie('curpage', '404', secret=secret1)
-
-    username = request.get_cookie('administrator', secret=secret1)
-    return template('error404', username=username, \
-                                veteran=veteran)
-  elif not username:
-    redirect('/login')
+  return template('error404')
 # ----------------------------------------
-
 
 
 # ----------------------------------------
