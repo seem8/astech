@@ -363,7 +363,7 @@ def index():
       megatech.ison = False
 
     # render template
-    return template('administrator',
+    return template('index',
                     username = username,
                     veteran = veteran,
                     mtison = megatech.ison,
