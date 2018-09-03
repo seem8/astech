@@ -421,6 +421,7 @@ def index_set_password():
     redirect('/login')
 # ----------------------------------------
 
+
 # ----------------------------------------
 # ------- USER FILES PAGE ----------------
 # ----------------------------------------
@@ -553,9 +554,8 @@ def options():
     versions = []
     # cutting 'megamek-(v)' prefix
     for i in os.listdir(megatech.meks_dir):
-      if os.path.isdir(i):
-        # skip "megamek-"
-        versions.append(i[8:])
+      # skip "megamek-"
+      versions.append(i[8:])
     versions.sort()
 
     # we are checking which version is currently selected
@@ -578,7 +578,6 @@ def options():
 @route('/mmturnon')
 def mmturnon():
   if request.get_cookie('administrator', secret=secret1):
-    print(megatech.version)
     megatech.start()
   redirect('/')
 # ----------------------------------------
@@ -627,8 +626,11 @@ def changeVer(vernumber):
   and installs version of MegaMek'''
   megatech.version = vernumber
 
-  # stop current MegaMek instance 
-  megatech.stop()
+  # restart MegaMek instance
+  if megatech.ison:
+    megatech.stop()
+    sleep(1)
+    megatech.start()
 
   # updating astech.conf file
   megatech.writeConfig()
