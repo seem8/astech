@@ -10,37 +10,52 @@ import pickle
 import hashlib
 
 # we need a little random string for signed cookies
-import random
 import string
+import random
 random.seed()
 
 # ---------------------------------------
 # dumb initial configutarion 
-conf = { 'name': '', \
-         'version': '', \
-         'port': 1111, \
-         'game_password': False }
-crede = { 'user': '', \
-          'pass': '' }
-secret = { 'alpha': '', \
-           'beta': '' }
-
+conf = {
+       'name': '',
+       'version': '',
+       'port': 2346,
+       'game_password': False,
+       }
+crede = {
+        'user': '',
+        'pass': '',
+        }
+secret = {
+         'alpha': '',
+         'beta': '',
+         }
+bottle = {
+         'port': '8080',
+         'debug': False,
+         }
 # ---------------------------------------
 # now we are making real one
-print('Type name: ')
+print('Type server name: ')
 name = input()
 
-print('Type version: ')
+print('Type MegaMek version: ')
 version = input()
 
-print('Type port: ')
+print('Type port for MegaMek: ')
 port = input()
 
-print('Type username: ')
+print('Type astech username: ')
 user = input()
 
-print('Type password: ')
+print('Type astech password: ')
 password = input()
+
+print('Type bottle server port: ')
+server_port = input()
+
+print('Use bottle debug server? [y/n]')
+server_debug = input()
 
 # we have all the data we need
 print('--- saving configuration ---')
@@ -49,31 +64,34 @@ print('--- saving configuration ---')
 conf['name'] = name
 conf['version'] = version
 conf['port'] = int(port)
+
 crede['user'] = user
 crede['pass'] = hashlib.sha512(password.encode()).hexdigest()
 
-# dumping name, version and port to config file
-confile = open('astech.conf', 'w+b')
-pickle.dump(conf, confile, protocol=0)
-confile.close()
+bottle['port'] = server_port
+bottle['debug'] = server_debug
 
-# dumping user and password to credentials file
-credefile = open('astech.crede', 'w+b')
-pickle.dump(crede, credefile, protocol=0)
-confile.close()
+# dumping name, version and port
+with open('astech.conf', 'w+b') as confile:
+  pickle.dump(conf, confile, protocol=0)
 
-# ---------------------------------------
+# dumping user and password
+with open('astech.crede', 'w+b') as credefile:
+  pickle.dump(crede, credefile, protocol=0)
+
+# dumping bottle config
+with open('astech.bottle', 'w+b') as bottlefile:
+  pickle.dump(bottle, bottlefile, protocol=0)
+
 # generating random strings for signed cookiess
 secret['alpha'] = ''.join(random.choices(string.ascii_letters + string.digits, \
                                    k=34+random.randint(0,8)))
 secret['beta'] = ''.join(random.choices(string.ascii_letters + string.digits, \
                                    k=34+random.randint(0,8)))
 
-cookiefile = open('astech.cookie', 'w+b')
-pickle.dump(secret, cookiefile, protocol=0)
-cookiefile.close()
-
-
+# dumping cookie confing file
+with open('astech.cookie', 'w+b') as cookiefile:
+  pickle.dump(secret, cookiefile, protocol=0)
 # ---------------------------------------
 # ok
 print('--- config is ready. ---')
