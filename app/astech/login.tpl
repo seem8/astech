@@ -17,9 +17,9 @@
 </table>
 </form>
 
-% # comment those two lines on production
-<p>Default login: <em>somelogin</em>,
-default password: <em>somepassword</em></p>
+% if bottle_debug == 'y':
+  <p>Default login: <em>somelogin</em>, default password: <em>somepassword</em></p>
+% end
 
 % # badpass is a cookie set when wrong login and/or password were submitted
 % if badPass:

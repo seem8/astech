@@ -38,7 +38,7 @@
         % # variables from MegaTech class
         name: {{mtname}}<br>
         version: {{mtver}}<br>
-        address: {{mtdomain}}<br>
+        address: {{domain}}<br>
         port: {{mtport}}
       </td>
       <td width=250px>

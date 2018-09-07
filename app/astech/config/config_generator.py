@@ -16,23 +16,24 @@ random.seed()
 
 # ---------------------------------------
 # dumb initial configutarion 
-conf = {
-       'name': '',
-       'version': '',
-       'port': 2346,
-       'game_password': False,
-       }
-crede = {
-        'user': '',
-        'pass': '',
-        }
+conf =   {
+         'name': '',
+         'version': '',
+         'port': 2346,
+         'game_password': False,
+         }
+crede =  {
+         'user': '',
+         'pass': '',
+         }
 secret = {
          'alpha': '',
          'beta': '',
          }
 bottle = {
          'port': '8080',
-         'debug': False,
+         'debug': 'n',
+         'domain': 'some.server.com',
          }
 # ---------------------------------------
 # now we are making real one
@@ -51,6 +52,9 @@ user = input()
 print('Type astech password: ')
 password = input()
 
+print('Type server domain: ')
+server_domain = input()
+
 print('Type bottle server port: ')
 server_port = input()
 
@@ -68,6 +72,7 @@ conf['port'] = int(port)
 crede['user'] = user
 crede['pass'] = hashlib.sha512(password.encode()).hexdigest()
 
+bottle['domain'] = server_domain
 bottle['port'] = server_port
 bottle['debug'] = server_debug
 

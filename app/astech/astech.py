@@ -14,11 +14,6 @@ from time import sleep
 # maybe I will switch to sqlite
 import pickle
 
-# import bottle
-# remember to comment out ', debug'  for production
-from bottle import template, response, request, get, post, error, \
-                   redirect, static_file, run, route, debug
-
 # file creating, uploading and listing directories
 import os
 import pathlib
@@ -33,6 +28,16 @@ import hashlib
 # for downloading new versions of megamek
 import urllib.request
 
+# read bottle configuration file
+with open('config/astech.bottle', 'r+b') as bottlefile:
+  bottle_conf = pickle.load(bottlefile)
+
+# import bottle
+from bottle import template, response, request, get, post, error, \
+                   redirect, static_file, run, route
+
+if bottle_conf['debug'] == 'y':
+  from bottle import debug
 
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
@@ -121,9 +126,8 @@ with open('config/astech.cookie', 'r+b') as secrets:
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    confile = open('config/astech.conf', 'r+b') # Astech configuration file
-    self.asconfig = pickle.load(confile)        # restore dictionary from a file
-    confile.close()
+    with open('config/astech.conf', 'r+b') as confile:
+      self.asconfig = pickle.load(confile)
 
     # 4 vars are stored in astech.config file
     self.name = self.asconfig['name']         # name of the instance 
@@ -134,7 +138,6 @@ class MegaTech:
 
     self.ison = False                         # megamek is off by default 
     self.process = False                      # to check if MegaMek is running
-    self.domain = 'some.server.com'           # nice site name
 
     # "shortcuts" for various used directories
     self.meks_dir = './megamek/installed'       # avaiable versions of Megamek
@@ -155,7 +158,7 @@ class MegaTech:
     javabin = '/usr/java/default/bin/java'
 
     # command to run MegaMek headless server
-    command = f'{javabin} -jar MegaMek.jar -dedicated -port {str(self.port)}'
+    command = f'{javabin} -jar MegaMek.jar -dedicated -port {self.port}'
 
     # add password if present
     if self.game_password and self.game_password != '':
@@ -300,7 +303,11 @@ def login():
 
   # cookie with information about bad password
   bad_password = request.get_cookie('badPassword', secret=secret2)
-  return template('login', badPass=bad_password, username=username)
+  return template('login',
+                  badPass=bad_password,
+                  username=username,
+                  bottle_debug=bottle_conf['debug'],
+                  )
 # ----------------------------------------
 
 # check credentials and redirect to other routes
@@ -320,6 +327,7 @@ def check_login():
     elif not crede(username, password):
       # bad password
       response.set_cookie('badPassword', 'nopass', max_age=5, secret=secret2)
+      time.sleep(3) # to prevent simple spam
       redirect('/login')
   else:
     # if login and/or password are not alpha, don't parse them
@@ -364,13 +372,13 @@ def index():
 
     # render template
     return template('index',
+                    domain = bottle_conf['domain'],
                     username = username,
                     veteran = veteran,
                     mtison = megatech.ison,
                     mtver = megatech.version,
                     mtname = megatech.name,
                     mtport = str(megatech.port),
-                    mtdomain = megatech.domain,
                     logFile = getFile(megatech.logs_dir + 'megameklog.txt'),
                     mtpassword = megatech.game_password,
                     passwordnoalpha = passwordnoalpha,
@@ -651,12 +659,11 @@ def route404(error):
 # ----------------------------------------
 # ----- ALL SYSTEMS... NOMINAL -----------
 # ----------------------------------------
-# main debug loop
-# remember to add debug import from bottle
-debug(True)
-run(host='localhost', port=8080, reloader=True)
 
-# main production loop
-# remember to delete debug import from bottle
-#run(host='0.0.0.0', port=8080)
+# main loop
+if bottle_conf['debug'] == 'y':
+  debug(True)
+  run(host='localhost', port=bottle_conf['port'], reloader=True)
+elif bottle_conf['debug'] == 'n':
+  run(host='0.0.0.0', port=bottle_conf['port'])
 
