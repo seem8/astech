@@ -37,29 +37,14 @@ bottle = {
          }
 # ---------------------------------------
 # now we are making real one
-print('Type server name: ')
-name = input()
-
-print('Type MegaMek version: ')
-version = input()
-
-print('Type port for MegaMek: ')
-port = input()
-
-print('Type astech username: ')
-user = input()
-
-print('Type astech password: ')
-password = input()
-
-print('Type server domain: ')
-server_domain = input()
-
-print('Type bottle server port: ')
-server_port = input()
-
-print('Use bottle debug server? [y/n]')
-server_debug = input()
+name = input('Server name: ')
+version = input('MegaMek version: ')
+port = input('MegaMek port: ')
+user = input('Astech username: ')
+password = input('Astech password: ')
+server_domain = input('Server web address: ')
+server_port = input('Bottle port: ')
+server_debug = input('Use Bottle debug mode? [y/n] ')
 
 # we have all the data we need
 print('--- saving configuration ---')
