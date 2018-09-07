@@ -61,7 +61,7 @@ def getFile(filename):
     # so I'm inserting '\n' all over the lines;
     # in tpl it is interpreted by SPACE character, which is capable to
     # break like if necessary (werid, but it works);
-    # TODO it adds verid looking spaces into a log file view
+    # TODO it adds spaces into a log file view
     for line_number in range(len(lastlog)):
       line = list(lastlog[line_number])
 
