@@ -110,8 +110,8 @@
   % if len(save_list) > 0:
     % for save in save_list:
       <tr width=800px>
-        <td width=40px><a href="/files/remove/savegames/{{save}}"><img src="/image/delete.png"></a></td>
-        <td width=40px><a href="/files/download/savegames/{{save}}"><img src="/image/download.png"></a></td>
+        <td width=40px><a href="/files/remove/savegame/{{save}}"><img src="/image/delete.png"></a></td>
+        <td width=40px><a href="/files/download/savegame/{{save}}"><img src="/image/download.png"></a></td>
         <td width=720px>{{save}}</td>
       </tr>
     % end
