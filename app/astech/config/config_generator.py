@@ -74,9 +74,9 @@ with open('astech.bottle', 'w+b') as bottlefile:
   pickle.dump(bottle, bottlefile, protocol=0)
 
 # generating random strings for signed cookiess
-secret['alpha'] = ''.join(random.choices(string.ascii_letters + string.digits, \
+secret['alpha'] = ''.join(random.choices(string.ascii_letters + string.digits,
                                    k=34+random.randint(0,8)))
-secret['beta'] = ''.join(random.choices(string.ascii_letters + string.digits, \
+secret['beta'] = ''.join(random.choices(string.ascii_letters + string.digits,
                                    k=34+random.randint(0,8)))
 
 # dumping cookie confing file
