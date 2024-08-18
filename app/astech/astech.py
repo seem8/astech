@@ -155,7 +155,8 @@ class MegaTech:
     if self.ison:
       return False
 
-    javabin = '/usr/java/default/bin/java'
+    #javabin = '/usr/java/default/bin/java'
+    javabin = '/usr/bin/java'
 
     # command to run MegaMek headless server
     command = f'{javabin} -jar MegaMek.jar -dedicated -port {self.port}'
