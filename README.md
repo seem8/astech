@@ -27,8 +27,9 @@ Modify step 4 to AST_MM_VERSION=0.49.19.1 AST_MM_PORT=2346 AST_USER=otherusernam
 
 You need:
 - public IP address,
+- a proper domain,
 - some sort of http proxy, like Nginx,
-- SSL certicate, possibly from Let's Encrypt.
+- SSL certificate, possibly from Let's Encrypt.
 
 Sample Nginx vhost configuration is included as app/nginx/sample.conf.
 
