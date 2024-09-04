@@ -6,7 +6,7 @@ It's intended to run on a Linux machine with Java 17 and Python 3.6+. Tested up 
 
 # HOW TO RUN #
 
-1. Install Java JDK 17 as /usr/bin/java. It can by a symlink to /etc/alternatives.
+1. Install Java JDK 17 as /usr/bin/java. It can be a symlink to /etc/alternatives.
 
 2. Unpack megamek-0.[version].[release].tar.gz as astech/megamek-version directory. In this example it will be megamek-0.49.19.1 (https://github.com/MegaMek/megamek/releases/download/v0.49.19.1/megamek-0.49.19.1.tar.gz). Read astech-version/PLACEHOLDER_FOR_ASTECH (https://github.com/seem8/astech/blob/master/app/astech/megamek-version/PLACEHOLDER_FOR_MEGAMEK) for more deailed instruction.
 
