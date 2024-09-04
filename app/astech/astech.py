@@ -1,43 +1,79 @@
 #!/usr/bin/python3
-'''Megamek server administration page.
-This is ALPHA quality software,
-expect some bugs and glitches.
-author: Łukasz Posadowski,  mail [at] lukaszposadowski.pl'''
+'''
+Megamek server administration page.
+This is ALPHA quality software (even after so much time),
+so expect some bugs and glitches.
+'''
 
-# import subprocess, for launching jar files
+# ----------------------------------------
+# ------- IMPORT MODULES -----------------
+# ----------------------------------------
+
+# launching MegaMek from jar files
 import subprocess
 
-# sleep may help with subprocess,
-from time import sleep
-
-# pickle is for the config files;
-# maybe I will switch to sqlite
-import pickle
-
-# file creating, uploading and listing directories
+# using ENV from "podman run"
 import os
+
+# save and open files for MegaMek
 import pathlib
 
-# we have to append date to filenames 
+# append date to filenames and
+# wait between unsuccesfull login attempts
 import time
 
-# we're checking the password by making hash
-# and comparing with a bytestring
+# password hashing
 import hashlib
 
-# for downloading new versions of megamek
-import urllib.request
-
-# read bottle configuration file
-with open('config/astech.bottle', 'r+b') as bottlefile:
-  bottle_conf = pickle.load(bottlefile)
+# cookie secrets
+import string
+import random
+random.seed()
 
 # import bottle
 from bottle import template, response, request, get, post, error, \
                    redirect, static_file, run, route
 
-if bottle_conf['debug'] == 'y':
+
+# ----------------------------------------
+# ------- INITIAL CONFIGURATION ----------
+# ----------------------------------------
+
+# Bottle can run in debug mode
+AST_DEBUG = os.environ.get("AST_DEBUG")
+if AST_DEBUG:
   from bottle import debug
+
+# MegaMek version
+AST_MM_VERSION = os.environ.get("AST_MM_VERSION")
+
+# get MegaMek port from ENV, or set it as 2346
+AST_MM_PORT = os.environ.get("AST_MM_PORT")
+if not AST_MM_PORT:
+  AST_MM_PORT = 2346
+
+# get user from ENV, or set it as 'kerensky'
+AST_USER = os.environ.get("AST_USER")
+if not AST_USER:
+  AST_USER = 'kerensky'
+
+# get password from ENV, or set it as 'sldf';
+# TODO this ENV variable will still be plain text in container init/systemd unit file,
+# it's just avoid keeping plain text password in containers memory all the time
+PLAINPASS = os.environ.get("AST_PASS")
+if PLAINPASS:
+  AST_PASS = hashlib.sha512(PLAINPASS.encode()).hexdigest()
+  del PLAINPASS
+else:
+  AST_PASS = hashlib.sha512('sldf'.encode()).hexdigest()
+
+# set secrets for cookiess;
+# restarting application will - almost certainly - force users to login again
+SECRET1 = \
+  ''.join(random.choices(string.ascii_letters + string.digits, k=34+random.randint(0,8)))
+SECRET2 = \
+  ''.join(random.choices(string.ascii_letters + string.digits, k=34+random.randint(0,8)))
+
 
 # ----------------------------------------
 # ------- HELPER FUNCTIONS ---------------
@@ -46,8 +82,8 @@ if bottle_conf['debug'] == 'y':
 # convert megamek log files into lists
 def getFile(filename):
   '''filename -> reversed list of last 81 lines'''
+  # log file doesn't exist by default in MegaMek
   try:
-    # log file doesn't exist by default in MegaMek
     open(filename,'r').close()
   except FileNotFoundError:
     open(filename,'w').close()
@@ -59,20 +95,17 @@ def getFile(filename):
 
     # sometimes the word in file is too long to fit inside template div,
     # so I'm inserting '\n' all over the lines;
-    # in tpl it is interpreted by SPACE character, which is capable to
-    # break like if necessary (werid, but it works);
+    # in Bottle templates it is interpreted by SPACE character, which is
+    # capable to break like if necessary (werid, but it works);
     # TODO it adds spaces into a log file view
     for line_number in range(len(lastlog)):
       line = list(lastlog[line_number])
-
       try:
         for column in (101, 152, 203, 254, 305, 356, 407, 458, 509):
           line.insert(column, '\n')
       except IndexError:
         pass
-
       lastlog[line_number] = ''.join(line)
-
     return lastlog
 # ----------------------------------------
 
@@ -84,70 +117,43 @@ def stringTime():
 # ----------------------------------------
 
 # user name and password;
-# password encryption is nice,
-# but useless without https;
-# defaults are 'somelogin' and 'somepassword'
+# password encryption is nice, but useless without https;
+# defaults are user: 'kerensky', password: 'sldf'
 def crede(u, p):
   '''check credentials'''
-  credefile = open('config/astech.crede', 'r+b')
-  # I really want to close that file
-  credentials = pickle.load(credefile)
-  credefile.close()
-  if u == credentials['user']:
-    if hashlib.sha512(p.encode()).hexdigest() == credentials['pass']:
+  if u == AST_USER:
+    if hashlib.sha512(p.encode()).hexdigest() == AST_PASS:
+      time.sleep(random.randint(1,2))
       return True
-    else:
-      return False
-  else:
+    time.sleep(random.randint(1,2))
     return False
+  time.sleep(random.randint(1,2))
+  return False
 # ----------------------------------------
-
-
-# ----------------------------------------
-# ------- SOME USEFULL VARIABLES ---------
-# ----------------------------------------
-
-# we need two separate secrets:
-# 1: for cookies with ~1 day expiration time,
-# 2: for 5 second cookies to display warnings on templates
-# secrets are stored in astech.cookie config file
-with open('config/astech.cookie', 'r+b') as secrets:
-  cookies = pickle.load(secrets)
-  secret1 = cookies['alpha']
-  secret2 = cookies['beta']
 
 
 # ----------------------------------------
 # ------- MAIN LOGIC ---------------------
 # ----------------------------------------
 
-# MegaMek server status and controls
-# we have a class for a little namespace home 
+# MegaMek server stuff
 class MegaTech:
   '''MegaMek server controls and status'''
   def __init__(self):
-    with open('config/astech.conf', 'r+b') as confile:
-      self.asconfig = pickle.load(confile)
 
-    # 4 vars are stored in astech.config file
-    self.name = self.asconfig['name']         # name of the instance 
-    self.version = self.asconfig['version']   # megamek version
-    self.port = self.asconfig['port']         # port for megamek server
-    # optional password to change game options
-    self.game_password = self.asconfig['game_password']
+    self.version = AST_MM_VERSION     # megamek version
+    self.port = AST_MM_PORT           # port number for MegaMek
 
-    self.ison = False                         # megamek is off by default 
-    self.process = False                      # to check if MegaMek is running
+    self.ison = False                 # MegaMek is off during __init__
+    self.process = False              # to check if MegaMek is running
 
-    # "shortcuts" for various used directories
-    self.meks_dir = './megamek/installed'       # avaiable versions of Megamek
-    self.archive_dir = './megamek/archives'     # downloaded versions of MegaMek
+    # "shortcuts" for various directories
+    self.mek_dir = f'./megamek-{self.version}'                 # MegaMek directory
 
-    self.install_dir = f'{self.meks_dir}/megamek-{self.version}'   # megamek directory
-    self.save_dir = f'{self.install_dir}/savegames/'               # default save dir for megamek
-    self.map_dir = f'{self.install_dir}/data/boards/astech/'       # astech will upload maps there
-    self.unit_dir = f'{self.install_dir}/data/mechfiles/astech/'   # and custom mechs there
-    self.logs_dir = f'{self.install_dir}/logs/'                    # gamelogs are there
+    self.save_dir = f'{self.mek_dir}/savegames/'               # default save dir for megamek
+    self.maps_dir = f'{self.mek_dir}/data/boards/astech/'      # astech will upload maps there
+    self.unit_dir = f'{self.mek_dir}/data/mechfiles/astech/'   # and custom mechs there
+    self.logs_dir = f'{self.mek_dir}/logs/'                    # gamelogs are there
 
   def start(self):
     '''starts MegaMek server'''
@@ -155,18 +161,11 @@ class MegaTech:
     if self.ison:
       return False
 
-    #javabin = '/usr/java/default/bin/java'
-    javabin = '/usr/bin/java'
-
     # command to run MegaMek headless server
-    command = f'{javabin} -jar MegaMek.jar -dedicated -port {self.port}'
-
-    # add password if present
-    if self.game_password and self.game_password != '':
-      command += f' -p {self.game_password}'
+    command = f'/usr/bin/java -jar MegaMek.jar -dedicated -port {self.port}'
 
     # we're running server now
-    self.process = subprocess.Popen(command.split(), cwd=self.install_dir)
+    self.process = subprocess.Popen(command.split(), cwd=self.mek_dir)
     self.ison = True
 
   def check(self):
@@ -188,39 +187,6 @@ class MegaTech:
       self.process.kill()
       self.ison = False
 
-  def getConfig(self):
-    '''creates dictionary from pickled astech config'''
-    confile = open('config/astech.conf', 'r+b')
-    # I really want to close that file
-    self.asconfig = pickle.load(confile)
-    confile.close()
-
-    # updating variables from config file 
-    self.name = self.asconfig['name']
-    self.version = self.asconfig['version']
-    self.port = self.asconfig['port']
-    self.game_password = self.asconfig['game_password']
-
-    # updating "shortcuts" for various used directories
-    self.install_dir = f'{self.meks_dir}/megamek-{self.version}'   # megamek directory
-    self.save_dir = f'{self.install_dir}/savegames/'               # default save dir for megamek
-    self.map_dir = f'{self.install_dir}/data/boards/astech/'       # astech will upload maps there
-    self.unit_dir = f'{self.install_dir}/data/mechfiles/astech/'   # and custom mechs there
-    self.logs_dir = f'{self.install_dir}/logs/'                    # gamelogs are there
-
-
-  def writeConfig(self):
-    '''pickles astech config into astech.conf file'''
-    confile = open('config/astech.conf', 'w+b')
-
-    # creating new config
-    self.asconfig = { 'name': self.name, \
-                      'version': self.version, \
-                      'port': self.port, \
-                      'game_password': self.game_password }
-
-    pickle.dump(self.asconfig, confile, protocol=0)
-    confile.close()
 
 # sensors... engaged 
 megatech = MegaTech()
@@ -249,11 +215,11 @@ def style():
 @route('/files/<operation>/<filetype>/<filename>')
 def file_operations(operation, filetype, filename):
   # check if we are logged in before download, to prevent link guessing
-  username = request.get_cookie('administrator', secret=secret1)
+  username = request.get_cookie('administrator', secret=SECRET1)
   if username:
     # filetype define directory with files to download
     if filetype == 'map':
-      rootdir = megatech.map_dir
+      rootdir = megatech.maps_dir
     elif filetype == 'savegame':
       rootdir = megatech.save_dir
     elif filetype == 'unit':
@@ -272,7 +238,7 @@ def file_operations(operation, filetype, filename):
         os.remove(rootdir + filename)
         # os.remove is displaying blank page, so we have to
         # quickly return to maps, saves, or units page
-        redirect(request.get_cookie('curpage', secret=secret1))
+        redirect(request.get_cookie('curpage', secret=SECRET1))
         return True
       except FileNotFoundError:
         redirect('/404page')
@@ -295,7 +261,7 @@ def file_operations(operation, filetype, filename):
 @get('/login')
 def login():
   # username variable is required for header template
-  username = request.get_cookie('administrator', secret=secret1)
+  username = request.get_cookie('administrator', secret=SECRET1)
 
   if username:
     # redirect logged users to main page
@@ -303,11 +269,11 @@ def login():
     return True
 
   # cookie with information about bad password
-  bad_password = request.get_cookie('badPassword', secret=secret2)
+  badPassword = request.get_cookie('badPassword', secret=SECRET2)
   return template('login',
-                  badPass=bad_password,
+                  badPassword=badPassword,
                   username=username,
-                  bottle_debug=bottle_conf['debug'],
+                  AST_DEBUG=AST_DEBUG,
                   )
 # ----------------------------------------
 
@@ -322,18 +288,17 @@ def check_login():
     # now check actual credentials from the form
     if crede(username, password):
       # good password, give a cookie
-      response.set_cookie('administrator', username, secret=secret1)
+      response.set_cookie('administrator', username, secret=SECRET1)
       response.delete_cookie('badPassword')
       redirect('/')
     elif not crede(username, password):
       # bad password
-      response.set_cookie('badPassword', 'nopass', max_age=5, secret=secret2)
-      time.sleep(3) # to prevent simple spam
+      response.set_cookie('badPassword', 'nopass', max_age=5, secret=SECRET2)
       redirect('/login')
   else:
     # if login and/or password are not alpha, don't parse them
     # and redirect to login (just to be safe)
-    response.set_cookie('badPassword', 'nopass', max_age=5, secret=secret2)
+    response.set_cookie('badPassword', 'nopass', max_age=5, secret=SECRET2)
     redirect('/login')
 # ----------------------------------------
 
@@ -346,20 +311,13 @@ def check_login():
 @get('/')
 def index():
   # check if we are logged in
-  username = request.get_cookie('administrator', secret=secret1)
-
-  # check game password
-  passwordnoalpha = request.get_cookie('passwordnoalpha', secret=secret2)
-  passwordtoolong = request.get_cookie('passwordtoolong', secret=secret2)
+  username = request.get_cookie('administrator', secret=SECRET1)
 
   # checks if help messages will be displayed
-  veteran = request.get_cookie('veteran', secret=secret1)
+  veteran = request.get_cookie('veteran', secret=SECRET1)
 
   # current page
-  response.set_cookie('curpage', '/', secret=secret1)
-
-  # update data from config file
-  megatech.getConfig()
+  response.set_cookie('curpage', '/', secret=SECRET1)
 
   if username:
     # password and login cookie are checked by now
@@ -373,58 +331,14 @@ def index():
 
     # render template
     return template('index',
-                    domain = bottle_conf['domain'],
                     username = username,
                     veteran = veteran,
                     mtison = megatech.ison,
                     mtver = megatech.version,
-                    mtname = megatech.name,
-                    mtport = str(megatech.port),
-                    logFile = getFile(megatech.logs_dir + 'megameklog.txt'),
-                    mtpassword = megatech.game_password,
-                    passwordnoalpha = passwordnoalpha,
-                    passwordtoolong = passwordtoolong,
+                    mtport = megatech.port,
+                    logFile = getFile(megatech.logs_dir + 'megamek.log'),
+                    AST_DEBUG=AST_DEBUG,
                     )
-
-  elif not username:
-    redirect('/login')
-
-# main route - setting server password via html form
-@post('/')
-def index_set_password():
-  username = request.get_cookie('administrator', secret=secret1)
-
-  if username:
-    game_pass = request.forms.get('mekpassword')
-
-    if len(game_pass) > 0 and not game_pass.isalpha():
-      # if mekpassword is not alpha, don't parse it;
-      # will display warning message about using nonlatin characters, see administrator.tpl
-      response.delete_cookie('passwordtoolong')
-      response.set_cookie('passwordnoalpha', 'passwordnoalpha', max_age=5, secret=secret2)
-      megatech.game_password = False
-
-    elif len(game_pass) > 100:
-      # it may be too much for MegaMek
-      response.delete_cookie('passwordnoalpha')
-      response.set_cookie('passwordtoolong', 'passwordtoolong', max_age=5, secret=secret2)
-      megatech.game_password = False
-
-    else:
-      if game_pass == '':
-        # empty password is no password
-        megatech.game_password = False
-      else:
-        megatech.game_password = game_pass
-      response.delete_cookie('passwordnoalpha')
-      response.delete_cookie('passwordtoolong')
-
-
-    # refreshing config file
-    megatech.writeConfig()
-    megatech.getConfig()
-
-    redirect('/')
 
   elif not username:
     redirect('/login')
@@ -438,22 +352,22 @@ def index_set_password():
 # files view and upload form 
 @get('/gamefiles')
 def list_user_files():
-  username = request.get_cookie('administrator', secret=secret1)
+  username = request.get_cookie('administrator', secret=SECRET1)
 
   if username:
     # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret=secret1)
+    veteran = request.get_cookie('veteran', secret=SECRET1)
 
     # current page for become_veteran and become_rookie functions
-    response.set_cookie('curpage', '/gamefiles', secret=secret1)
+    response.set_cookie('curpage', '/gamefiles', secret=SECRET1)
 
     # create diretories, if they not exist
-    pathlib.Path(megatech.map_dir).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(megatech.maps_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(megatech.unit_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(megatech.save_dir).mkdir(parents=True, exist_ok=True)
 
     # specify directories with user files
-    map_list = os.listdir(megatech.map_dir)
+    map_list = os.listdir(megatech.maps_dir)
     unit_list = os.listdir(megatech.unit_dir)
     save_list = os.listdir(megatech.save_dir)
 
@@ -462,10 +376,10 @@ def list_user_files():
     save_list.sort()
 
     # cookies set when uploaded file is wrong
-    wrongfile = request.get_cookie('wrongfile', secret=secret2)
-    bigfile = request.get_cookie('bigfile', secret=secret2)
-    nofile = request.get_cookie('nofile', secret=secret2)
-    longname = request.get_cookie('longname', secret=secret2)
+    wrongfile = request.get_cookie('wrongfile', secret=SECRET2)
+    bigfile = request.get_cookie('bigfile', secret=SECRET2)
+    nofile = request.get_cookie('nofile', secret=SECRET2)
+    longname = request.get_cookie('longname', secret=SECRET2)
 
     # render web page with template
     return template('gamefiles',
@@ -478,6 +392,7 @@ def list_user_files():
                      bigfile=bigfile,
                      nofile=nofile,
                      longname=longname,
+                     AST_DEBUG=AST_DEBUG,
                      )
 
   elif not username:
@@ -488,7 +403,7 @@ def list_user_files():
 # checking and uploading files
 @post('/gamefiles')
 def upload_file():
-  username = request.get_cookie('administrator', secret=secret1)
+  username = request.get_cookie('administrator', secret=SECRET1)
   if username:
     posted_file = request.files.get('posted_file')
 
@@ -497,19 +412,19 @@ def upload_file():
     except AttributeError:
       # in a case when no file was uploaded;
       # page template will show error message with this cookie
-      response.set_cookie('nofile', 'nofile', max_age=5, secret=secret2)
-      redirect(request.get_cookie('curpage', secret=secret1))
+      response.set_cookie('nofile', 'nofile', max_age=5, secret=SECRET2)
+      redirect(request.get_cookie('curpage', secret=SECRET1))
       return False
 
     if len(name) > 80:
-      response.set_cookie('longname', 'longname', max_age=5, secret=secret2)
-      redirect(request.get_cookie('curpage', secret=secret1))
+      response.set_cookie('longname', 'longname', max_age=5, secret=SECRET2)
+      redirect(request.get_cookie('curpage', secret=SECRET1))
       return False
 
     response.delete_cookie('nofile')
     # specify correct path to save uploaded file and filesize limit
     if ext == '.board':
-      file_path = megatech.map_dir
+      file_path = megatech.maps_dir
       size_limit = 1500000
     elif ext == '.mtf':
       file_path = megatech.unit_dir
@@ -519,8 +434,8 @@ def upload_file():
       size_limit = 1500000
     else:
       # page template will show error message with this cookie
-      response.set_cookie('wrongfile', 'wrongfile', max_age=5, secret=secret2)
-      redirect(request.get_cookie('curpage', secret=secret1))
+      response.set_cookie('wrongfile', 'wrongfile', max_age=5, secret=SECRET2)
+      redirect(request.get_cookie('curpage', secret=SECRET1))
       return False
 
     # uploading and checking file in correct MegaMek directory
@@ -531,14 +446,14 @@ def upload_file():
     # checking filesize and, if bigger than size limit, delete file
     if filestats.st_size > size_limit:
       # page template will show error message with this cookie
-      response.set_cookie('bigfile', 'bigfile', max_age=5, secret=secret2)
+      response.set_cookie('bigfile', 'bigfile', max_age=5, secret=SECRET2)
       os.remove(file_path + posted_file.filename)
     else:
       response.delete_cookie('bigfile')
 
     # sometimes os.listdir isn't including new file right away
     time.sleep(1)
-    redirect(request.get_cookie('curpage', secret=secret1))
+    redirect(request.get_cookie('curpage', secret=SECRET1))
 
   elif not username:
     redirect('/login')
@@ -551,30 +466,18 @@ def upload_file():
 
 @route('/options')
 def options():
-  username = request.get_cookie('administrator', secret=secret1)
+  username = request.get_cookie('administrator', secret=SECRET1)
 
   if username:
     # checks if help messages will be displayed
-    veteran = request.get_cookie('veteran', secret=secret1)
+    veteran = request.get_cookie('veteran', secret=SECRET1)
 
-    response.set_cookie('curpage', '/options', secret=secret1)
-
-    # list of avaiable MegaMek versions
-    versions = []
-    # cutting 'megamek-(v)' prefix
-    for i in os.listdir(megatech.meks_dir):
-      # skip "megamek-"
-      versions.append(i[8:])
-    versions.sort()
-
-    # we are checking which version is currently selected
-    selected = megatech.version
+    response.set_cookie('curpage', '/options', secret=SECRET1)
 
     return template('options',
                     username=username,
                     veteran=veteran,
-                    versions=versions,
-                    selected=selected,
+                    AST_DEBUG=AST_DEBUG,
                    )
 
   elif not username:
@@ -586,8 +489,9 @@ def options():
 # turn on MegaMek server via MegaTech class
 @route('/mmturnon')
 def mmturnon():
-  if request.get_cookie('administrator', secret=secret1):
+  if request.get_cookie('administrator', secret=SECRET1):
     megatech.start()
+    time.sleep(4)
   redirect('/')
 # ----------------------------------------
 
@@ -595,8 +499,9 @@ def mmturnon():
 # turn off MegaMek server via MegaTech class
 @route('/mmturnoff')
 def mmturnoff():
-  if request.get_cookie('administrator', secret=secret1):
+  if request.get_cookie('administrator', secret=SECRET1):
     megatech.stop()
+    time.sleep(2)
   redirect('/')
 # ----------------------------------------
 
@@ -612,41 +517,20 @@ def logoff():
 # set vetran cookie to hide tutorial messages
 @route('/veteran')
 def becomeVeteran():
-  if request.get_cookie('administrator', secret=secret1):
-    response.set_cookie('veteran', 'veteran', secret=secret1)
+  if request.get_cookie('administrator', secret=SECRET1):
+    response.set_cookie('veteran', 'veteran', secret=SECRET1)
   # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret=secret1))
+  redirect(request.get_cookie('curpage', secret=SECRET1))
 # ----------------------------------------
 
 
 # delete veteran cookie to show tutorial messages 
 @route('/green')
 def becomeGreen():
-  if request.get_cookie('administrator', secret=secret1):
+  if request.get_cookie('administrator', secret=SECRET1):
     response.delete_cookie('veteran')
   # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret=secret1))
-# ----------------------------------------
-
-# change MegaMek version
-@route('/ver/<vernumber>')
-def changeVer(vernumber):
-  '''Changes version info in MegaTech instance
-  and installs version of MegaMek'''
-  megatech.version = vernumber
-
-  # restart MegaMek instance
-  if megatech.ison:
-    megatech.stop()
-    sleep(1)
-    megatech.start()
-
-  # updating astech.conf file
-  megatech.writeConfig()
-  megatech.getConfig()
-
-  # curpage cookie is storing current page (route)
-  redirect(request.get_cookie('curpage', secret=secret1))
+  redirect(request.get_cookie('curpage', secret=SECRET1))
 # ----------------------------------------
 
 # 404 error page
@@ -662,9 +546,9 @@ def route404(error):
 # ----------------------------------------
 
 # main loop
-if bottle_conf['debug'] == 'y':
+if AST_DEBUG:
   debug(True)
-  run(host='localhost', port=bottle_conf['port'], reloader=True)
-elif bottle_conf['debug'] == 'n':
-  run(host='0.0.0.0', port=bottle_conf['port'])
+  run(host='0.0.0.0', port=8080, reloader=True)
+else:
+  run(host='127.0.0.1', port=8080)
 

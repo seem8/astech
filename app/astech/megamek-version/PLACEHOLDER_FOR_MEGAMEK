@@ -1,0 +1,23 @@
+
+Unpack MegaMek files here. It should look like:
+
+.
+├── astech.py
+├── bottle.py
+├── error404.tpl
+├── footer.tpl
+├── gamefiles.tpl
+├── header.tpl
+├── index.tpl
+├── login.tpl
+├── megamek-0.49.19.1
+    ├── data
+    ├── docs
+    ├── lib
+    ├── logs
+    ├── mmconf
+    └── userdata
+    └── [...]
+├── options.tpl
+└── static
+

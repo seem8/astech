@@ -17,16 +17,13 @@
 </table>
 </form>
 
-% if bottle_debug == 'y':
-  <p>Default login: <em>somelogin</em>, default password: <em>somepassword</em></p>
-% end
-
 % # badpass is a cookie set when wrong login and/or password were submitted
-% if badPass:
+% if badPassword:
   <p class="error">Wrong login, or password.</p>
 % end
 
-<p><em>Astech page is using cookies to work properly.</em></p>
+<p><em>Astech page is using cookies to work properly.</em><br>
+<em>We do not track You. We just want to know if You're logged in.</p>
 
 % # contact information and closing html tags
 % include('footer')
