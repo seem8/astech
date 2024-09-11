@@ -39,13 +39,28 @@ from bottle import template, response, request, get, post, error, \
 # ------- INITIAL CONFIGURATION ----------
 # ----------------------------------------
 
-# Bottle can run in debug mode
+# get Bottle debug mode from ENV
 AST_DEBUG = os.environ.get("AST_DEBUG")
 if AST_DEBUG:
   from bottle import debug
 
-# MegaMek version
+# get IP on which Bottle will listen for http traffic from ENV;
+# may be '0.0.0.0', or any local IP address, but by default
+# it is ipv4 localhost
+AST_LISTEN = os.environ.get("AST_LISTEN")
+if not AST_LISTEN:
+  AST_LISTEN='127.0.0.1'
+
+# get port on which Bottle will listen for http traffic from ENV;
+# by default it is 8080
+AST_PORT = os.environ.get("AST_PORT")
+if not AST_PORT:
+  AST_PORT=8080
+
+# get MegaMek version from ENV; it is mandatory and has no default value
 AST_MM_VERSION = os.environ.get("AST_MM_VERSION")
+if not AST_MM_VERSION:
+  raise ValueError('No AST_MM_VERSION ENV variable, but is mandatory.')
 
 # get MegaMek port from ENV, or set it as 2346
 AST_MM_PORT = os.environ.get("AST_MM_PORT")
@@ -548,7 +563,7 @@ def route404(error):
 # main loop
 if AST_DEBUG:
   debug(True)
-  run(host='0.0.0.0', port=8080, reloader=True)
+  run(host=AST_LISTEN, port=AST_PORT, reloader=True)
 else:
-  run(host='127.0.0.1', port=8080)
+  run(host=AST_LISTEN, port=AST_PORT)
 
