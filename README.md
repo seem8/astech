@@ -4,6 +4,8 @@ This is a webapp to control and manage headless MegaMek (www.megamek.org) server
 
 It's intended to run on a Linux machine with Java 17 and Python 3.6+. Tested up to Python 3.12.
 
+Astech will not run on Python 3.13. It dropped cgi module, so I'll have to update Bottle, which in turn breaks error messages based on short lived cookies. To be done.
+
 # HOW TO RUN #
 
 1. Install Java JDK 17 as /usr/bin/java. It can be a symlink to /etc/alternatives.
@@ -34,6 +36,12 @@ You need:
 - SSL certificate, possibly from Let's Encrypt.
 
 Sample Nginx vhost configuration is included as app/nginx/sample.conf.
+
+------------------------------------
+
+# CONTAINERS #
+
+
 
 ------------------------------------
 
